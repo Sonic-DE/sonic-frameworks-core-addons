@@ -82,7 +82,19 @@ class KCOREADDONS_EXPORT KJob : public QObject
     Q_PROPERTY(Capabilities capabilities READ capabilities CONSTANT)
 
 public:
-    enum Unit { Bytes, Files, Directories };
+    /**
+     * Describes the unit used in the methods that handle reporting the job progress info.
+     * @see totalAmount
+     */
+    enum Unit {
+        Bytes,          ///< Directory and file sizes in bytes
+        Files,          ///< The number of files handled by the job
+        Directories,    ///< The number of directories handled by the job
+        Items,          ///< The number of items, including both directories and files, handled by the job;
+                        ///< this unit can be used with e.g. batch rename jobs where calculating the number of
+                        ///< directories and files separately would make the, usually fast, direct rename job slower
+                        ///< @since 5.72
+    };
     Q_ENUM(Unit)
 
     /**
