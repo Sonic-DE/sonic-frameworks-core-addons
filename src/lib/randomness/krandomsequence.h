@@ -69,7 +69,7 @@ public:
      * Restart the sequence based on lngSeed.
      * @param intSeed Seed to initialize the sequence with.
      * If lngSeed is 0, the sequence is initialized with a value from
-     * KRandom::random().
+     * QRandomGenerator::global()->generate().
      */
     void setSeed(int intSeed = 0);
     void setSeed(long lngSeed = 0);
