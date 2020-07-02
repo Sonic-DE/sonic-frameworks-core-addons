@@ -39,12 +39,20 @@ int KRandom::random()
         bool opened = urandom.open(QIODevice::ReadOnly | QIODevice::Unbuffered);
         if (!opened || urandom.read(reinterpret_cast<char *>(&seed), sizeof(seed)) != sizeof(seed)) {
             // No /dev/urandom... try something else.
+// silence warnings about use of deprecated qsrand()/qrand()
+// Porting to QRandomGenerator::global() instead might result in no new seed set for the generator behind qrand()
+// which then might affect other places indirectly relying on this.
+// So just keeping the old calls here, as this method is also deprecated and will disappear together with qsrand/qrand.
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_CLANG("-Wdeprecated-declarations")
+QT_WARNING_DISABLE_GCC("-Wdeprecated-declarations")
             qsrand(getpid());
             seed = qrand() ^ time(nullptr) ^ reinterpret_cast<quintptr>(QThread::currentThread());
         }
         qsrand(seed);
     }
     return qrand();
+QT_WARNING_POP
 }
 #endif
 
