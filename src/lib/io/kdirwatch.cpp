@@ -4,6 +4,7 @@
    SPDX-FileCopyrightText: 2007 Flavio Castelli <flavio.castelli@gmail.com>
    SPDX-FileCopyrightText: 2008 Rafal Rzepecki <divided.mind@gmail.com>
    SPDX-FileCopyrightText: 2010 David Faure <faure@kde.org>
+   SPDX-FileCopyrightText: 2020 Harald Sitter <sitter@kde.org>
 
    SPDX-License-Identifier: LGPL-2.0-only
 */
@@ -668,14 +669,17 @@ bool KDirWatchPrivate::useFAM(Entry *e)
 
     // handle FAM events to avoid deadlock
     // (FAM sends back all files in a directory when monitoring)
-    do {
-      famEventReceived();
-      if (startedFAMMonitor && !e->m_famReportedSeen) {
-        // 50 is ~half the time it takes to setup a watch.  If gamin's latency
-        // gets better, this can be reduced.
-        QThread::msleep(50);
-      }
-    } while (startedFAMMonitor &&!e->m_famReportedSeen);
+    for (int i = 0; i <= 80; ++i) { // we'll not wait forever; blocking for 4s seems plenty
+        famEventReceived();
+        // NB: check use_fam, if fam is defunct event receiving might disable fam support!
+        if (use_fam && startedFAMMonitor && !e->m_famReportedSeen) {
+            // 50 is ~half the time it takes to setup a watch.  If gamin's latency
+            // gets better, this can be reduced.
+            QThread::msleep(50);
+        } else {
+            break;
+        }
+    }
 
     return true;
 }
