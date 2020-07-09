@@ -30,8 +30,11 @@ void KListOpenFilesJobTest::testOpenFiles()
     if (!hasLsofInstalled()) {
         QSKIP("lsof is not installed - skipping test");
     }
-    QDir path(QCoreApplication::applicationDirPath());
-    auto job = new KListOpenFilesJob(path.path());
+    QTemporaryDir tempDir;
+    QFile tempFile(tempDir.path() + QStringLiteral("/tempfile"));
+    QVERIFY(tempFile.open(QIODevice::WriteOnly));
+
+    auto job = new KListOpenFilesJob(tempDir.path());
     job->exec();
     QCOMPARE(job->error(), KJob::NoError);
     auto processInfoList = job->processInfoList();
@@ -45,6 +48,8 @@ void KListOpenFilesJobTest::testOpenFiles()
     const auto& processInfo = *testProcessIterator;
     QVERIFY(processInfo.isValid());
     QCOMPARE(processInfo.pid(), QCoreApplication::applicationPid());
+
+    tempFile.close();
 }
 
 void KListOpenFilesJobTest::testNoOpenFiles()
