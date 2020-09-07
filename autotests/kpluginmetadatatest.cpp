@@ -56,9 +56,9 @@ class KPluginMetaDataTest : public QObject
                 QSKIP("QT_LOGGING_CONF prevents warning expectations from matching");
             }
             m_canMessage = true;
-            // Ensure the desktopparser warnings are actually enabled even with a sane env.
+            // Ensure all frameworks output is enabled so the expectations can match.
             // qtlogging.ini may have disabled it but we can fix that because setFilterRules overrides the ini files.
-            QLoggingCategory::setFilterRules(QStringLiteral("kf.coreaddons.desktopparser.warning=true"));
+            QLoggingCategory::setFilterRules(QStringLiteral("kf.*=true"));
         };
         internalCheck();
         return m_canMessage;
