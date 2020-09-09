@@ -28,6 +28,9 @@
  *
  * @author Sean Harmer <sh@astro.keele.ac.uk>
  */
+
+#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 75)
+
 class KCOREADDONS_EXPORT KRandomSequence
 {
 public:
@@ -47,8 +50,8 @@ public:
      * Do not use methods working with long type because on 64-bit
      * their size is different.
      */
-    explicit KRandomSequence(int intSeed = 0);
-    explicit KRandomSequence(long lngSeed);
+    KCOREADDONS_DEPRECATED_VERSION(5, 75, "Use QRandomGenerator") explicit KRandomSequence(int intSeed = 0);
+    KCOREADDONS_DEPRECATED_VERSION(5, 75, "Use QRandomGenerator") explicit KRandomSequence(long lngSeed);
 
     /**
      * Standard destructor
@@ -109,7 +112,9 @@ public:
      * @param list the list whose order will be modified
      * @note modifies the list in place
      */
-    template<typename T> void randomize(QList<T> &list)
+    template<typename T>
+    KCOREADDONS_DEPRECATED_VERSION(5, 75, "Use KRandom::shuffle")
+    void randomize(QList<T> &list)
     {
         // Fisher-Yates algorithm
         for (int index = list.count() - 1; index > 0; --index) {
@@ -145,5 +150,7 @@ private:
     class Private;
     Private *const d;
 };
+
+#endif
 
 #endif
