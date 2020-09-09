@@ -10,6 +10,9 @@
 #define K_RANDOM_SEQUENCE_H
 
 #include <kcoreaddons_export.h>
+
+#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 75)
+
 #include <QList>
 
 /**
@@ -25,6 +28,8 @@
  * pass along your seed number in the constructor.  From then on,
  * simply call getDouble or getLong to obtain the next
  * number in the sequence.
+ *
+ * @deprecated Since 5.75, use QRandomGenerator or KRandom::shuffle
  *
  * @author Sean Harmer <sh@astro.keele.ac.uk>
  */
@@ -47,7 +52,9 @@ public:
      * Do not use methods working with long type because on 64-bit
      * their size is different.
      */
+    KCOREADDONS_DEPRECATED_VERSION(5, 75, "Use QRandomGenerator")
     explicit KRandomSequence(int intSeed = 0);
+    KCOREADDONS_DEPRECATED_VERSION(5, 75, "Use QRandomGenerator")
     explicit KRandomSequence(long lngSeed);
 
     /**
@@ -108,8 +115,12 @@ public:
      *
      * @param list the list whose order will be modified
      * @note modifies the list in place
+     *
+     * @deprecated Since 5.75, use KRandom::shuffle
      */
-    template<typename T> void randomize(QList<T> &list)
+    template<typename T>
+    KCOREADDONS_DEPRECATED_VERSION(5, 75, "Use KRandom::shuffle")
+    void randomize(QList<T> &list)
     {
         // Fisher-Yates algorithm
         for (int index = list.count() - 1; index > 0; --index) {
@@ -145,5 +156,7 @@ private:
     class Private;
     Private *const d;
 };
+
+#endif
 
 #endif
