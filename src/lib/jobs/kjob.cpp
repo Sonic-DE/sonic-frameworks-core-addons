@@ -217,6 +217,11 @@ unsigned long KJob::percent() const
     return d_func()->percentage;
 }
 
+bool KJob::isFinished() const
+{
+    return d_func()->isFinished;
+}
+
 void KJob::setError(int errorCode)
 {
     Q_D(KJob);
