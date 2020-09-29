@@ -400,6 +400,12 @@ public:
      */
     QString value(const QString &key, const QString &defaultValue = QString()) const;
 
+    /**
+     * @return the ID of the config module for this plugin.
+     * @since 5.75
+     */
+    QString configModule() const;
+
     /** @return the value for @p key inside @p jo as a string list. If the type of @p key is string, a list with containing
      * just that string will be returned, if it is an array the list will contain one entry for each array member.
      * If the key cannot be found an empty list will be returned.
