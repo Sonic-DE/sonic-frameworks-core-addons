@@ -1030,13 +1030,12 @@ public:
     ~KAboutDataRegistry()
     {
         delete m_appData;
-        qDeleteAll(m_pluginData);
     }
     KAboutDataRegistry(const KAboutDataRegistry &) = delete;
     KAboutDataRegistry &operator=(const KAboutDataRegistry &) = delete;
 
     KAboutData *m_appData;
-    QHash<QString, KAboutData *> m_pluginData;
+    QHash<QString, KAboutData> m_pluginData;
 };
 
 Q_GLOBAL_STATIC(KAboutDataRegistry, s_registry)
@@ -1133,13 +1132,16 @@ void KAboutData::setApplicationData(const KAboutData &aboutData)
 
 void KAboutData::registerPluginData(const KAboutData &aboutData)
 {
-    s_registry->m_pluginData.insert(aboutData.componentName(), new KAboutData(aboutData));
+
+    s_registry->m_pluginData.insert(aboutData.componentName(), aboutData);
 }
 
 KAboutData *KAboutData::pluginData(const QString &componentName)
 {
-    KAboutData *ad = s_registry->m_pluginData.value(componentName);
-    return ad;
+    auto it = s_registry->m_pluginData.find(componentName);
+    if (it == s_registry->m_pluginData.end())
+        return nullptr;
+    return &(*it);
 }
 
 // only for KCrash (no memory allocation allowed)
