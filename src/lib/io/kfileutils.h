@@ -25,7 +25,7 @@ namespace KFileUtils
  * (which usually exist already), this function returns a suggested name
  * for a file/directory that doesn't exist in @p baseURL.
  *
- *The suggested file name is of the form "foo (1)", "foo (2)" etc.
+ * The suggested file name is of the form "foo (1)", "foo (2)" etc.
  *
  * For local URLs, this function will check if there is already a file/directory
  * with the new suggested name and will keep incrementing the number in the above
