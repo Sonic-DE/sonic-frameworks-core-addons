@@ -12,7 +12,7 @@
 #include <QFileInfo>
 #include <QRegularExpression>
 
-QString KFileUtils::suggestNameOnly(const QString &oldName)
+QString KFileUtils::makeSuggestedName(const QString &oldName)
 {
     QString basename;
 
@@ -55,12 +55,12 @@ QString KFileUtils::suggestNameOnly(const QString &oldName)
 
 QString KFileUtils::suggestName(const QUrl &baseURL, const QString &oldName)
 {
-    QString suggestedName = suggestNameOnly(oldName);
+    QString suggestedName = makeSuggestedName(oldName);
 
     if (baseURL.isLocalFile()) {
         const QString basePath = baseURL.toLocalFile() + QLatin1Char('/');
         while (QFileInfo::exists(basePath + suggestedName)) {
-            suggestedName = suggestNameOnly(suggestedName);
+            suggestedName = makeSuggestedName(suggestedName);
         }
     }
 

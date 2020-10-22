@@ -32,7 +32,7 @@ namespace KFileUtils
  * format until it finds one that doesn't exist. Note that this function uses a
  * blocking I/O call (using QFileInfo) to check the existence of the file/directory,
  * this could be problematic for network mounts (e.g. SMB, NFS) as these are treated
- * as local files by the upstream QFile code. An alternative is to use suggestNameOnly()
+ * as local files by the upstream QFile code. An alternative is to use makeSuggestedName()
  * and use KIO to stat the new file/directory in an asynchronous way.
  *
  * @since 5.61
@@ -51,7 +51,7 @@ KCOREADDONS_EXPORT QString suggestName(const QUrl &baseURL, const QString &oldNa
  *
  * @since 5.76
  */
-KCOREADDONS_EXPORT QString suggestNameOnly(const QString &oldName);
+KCOREADDONS_EXPORT QString makeSuggestedName(const QString &oldName);
 
 }
 #endif
