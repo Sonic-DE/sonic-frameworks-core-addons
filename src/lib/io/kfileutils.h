@@ -44,7 +44,7 @@ KCOREADDONS_EXPORT QString suggestName(const QUrl &baseURL, const QString &oldNa
  * this function returns a suggested name for a file/directory in the form "foo (1)",
  * "foo (2)" etc.
  *
- * Unlink the suggestName() method, this function doesn't check if there is a file/directory
+ * Unlike the suggestName() method, this function doesn't check if there is a file/directory
  * with the newly suggested name; the idea being that this responsibility falls on
  * the caller, e.g. one can use KIO::stat() to check asynchronously whether the new
  * name already exists (in its parent directory) or not.
