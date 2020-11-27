@@ -207,23 +207,26 @@ bool KTextToHTMLHelper::atUrl() const
              (allowedSpecialChars.indexOf(mText[mPos - 1]) != -1))) {
         return false;
     }
-    QChar ch = mText[mPos];
+
+    const QStringView text{mText};
+
+    QChar ch = text.at(mPos);
     return
-        (ch == QLatin1Char('h') && (mText.midRef(mPos, 7) == QLatin1String("http://") ||
-                                    mText.midRef(mPos, 8) == QLatin1String("https://"))) ||
-        (ch == QLatin1Char('v') && mText.midRef(mPos, 6) == QLatin1String("vnc://")) ||
-        (ch == QLatin1Char('f') && (mText.midRef(mPos, 7) == QLatin1String("fish://") ||
-                                    mText.midRef(mPos, 6) == QLatin1String("ftp://") ||
-                                    mText.midRef(mPos, 7) == QLatin1String("ftps://"))) ||
-        (ch == QLatin1Char('s') && (mText.midRef(mPos, 7) == QLatin1String("sftp://") ||
-                                    mText.midRef(mPos, 6) == QLatin1String("smb://"))) ||
-        (ch == QLatin1Char('m') && mText.midRef(mPos, 7) == QLatin1String("mailto:")) ||
-        (ch == QLatin1Char('w') && mText.midRef(mPos, 4) == QLatin1String("www.")) ||
-        (ch == QLatin1Char('f') && (mText.midRef(mPos, 4) == QLatin1String("ftp.") ||
-                                    mText.midRef(mPos, 7) == QLatin1String("file://"))) ||
-        (ch == QLatin1Char('n') && mText.midRef(mPos, 5) == QLatin1String("news:")) ||
-        (ch == QLatin1Char('t') && mText.midRef(mPos, 4) == QLatin1String("tel:")) ||
-        (ch == QLatin1Char('x') && mText.midRef(mPos, 5) == QLatin1String("xmpp:"));
+        (ch == QLatin1Char('h') && (text.mid(mPos, 7) == QLatin1String("http://") ||
+                                    text.mid(mPos, 8) == QLatin1String("https://"))) ||
+        (ch == QLatin1Char('v') && text.mid(mPos, 6) == QLatin1String("vnc://")) ||
+        (ch == QLatin1Char('f') && (text.mid(mPos, 7) == QLatin1String("fish://") ||
+                                    text.mid(mPos, 6) == QLatin1String("ftp://") ||
+                                    text.mid(mPos, 7) == QLatin1String("ftps://"))) ||
+        (ch == QLatin1Char('s') && (text.mid(mPos, 7) == QLatin1String("sftp://") ||
+                                    text.mid(mPos, 6) == QLatin1String("smb://"))) ||
+        (ch == QLatin1Char('m') && text.mid(mPos, 7) == QLatin1String("mailto:")) ||
+        (ch == QLatin1Char('w') && text.mid(mPos, 4) == QLatin1String("www.")) ||
+        (ch == QLatin1Char('f') && (text.mid(mPos, 4) == QLatin1String("ftp.") ||
+                                    text.mid(mPos, 7) == QLatin1String("file://"))) ||
+        (ch == QLatin1Char('n') && text.mid(mPos, 5) == QLatin1String("news:")) ||
+        (ch == QLatin1Char('t') && text.mid(mPos, 4) == QLatin1String("tel:")) ||
+        (ch == QLatin1Char('x') && text.mid(mPos, 5) == QLatin1String("xmpp:"));
 
 }
 
