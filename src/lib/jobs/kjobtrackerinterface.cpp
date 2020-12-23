@@ -44,12 +44,10 @@ void KJobTrackerInterface::registerJob(KJob *job)
     QObject::connect(job, SIGNAL(resumed(KJob*)),
                      this, SLOT(resumed(KJob*)));
 
-    QObject::connect(job, SIGNAL(description(KJob *, const QString &,
-                                 const QPair<QString, QString> &,
-                                 const QPair<QString, QString> &)),
-                     this, SLOT(description(KJob *, const QString &,
-                                            const QPair<QString, QString> &,
-                                            const QPair<QString, QString> &)));
+    QObject::connect(job,
+                     SIGNAL(description(KJob*,QString,QPair<QString,QString>,QPair<QString,QString>)),
+                     this,
+                     SLOT(description(KJob*,QString,QPair<QString,QString>,QPair<QString,QString>)));
     QObject::connect(job, SIGNAL(infoMessage(KJob*,QString,QString)),
                      this, SLOT(infoMessage(KJob*,QString,QString)));
     QObject::connect(job, SIGNAL(warning(KJob*,QString,QString)),
