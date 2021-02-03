@@ -22,7 +22,12 @@ class QStringView;
  * stateless i.e., the input string will not be modified. Also note that strings in all the
  * functions in this namespace will be matched case-insensitively.
  *
- * If you are using this with @c QSortFilterProxyModel, you need override both
+ * Limitations:
+ * - Currently this will match only 256 char strings correctly. This is because we mostly
+ * intend on matching a pattern against words and not sentences.
+ * - No more than 256 matches will happen
+ *
+ * If you are using this with @c QSortFilterProxyModel, you need to override both
  * @c QSortFilterProxyModel::lessThan and @c QSortFilterProxyModel::filterAcceptsRow.
  * A simple example:
  *
