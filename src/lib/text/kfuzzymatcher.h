@@ -141,4 +141,30 @@ KCOREADDONS_EXPORT QString toFuzzyMatchedDisplayString(QStringView pattern,
                                                        QStringView htmlTag,
                                                        QStringView htmlTagClose);
 
+/**
+ * @brief This is a utility function to display what is being matched.
+ * You can use the output of this function with a @c QTextDocument
+ * or in a @c QStyledItemDelegate.
+ *
+ * The difference between this and toFuzzyMatchedDisplayString() is that this
+ * function will show the actual positions of matches and due to this, this will
+ * be less performant because it has to calculate the match positions exactly. Use
+ * this function unless it really causes a performance issue.
+ *
+ * @param pattern is the current pattern entered by user
+ * @param str is the string that will be wrapped with @p htmlTag.
+ * @param htmlTag is the html tag you want to use for example \<b\> or \<span
+ * style=...\>
+ * @param htmlTagClose is the corresponding closing tag for @p htmlTag. The
+ * function does not check whether it is a closing tag for @p htmlTag or
+ * not.
+ * @return html styled output string
+ *
+ * @since 5.79
+ */
+KCOREADDONS_EXPORT QString toActualFuzzyMatchedDisplayString(QStringView pattern,
+                                                             QStringView str,
+                                                             QStringView htmlTag,
+                                                             QStringView htmlTagClose);
+
 } // namespace KFuzzyMatcher

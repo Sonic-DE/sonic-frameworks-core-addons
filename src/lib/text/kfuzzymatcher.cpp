@@ -172,7 +172,7 @@ static bool match_recursive(QStringView::const_iterator pattern,
     // Return best result
     if (recursiveMatch && (!matched || bestRecursiveScore > outScore)) {
         // Recursive score is better than "this"
-        memcpy(matches, bestRecursiveMatches, maxMatches);
+        memcpy(matches, bestRecursiveMatches, nextMatch);
         outScore = bestRecursiveScore;
         return true;
     } else if (matched) {
@@ -254,4 +254,33 @@ KFuzzyMatcher::Result KFuzzyMatcher::match(QStringView pattern, QStringView str)
     result.matched = matched;
     result.score = score;
     return result;
+}
+
+QString KFuzzyMatcher::toActualFuzzyMatchedDisplayString(QStringView pattern, QStringView str, QStringView htmlTag, QStringView htmlTagClose)
+{
+    if (pattern.isEmpty()) {
+        return str.toString();
+    }
+
+    uint8_t matches[256];
+    std::fill(std::begin(matches), std::end(matches), 255);
+    int score = 0;
+    const bool matched = match_internal(pattern, str, score, matches);
+
+    if (!matched) {
+        return str.toString();
+    }
+
+    QString string = str.toString();
+    int offset = 0;
+    for (int i = 0; i < 256; ++i) {
+        if (matches[i] == 255){
+            break;
+        }
+        string.insert(matches[i] + offset, htmlTag);
+        offset += htmlTag.size();
+        string.insert(matches[i] + offset + 1, htmlTagClose);
+        offset += htmlTagClose.size();
+    }
+    return string;
 }

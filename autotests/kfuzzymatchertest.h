@@ -21,6 +21,8 @@ private Q_SLOTS:
     void testMatch();
     void testToFuzzyMatchedDisplayString_data();
     void testToFuzzyMatchedDisplayString();
+    void testToActualFuzzyMatchedDisplayString_data();
+    void testToActualFuzzyMatchedDisplayString();
 };
 
 #endif // KFUZZYMATCHERTEST_H
