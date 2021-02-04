@@ -238,38 +238,3 @@ void KFuzzyMatcherTest::testToFuzzyMatchedDisplayString()
 
     QCOMPARE(actual, expected);
 }
-
-void KFuzzyMatcherTest::testToActualFuzzyMatchedDisplayString_data()
-{
-    QTest::addColumn<QString>("pattern");
-    QTest::addColumn<QString>("input");
-    QTest::addColumn<QString>("expected");
-    QTest::addColumn<QString>("tag");
-    QTest::addColumn<QString>("tagClose");
-
-    QTest::newRow("HelloBold") << QStringLiteral("Hlo")
-                               << QStringLiteral("Hello")
-                               << QStringLiteral("<b>H</b>el<b>l</b><b>o</b>")
-                               << QStringLiteral("<b>")
-                               << QStringLiteral("</b>");
-
-    QTest::newRow("lll display") << QStringLiteral("lll")
-                               << QStringLiteral("SVisualLoggerLogsList.h")
-                                  // should match the second L, not first
-                               << QStringLiteral("SVisual<b>L</b>ogger<b>L</b>ogs<b>L</b>ist.h")
-                               << QStringLiteral("<b>")
-                               << QStringLiteral("</b>");
-}
-
-void KFuzzyMatcherTest::testToActualFuzzyMatchedDisplayString()
-{
-    QFETCH(QString, pattern);
-    QFETCH(QString, input);
-    QFETCH(QString, expected);
-    QFETCH(QString, tag);
-    QFETCH(QString, tagClose);
-
-    QString actual = KFuzzyMatcher::toActualFuzzyMatchedDisplayString(pattern, input, tag, tagClose);
-
-    QCOMPARE(actual, expected);
-}
