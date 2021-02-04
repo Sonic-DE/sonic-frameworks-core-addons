@@ -204,36 +204,6 @@ static bool match_internal(QStringView pattern, QStringView str, int &outScore, 
 
 /**************************************************************/
 
-QString KFuzzyMatcher::toFuzzyMatchedDisplayString(QStringView pattern, QStringView str, QStringView htmlTag, QStringView htmlTagClose)
-{
-    bool wasMatching = false;
-    QString ret = str.toString();
-    const QString htmlTagStr = htmlTag.toString();
-    const QString htmlTagCloseStr = htmlTagClose.toString();
-
-    for (int i = 0, j = 0; i < ret.size() && j < pattern.size(); ++i) {
-        bool matching = ret.at(i).toLower() == pattern.at(j).toLower();
-        if (!wasMatching && matching) {
-            ret.insert(i, htmlTagStr);
-            i += htmlTag.size();
-            ++j;
-            wasMatching = true;
-        } else if (wasMatching && !matching) {
-            ret.insert(i, htmlTagCloseStr);
-            i += htmlTagClose.size();
-            wasMatching = false;
-        } else if (matching) {
-            ++j;
-        }
-    }
-
-    if (wasMatching) {
-        ret.append(htmlTagCloseStr);
-    }
-
-    return ret;
-}
-
 bool KFuzzyMatcher::matchSimple(QStringView pattern, QStringView str)
 {
     auto patternIt = pattern.cbegin();
@@ -255,3 +225,4 @@ KFuzzyMatcher::Result KFuzzyMatcher::match(QStringView pattern, QStringView str)
     result.score = score;
     return result;
 }
+
