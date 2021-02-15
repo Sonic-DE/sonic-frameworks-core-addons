@@ -41,12 +41,19 @@ void KJobTrackerInterface::registerJob(KJob *job)
     connect(job, &KJob::infoMessage, this, &KJobTrackerInterface::infoMessage);
     connect(job, &KJob::warning, this, &KJobTrackerInterface::warning);
 
+#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 80)
     connect(job, QOverload<KJob *, KJob::Unit, qulonglong>::of(&KJob::totalAmount),
             this, &KJobTrackerInterface::totalAmount);
     connect(job, QOverload<KJob *, KJob::Unit, qulonglong>::of(&KJob::processedAmount),
             this, &KJobTrackerInterface::processedAmount);
     connect(job, QOverload<KJob *, unsigned long>::of(&KJob::percent),
             this, &KJobTrackerInterface::percent);
+#else
+    connect(job, &KJob::totalAmountChanged, this, &KJobTrackerInterface::totalAmount);
+    connect(job, &KJob::processedAmountChanged, this, &KJobTrackerInterface::processedAmount);
+    connect(job, &KJob::percentChanged, this, &KJobTrackerInterface::percent);
+#endif
+
     connect(job, &KJob::speed, this, &KJobTrackerInterface::speed);
 }
 
