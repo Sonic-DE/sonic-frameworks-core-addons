@@ -9,12 +9,12 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QtAlgorithms>
 
 #include <QTemporaryFile>
 #include <kautosavefile.h>
 
 #include <QTest>
-#include <QTemporaryFile>
 
 QTEST_MAIN(KAutoSaveFileTest)
 
@@ -111,10 +111,16 @@ void KAutoSaveFileTest::test_fileStaleFiles()
     KAutoSaveFile saveFile(normalFile);
     QVERIFY(saveFile.open(QIODevice::ReadWrite));
     saveFile.write("testdata");
+
     // Make sure the stale file is found
-    QVERIFY(saveFile.staleFiles(normalFile, QStringLiteral("qttest")).count() == 1);
+
+    const auto listOfStaleFiles = saveFile.staleFiles(normalFile, QStringLiteral("qttest"));
+    QVERIFY(listOfStaleFiles.count() == 1);
     saveFile.releaseLock();
+    qDeleteAll(listOfStaleFiles);
+
     // Make sure the stale file is deleted
+
     QVERIFY(saveFile.staleFiles(normalFile, QStringLiteral("qttest")).isEmpty());
 }
 
@@ -150,6 +156,6 @@ void KAutoSaveFileTest::test_locking()
 
     QVERIFY(saveFile2->open(QIODevice::ReadWrite));
 
-    delete saveFile2;
+    qDeleteAll(staleFiles);
 
 }
