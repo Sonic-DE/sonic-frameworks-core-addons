@@ -20,7 +20,7 @@ include(ECMGenerateExportHeader)
 include(CMakePackageConfigHelpers)
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)
-include(ECMQtDeclareLoggingCategory)
+include(ECMQLoggingCategoryHelpers)
 include(ECMAddQch)
 include(ECMSetupQtPluginMacroNames)
 
@@ -101,6 +101,8 @@ kde_enable_exceptions()
 
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050e00)
 add_definitions(-DQT_NO_FOREACH)
+
+include(QLoggingCategories.cmake)
 
 add_subdirectory(src)
 if (BUILD_TESTING)
