@@ -39,8 +39,8 @@ QString KStringHandler::capwords(const QString &text)
 QStringList KStringHandler::capwords(const QStringList &list)
 {
     QStringList tmp = list;
-    for (QStringList::Iterator it = tmp.begin(); it != tmp.end(); ++it) {
-        *it = (*it)[0].toUpper() + (*it).midRef(1);
+    for (auto &str : tmp) {
+        str[0] = str.at(0).toUpper();
     }
     return tmp;
 }
@@ -48,8 +48,8 @@ QStringList KStringHandler::capwords(const QStringList &list)
 QString KStringHandler::lsqueeze(const QString &str, int maxlen)
 {
     if (str.length() > maxlen) {
-        int part = maxlen - 3;
-        return QLatin1String("...") + str.rightRef(part);
+        const int part = maxlen - 3;
+        return QLatin1String("...") + QStringView(str).right(part);
     } else {
         return str;
     }
@@ -59,7 +59,8 @@ QString KStringHandler::csqueeze(const QString &str, int maxlen)
 {
     if (str.length() > maxlen && maxlen > 3) {
         const int part = (maxlen - 3) / 2;
-        return str.leftRef(part) + QLatin1String("...") + str.rightRef(part);
+        const QStringView strView{str};
+        return strView.left(part) + QLatin1String("...") + strView.right(part);
     } else {
         return str;
     }
@@ -68,8 +69,8 @@ QString KStringHandler::csqueeze(const QString &str, int maxlen)
 QString KStringHandler::rsqueeze(const QString &str, int maxlen)
 {
     if (str.length() > maxlen) {
-        int part = maxlen - 3;
-        return str.leftRef(part) + QLatin1String("...");
+        const int part = maxlen - 3;
+        return QStringView(str).left(part) + QLatin1String("...");
     } else {
         return str;
     }
