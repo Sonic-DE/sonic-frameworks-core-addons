@@ -347,6 +347,17 @@ public:
     static QVector<KPluginMetaData> findPluginsById(const QString &directory, const QString &pluginId);
 
     /**
+     * @param directory The directory to search for plugins. If a relative path is given for @p directory,
+     * all entries of QCoreApplication::libraryPaths() will be checked with @p directory appended as a
+     * subdirectory. If an absolute path is given only that directory will be searched.
+     * @note Check if the returned KPluginMetaData is valid before continuing to use it.
+     *
+     * @param pluginId The Id of the plugin. The pluginId should be the same as the file name. See KPluginMetaData::pluginId().
+     * @since 5.83
+     */
+    static KPluginMetaData findPluginById(const QString &directory, const QString &pluginId);
+
+    /**
      * Invokes @p callback for each valid plugin found inside @p directory. This is useful if
      * your application needs to customize the behaviour of KPluginLoader::findPlugins() or
      * KPluginLoader::instantiatePlugins().
