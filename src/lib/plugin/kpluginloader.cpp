@@ -294,6 +294,39 @@ QVector<KPluginMetaData> KPluginLoader::findPluginsById(const QString &directory
     return KPluginLoader::findPlugins(directory, filter);
 }
 
+KPluginMetaData KPluginLoader::findPluginById(const QString &directory, const QString &pluginId)
+{
+    KPluginMetaData metaData;
+    forEachPlugin(directory, [&](const QString &pluginPath) {
+        if (metaData.isValid()) {
+            return; // We have already found the match
+        }
+        if (QFileInfo(pluginPath).baseName() != pluginId) {
+            return;
+        }
+        // Load the JSON metadata and make sure the pluginId matches
+        KPluginMetaData uncheckedMetadata(pluginPath);
+        if (uncheckedMetadata.isValid() && uncheckedMetadata.pluginId() == pluginId) {
+            metaData = uncheckedMetadata;
+        }
+    });
+
+    if (metaData.isValid()) {
+        return metaData;
+    }
+
+    // TODO KF6 remove, this is fallback logic if the pluginId is not the same as the file name
+    auto filter = [&pluginId](const KPluginMetaData &md) -> bool {
+        return md.pluginId() == pluginId;
+    };
+    const QVector<KPluginMetaData> metaDataVector = KPluginLoader::findPlugins(directory, filter);
+    if (!metaDataVector.isEmpty()) {
+        metaData = metaDataVector.first();
+    }
+
+    return metaData;
+}
+
 QList<QObject *> KPluginLoader::instantiatePlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter, QObject *parent)
 {
     QList<QObject *> ret;
