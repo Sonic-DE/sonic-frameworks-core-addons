@@ -305,6 +305,7 @@ public:
      * @see KPluginLoader::findPlugins()
      *
      * @since 5.1
+     * @deprecated Since 5.84 create instances from the KPluginMetaData::findPlugins result instead
      */
     static QList<QObject *> instantiatePlugins(const QString &directory,
                                                std::function<bool(const KPluginMetaData &)> filter = std::function<bool(const KPluginMetaData &)>(),
@@ -325,6 +326,7 @@ public:
      * @see KPluginLoader::instantiatePlugins()
      *
      * @since 5.1
+     * @deprecated Since 5.84 use KPluginMetaData::findPlugins instead
      */
     static QVector<KPluginMetaData> findPlugins(const QString &directory,
                                                 std::function<bool(const KPluginMetaData &)> filter = std::function<bool(const KPluginMetaData &)>());
@@ -343,6 +345,7 @@ public:
      * @see KPluginLoader::instantiatePlugins()
      *
      * @since 5.11
+     * @deprecated Since 5.84 use KPluginMetaData::findPluginsById instead
      */
     static QVector<KPluginMetaData> findPluginsById(const QString &directory, const QString &pluginId);
 
