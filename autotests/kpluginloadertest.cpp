@@ -321,7 +321,7 @@ private Q_SLOTS:
             return a.pluginId() < b.pluginId();
         };
         // it should find jsonplugin and jsonplugin2 since unversionedplugin does not have any meta data
-        auto plugins = KPluginLoader::findPlugins(QStringLiteral("kpluginmetadatatest"));
+        auto plugins = KPluginMetaData::findPlugins(QStringLiteral("kpluginmetadatatest"));
         std::sort(plugins.begin(), plugins.end(), sortPlugins);
         QCOMPARE(plugins.size(), 2);
         QCOMPARE(plugins[0].pluginId(), QStringLiteral("foobar")); // ID is not the filename, it is set in the JSON metadata
@@ -337,7 +337,7 @@ private Q_SLOTS:
         QCOMPARE(plugins.size(), 0);
 
         // filter accepts all
-        plugins = KPluginLoader::findPlugins(QStringLiteral("kpluginmetadatatest"), [](const KPluginMetaData &) {
+        plugins = KPluginMetaData::findPlugins(QStringLiteral("kpluginmetadatatest"), [](const KPluginMetaData &) {
             return true;
         });
         std::sort(plugins.begin(), plugins.end(), sortPlugins);
@@ -349,7 +349,7 @@ private Q_SLOTS:
         auto supportTextPlain = [](const KPluginMetaData &metaData) {
             return metaData.supportsMimeType(QLatin1String("text/plain"));
         };
-        plugins = KPluginLoader::findPlugins(QStringLiteral("kpluginmetadatatest"), supportTextPlain);
+        plugins = KPluginMetaData::findPlugins(QStringLiteral("kpluginmetadatatest"), supportTextPlain);
         QCOMPARE(plugins.size(), 1);
         QCOMPARE(plugins[0].description(), QStringLiteral("This is a plugin"));
 
@@ -357,7 +357,7 @@ private Q_SLOTS:
         auto supportTextHtml = [](const KPluginMetaData &metaData) {
             return metaData.supportsMimeType(QLatin1String("text/html"));
         };
-        plugins = KPluginLoader::findPlugins(QStringLiteral("kpluginmetadatatest"), supportTextHtml);
+        plugins = KPluginMetaData::findPlugins(QStringLiteral("kpluginmetadatatest"), supportTextHtml);
         std::sort(plugins.begin(), plugins.end(), sortPlugins);
         QCOMPARE(plugins.size(), 2);
         QCOMPARE(plugins[0].description(), QStringLiteral("This is another plugin"));
@@ -367,11 +367,11 @@ private Q_SLOTS:
         auto supportDoesNotExist = [](const KPluginMetaData &metaData) {
             return metaData.supportsMimeType(QLatin1String("does/not/exist"));
         };
-        plugins = KPluginLoader::findPlugins(QStringLiteral("kpluginmetadatatest"), supportDoesNotExist);
+        plugins = KPluginMetaData::findPlugins(QStringLiteral("kpluginmetadatatest"), supportDoesNotExist);
         QCOMPARE(plugins.size(), 0);
 
         // invalid std::function as filter
-        plugins = KPluginLoader::findPlugins(QStringLiteral("kpluginmetadatatest"));
+        plugins = KPluginMetaData::findPlugins(QStringLiteral("kpluginmetadatatest"));
         std::sort(plugins.begin(), plugins.end(), sortPlugins);
         QCOMPARE(plugins.size(), 2);
         QCOMPARE(plugins[0].description(), QStringLiteral("This is another plugin"));
@@ -387,7 +387,7 @@ private Q_SLOTS:
         QCOMPARE(plugins.size(), 0);
 
         // absolute path, no filter
-        plugins = KPluginLoader::findPlugins(dir.absolutePath());
+        plugins = KPluginMetaData::findPlugins(dir.absolutePath());
         std::sort(plugins.begin(), plugins.end(), sortPlugins);
         QCOMPARE(plugins.size(), 2);
         QCOMPARE(plugins[0].description(), QStringLiteral("This is another plugin"));
