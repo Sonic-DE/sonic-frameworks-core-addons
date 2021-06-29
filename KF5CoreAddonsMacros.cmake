@@ -104,13 +104,14 @@ endfunction()
 #
 # This macro helps simplifying the creation of plugins for KPluginFactory
 # based systems.
-# It will create a plugin given the SOURCES list, the name of the JSON file
-# that will define the plugin's metadata and the INSTALL_NAMESPACE so that
+# It will create a plugin given the SOURCES list and the INSTALL_NAMESPACE so that
 # the plugin is installed with the rest of the plugins from the same sub-system,
 # within ${KDE_INSTALL_PLUGINDIR}.
+# The JSON parameter is deprecated, because it is not needed when the macro is properly set up using
+# the ECMSetupQtPluginMacroNames module. In case of macros provided by the KDE frameworks this is already done.
 #
 # Example:
-#   kcoreaddons_add_plugin(kdeconnect_share JSON kdeconnect_share.json SOURCES ${kdeconnect_share_SRCS})
+#   kcoreaddons_add_plugin(kdeconnect_share SOURCES ${kdeconnect_share_SRCS} INSTALL_NAMESPACE "kdeconnect")
 #
 # Since 5.10.0
 
@@ -120,10 +121,13 @@ function(kcoreaddons_add_plugin plugin)
     set(multiValueArgs SOURCES)
     cmake_parse_arguments(KCA_ADD_PLUGIN "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    get_filename_component(json "${KCA_ADD_PLUGIN_JSON}" REALPATH)
-
     add_library(${plugin} MODULE ${KCA_ADD_PLUGIN_SOURCES})
-    set_property(TARGET ${plugin} APPEND PROPERTY AUTOGEN_TARGET_DEPENDS ${json})
+
+    if ("${ECM_GLOBAL_FIND_VERSION}" VERSION_LESS "5.84.0")
+        get_filename_component(json "${KCA_ADD_PLUGIN_JSON}" REALPATH)
+        set_property(TARGET ${plugin} APPEND PROPERTY AUTOGEN_TARGET_DEPENDS ${json})
+    endif()
+
     # If find_package(ECM 5.38) or higher is called, output the plugin in a INSTALL_NAMESPACE subfolder.
     # See https://community.kde.org/Guidelines_and_HOWTOs/Making_apps_run_uninstalled
     if(NOT ("${ECM_GLOBAL_FIND_VERSION}" VERSION_LESS "5.38.0"))
