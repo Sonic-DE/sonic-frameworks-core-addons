@@ -107,8 +107,8 @@ endfunction()
 # It will create a plugin given the SOURCES list and the INSTALL_NAMESPACE so that
 # the plugin is installed with the rest of the plugins from the same sub-system,
 # within ${KDE_INSTALL_PLUGINDIR}.
-# The JSON parameter is deprecated since 5.85, because it is not needed when the macro is properly set up using
-# the ECMSetupQtPluginMacroNames module. In case of macros provided by the KDE Frameworks this is already done and the parameter
+# The JSON parameter is deprecated since 5.85, because it is not needed when the project is properly set up using
+# the ECMSetupQtPluginMacroNames module. In case of plugin export macros provided by the KDE Frameworks this is already done and the parameter
 # can be dropped with any older KF5 requirement.
 # In case you generate the JSON files during the build it should be manually added to the AUTOGEN_TARGET_DEPENDS property,
 # the kcoreaddons_desktop_to_json already does this for the generated file.
