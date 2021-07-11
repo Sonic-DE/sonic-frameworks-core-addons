@@ -2,12 +2,15 @@
     This file is part of the KDE libraries
 
     SPDX-FileCopyrightText: 2000-2005 David Faure <faure@kde.org>
+    SPDX-FileCopyrightText: 2021 Alexander Lohnau <alexander.lohnau@gmx.de>
 
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
 #include "kfileutils.h"
 
+#include <QDebug>
+#include <QDirIterator>
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QRegularExpression>
@@ -64,4 +67,22 @@ QString KFileUtils::suggestName(const QUrl &baseURL, const QString &oldName)
     }
 
     return suggestedName;
+}
+
+QStringList KFileUtils::findAllUniqueFiles(QStandardPaths::StandardLocation location, const QString &dirName, const QStringList &nameFilters)
+{
+    QStringList foundFilePaths;
+    QStringList foundFileNames;
+    const QStringList allDirs = QStandardPaths::locateAll(location, dirName, QStandardPaths::LocateDirectory);
+    for (const QString &dir : allDirs) {
+        QDirIterator it(dir, nameFilters, QDir::Files);
+        while (it.hasNext()) {
+            it.next();
+            if (!foundFileNames.contains(it.fileName())) {
+                foundFilePaths << it.filePath();
+                foundFileNames << it.fileName();
+            }
+        }
+    }
+    return foundFilePaths;
 }

@@ -2,6 +2,7 @@
     This file is part of the KDE libraries
 
     SPDX-FileCopyrightText: 2000-2005 David Faure <faure@kde.org>
+    SPDX-FileCopyrightText: 2021 Alexander Lohnau <alexander.lohnau@gmx.de>
 
     SPDX-License-Identifier: LGPL-2.0-only
 */
@@ -10,6 +11,7 @@
 
 #include "kcoreaddons_export.h"
 
+#include <QStandardPaths>
 #include <QString>
 #include <QUrl>
 
@@ -52,5 +54,20 @@ KCOREADDONS_EXPORT QString suggestName(const QUrl &baseURL, const QString &oldNa
  */
 KCOREADDONS_EXPORT QString makeSuggestedName(const QString &oldName);
 
+/**
+ * Locates all files matching the @p nameFilters in the given @p location and @p dir.
+ * The returned list does not contain duplicate file names. In case there are multiple files the one with the highest priority is returned.
+ * For example
+ * @code
+    KFileUtils::findAllUniqueFiles(QStandardPaths::GenericDataLocation, QStringLiteral("krunner/dbusplugins"), QStringList{QStringLiteral("*.desktop")});
+ * @endcode
+ * will look in the /home/user/.local/share/krunner/dbusplugins and /usr/share/krunner/dbusplugins dirs and return all the desktop files.
+ * @param location standard location for the dir
+ * @param dir directory in which the files are located
+ * @param nameFilters filters that get passed to QDirIterator
+ * @return list of absolute file paths
+ * @since 5.85
+ */
+KCOREADDONS_EXPORT QStringList findAllUniqueFiles(QStandardPaths::StandardLocation location, const QString &dir, const QStringList &nameFilters = {});
 }
 #endif
