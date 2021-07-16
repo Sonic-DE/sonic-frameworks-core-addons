@@ -18,7 +18,7 @@ VersionedPlugin::VersionedPlugin(QObject *parent, const QVariantList &args)
 }
 
 K_PLUGIN_FACTORY(VersionedPluginFactory, registerPlugin<VersionedPlugin>();)
-#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 84)
+#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 85)
 K_EXPORT_PLUGIN_VERSION(5)
 #endif
 
