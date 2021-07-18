@@ -132,7 +132,7 @@ KPluginMetaData::KPluginMetaData(const QPluginLoader &loader)
     m_metaData = loader.metaData().value(QStringLiteral("MetaData")).toObject();
 }
 
-#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 85)
+#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 86)
 KPluginMetaData::KPluginMetaData(const KPluginLoader &loader)
 {
     m_fileName = QFileInfo(loader.fileName()).absoluteFilePath();
@@ -512,6 +512,7 @@ bool KPluginMetaData::operator==(const KPluginMetaData &other) const
     return m_fileName == other.m_fileName && m_metaData == other.m_metaData;
 }
 
+#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 85)
 QObject *KPluginMetaData::instantiate() const
 {
     QPluginLoader loader(m_fileName);
@@ -521,6 +522,7 @@ QObject *KPluginMetaData::instantiate() const
     }
     return ret;
 }
+#endif
 
 template<class T>
 QVariantList listToVariant(const QList<T> &values)
