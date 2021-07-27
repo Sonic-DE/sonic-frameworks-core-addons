@@ -10,6 +10,7 @@
 #include "kcoreaddons_debug.h"
 #include "knetworkmounts.h"
 
+#include <QCoreApplication>
 #include <QFile>
 
 #ifndef Q_OS_WIN
@@ -148,5 +149,26 @@ KFileSystemType::Type KFileSystemType::fileSystemType(const QString &path)
         return KFileSystemType::Nfs;
     } else {
         return determineFileSystemTypeImpl(QFile::encodeName(path));
+    }
+}
+
+QString KFileSystemType::fileSystemName(KFileSystemType::Type type)
+{
+    switch (type) {
+    case KFileSystemType::Nfs:
+        return QCoreApplication::translate("KFileSystemType", "NFS");
+    case KFileSystemType::Smb:
+        return QCoreApplication::translate("KFileSystemType", "SMB");
+    case KFileSystemType::Fat:
+        return QCoreApplication::translate("KFileSystemType", "FAT");
+    case KFileSystemType::Ramfs:
+        return QCoreApplication::translate("KFileSystemType", "RAMFS");
+    case KFileSystemType::Other:
+        return QCoreApplication::translate("KFileSystemType", "Other");
+    case KFileSystemType::Ntfs:
+        return QCoreApplication::translate("KFileSystemType", "NTFS");
+    case KFileSystemType::Unknown:
+    default:
+        return QCoreApplication::translate("KFileSystemType", "Unknown");
     }
 }
