@@ -150,3 +150,32 @@ KFileSystemType::Type KFileSystemType::fileSystemType(const QString &path)
         return determineFileSystemTypeImpl(QFile::encodeName(path));
     }
 }
+
+QString KFileSystemType::fileSystemTypeName(const QString &path)
+{
+    const KFileSystemType::Type fsType = fileSystemType(path);
+    switch (fsType) {
+    case KFileSystemType::Nfs:
+        return QStringLiteral("NFS");
+        break;
+    case KFileSystemType::Smb:
+        return QStringLiteral("SMB");
+        break;
+    case KFileSystemType::Fat:
+        return QStringLiteral("FAT");
+        break;
+    case KFileSystemType::Ramfs:
+        return QStringLiteral("RAMFS");
+        break;
+    case KFileSystemType::Other:
+        return QStringLiteral("Other");
+        break;
+    case KFileSystemType::Ntfs:
+        return QStringLiteral("NTFS");
+        break;
+    case KFileSystemType::Unknown:
+    default:
+        return QStringLiteral("Unknown");
+        break;
+    }
+}

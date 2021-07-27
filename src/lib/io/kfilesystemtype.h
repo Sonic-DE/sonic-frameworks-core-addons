@@ -9,8 +9,9 @@
 #ifndef KFILESYSTEMTYPE_P_H
 #define KFILESYSTEMTYPE_P_H
 
-#include <QString>
 #include <kcoreaddons_export.h>
+
+#include <QString>
 
 /**
  * @namespace KFileSystemType
@@ -29,11 +30,22 @@ enum Type {
 };
 
 /**
- * Returns the file system type at a given path, as much as we are able to figure it out.
+ * For a given @p path, returns the filesystem type, one of @ref KFileSystemType::Type
+ * values. If the type can't be determined, @c KFileSystemType::Unknown is returned.
+ *
  * @since 5.0
  */
 KCOREADDONS_EXPORT Type fileSystemType(const QString &path);
 
+/**
+ * For a given @p path, returns the filesystem type name, e.g. (NFS, SMB, FAT).
+ * If the filesystem type couldn't be determined, "Unknown" is returned.
+ *
+ * @see @ref KFileSystemType::Type
+ *
+ * @since 5.85
+ */
+KCOREADDONS_EXPORT QString fileSystemTypeName(const QString &path);
 }
 
 #endif
