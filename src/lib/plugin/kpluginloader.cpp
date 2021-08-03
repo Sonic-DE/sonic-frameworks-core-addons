@@ -270,19 +270,22 @@ void KPluginLoader::forEachPlugin(const QString &directory, std::function<void(c
 QVector<KPluginMetaData> KPluginLoader::findPlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter)
 {
     QVector<KPluginMetaData> ret;
-    QSet<QString> addedPluginIds;
+    std::set<QString> addedPluginIds;
     forEachPlugin(directory, [&](const QString &pluginPath) {
         KPluginMetaData metadata(pluginPath);
         if (!metadata.isValid()) {
             return;
         }
-        if (addedPluginIds.contains(metadata.pluginId())) {
+
+        const auto [it, isFirstSeen] = addedPluginIds.insert(metadata.pluginId());
+        if (!isFirstSeen) {
             return;
         }
+
         if (filter && !filter(metadata)) {
             return;
         }
-        addedPluginIds << metadata.pluginId();
+
         ret.append(metadata);
     });
     return ret;
