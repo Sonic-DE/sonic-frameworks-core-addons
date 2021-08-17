@@ -507,6 +507,29 @@ QString KPluginMetaData::value(const QString &key, const QString &defaultValue) 
     return defaultValue;
 }
 
+bool KPluginMetaData::value(const QString &key, bool defaultValue) const
+{
+    const QJsonValue value = m_metaData.value(key);
+    if (value.isString()) {
+        return value.toString() == QLatin1String("true");
+    } else if (value.isBool()) {
+        return value.toBool();
+    }
+    return defaultValue;
+}
+
+int KPluginMetaData::value(const QString &key, int defaultValue) const
+{
+    const QJsonValue value = m_metaData.value(key);
+    if (value.isString()) {
+        return value.toString().toInt();
+    } else if (value.isDouble()) {
+        return value.toInt();
+    } else {
+        return defaultValue;
+    }
+}
+
 bool KPluginMetaData::operator==(const KPluginMetaData &other) const
 {
     return m_fileName == other.m_fileName && m_metaData == other.m_metaData;
