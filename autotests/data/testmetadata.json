@@ -11,5 +11,10 @@
         "Name": "Test"
     },
     "X-Plasma-MainScript": "ui/main.qml",
-    "X-Purpose-PluginTypes": [ "Export" ]
+    "X-Purpose-PluginTypes": [ "Export" ],
+    "SomeInt" : 42,
+    "SomeIntAsString" : "42",
+    "SomeBool" : true,
+    "SomeBoolAsString" : "true",
+    "SomeBoolThatIsFalse": false
 }
