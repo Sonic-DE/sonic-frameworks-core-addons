@@ -437,6 +437,16 @@ public:
     QString value(const QString &key, const QString &defaultValue = QString()) const;
 
     /**
+     * Overload to make sure the bool overload is not taken by accident
+     * @overload
+     * @since 5.86
+     */
+    QString value(const QString &key, const char *ch) const
+    {
+        return value(key, QString::fromLatin1(ch));
+    }
+
+    /**
      * @overload
      * @since 5.86
      */
