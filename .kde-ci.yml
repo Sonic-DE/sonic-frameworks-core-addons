@@ -1,0 +1,3 @@
+Dependencies:
+- 'require':
+  'frameworks/extra-cmake-module': '@stable'
