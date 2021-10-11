@@ -80,6 +80,7 @@ ecm_add_tests(
     knetworkmountstestnoconfig.cpp
     knetworkmountstestpaths.cpp
     knetworkmountsteststatic.cpp
+    klibexectest.cpp
     ${autotests_OPTIONAL_SRCS}
     LINK_LIBRARIES Qt5::Test KF5::CoreAddons autotests_static
 )
