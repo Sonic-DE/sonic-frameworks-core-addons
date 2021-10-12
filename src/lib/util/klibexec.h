@@ -16,6 +16,7 @@ namespace KLibexec
 
 KCOREADDONS_EXPORT QString pathFromAddress(const QString &relativePath, void *address);
 KCOREADDONS_EXPORT QString findLibexecFromAddress(const QString &exectuableName, const QStringList &paths);
+KCOREADDONS_EXPORT QStringList pathCandidates(const QStringList &fallbackPaths);
 
 /**
  * @brief Absolute libexec path relative from the current shared object.
@@ -32,11 +33,19 @@ inline QString path(const QString &relativePath)
     return pathFromAddress(relativePath, &marker);
 }
 
-/// TODO convenience finder appdir > qt.conf > qt.conf+kf5 (fallbacks from caller?: relative > absolute)
+/// TODO convenience finder appdir > qt.conf > qt.conf+kf5 > (fallbacks from caller?: relative > absolute)
 inline QString findLibexec(const QString &exectuableName, const QStringList &paths)
 {
-    // intentionally inline because libexecPath must be inline!
+    // TODO: move to cpp I guess. since we need the relativePath passed in for path() anyway we may as well accept
+    // a QStringList. to the caller it makes no difference either way
     return findLibexecFromAddress(exectuableName, paths);
+}
+
+/// TODO alternative candidate (caller gets access to the internal list and can prepend/append/qdebug/findExec it). disadvantage: callers may presume things about the list content
+inline QStringList paths(const QString &relativePath)
+{
+    // intentional inline because path must be inline
+    return pathCandidates({path(relativePath)});
 }
 
 } // namespace KLibexec
