@@ -14,27 +14,28 @@
 #include <QVarLengthArray>
 #endif
 
-#include <QDebug>
 #include <QDir>
+
+#include <kcoreaddons_debug.h>
 
 QString libraryPathFromAddress(void *address)
 {
 #if HAVE_DLADDR
     Dl_info info {};
     if (dladdr(address, &info) == 0) {
-        qWarning() << "Failed to match address to shared object.";
+        qCWarning(KCOREADDONS_DEBUG) << "Failed to match address to shared object.";
         // Do not call dlerror. It's only expected to return something useful on freebsd!
         return {};
     }
     return QString::fromLocal8Bit(info.dli_fname);
 #elif defined(Q_OS_WIN)
-        qWarning() << "Failed to GetModuleHandleEx" << GetLastError();
     HMODULE hModule = nullptr;
     if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, static_cast<LPCTSTR>(address), &hModule)) {
+        qCWarning(KCOREADDONS_DEBUG) << "Failed to GetModuleHandleEx" << GetLastError();
         return {};
     }
     if (!hModule) {
-        qWarning() << "hModule null unexpectedly";
+        qCWarning(KCOREADDONS_DEBUG) << "hModule null unexpectedly";
         return {};
     }
 
@@ -44,7 +45,7 @@ QString libraryPathFromAddress(void *address)
         pathArray.resize(pathArray.size() + MAX_PATH);
         pathSize = GetModuleFileName(hModule, pathArray.data(), pathArray.size());
         if (pathSize == 0) {
-            qWarning() << "Failed to GetModuleFileName" << GetLastError();
+            qCWarning(KCOREADDONS_DEBUG) << "Failed to GetModuleFileName" << GetLastError();
             return {};
         }
     }
@@ -61,7 +62,6 @@ QString KLibexec::pathFromAddress(const QString &relativePath, void *address)
     const QString libraryPath = QDir::fromNativeSeparators(libraryPathFromAddress(address));
     const QString absoluteDirPath = QFileInfo(libraryPath).absolutePath();
     const QString libexecPath = QFileInfo(absoluteDirPath + QDir::separator() + relativePath).absoluteFilePath();
-    qDebug() << libraryPath << absoluteDirPath << libexecPath;
     return libexecPath;
 }
 
