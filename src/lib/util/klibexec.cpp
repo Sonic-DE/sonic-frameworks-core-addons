@@ -4,9 +4,7 @@
 */
 
 #include "klibexec.h"
-
-// FIXME hack -- need to add config.h
-#define HAVE_DLADDR 1
+#include <config-util.h>
 
 #if defined(HAVE_DLADDR)
 #include <dlfcn.h>
