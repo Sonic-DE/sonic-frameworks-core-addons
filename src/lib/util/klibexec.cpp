@@ -52,12 +52,7 @@ QString libraryPathFromAddress(void *address)
             return {};
         }
     }
-    const QString path = QString::fromWCharArray(pathArray.data());
-    // TODO: how does one convert a TCHAR to qstring :O
-    // https://docs.microsoft.com/en-us/windows/win32/winprog/windows-data-types?redirectedfrom=MSDN
-    // TCHAR = A WCHAR if UNICODE is defined, a CHAR otherwise.
-    // Raises the question if the non unicode scenario can even appear in 2021
-    return path;
+    return QString::fromWCharArray(pathArray.data());
 #else // unsupported
     return {};
 #endif
