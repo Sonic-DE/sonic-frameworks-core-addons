@@ -11,18 +11,31 @@
 class KLibexecTest : public QObject
 {
     Q_OBJECT
+
+    const QString m_relative = QStringLiteral("fakeexec/kf5");
+    const QString m_fixtureName = QStringLiteral("klibexectest-fixture-binary");
+    QString m_fixtureDir;
+    QString m_fixturePath;
+
 private Q_SLOTS:
+    void initTestCase()
+    {
+        m_fixtureDir = QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + m_relative);
+        m_fixturePath = QDir::cleanPath(m_fixtureDir + QDir::separator() + m_fixtureName);
+        QDir().mkpath(m_fixtureDir);
+        QFile fixture(m_fixturePath);
+        QVERIFY(fixture.open(QFile::WriteOnly));
+        fixture.setPermissions(QFile::ExeOwner);
+    }
+
     void testPath()
     {
-        const QString relative = QStringLiteral("libexec/kf5");
-        const QString expected = QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + relative);
-        QCOMPARE(KLibexec::path(relative), expected);
+        QCOMPARE(KLibexec::path(m_relative), m_fixtureDir);
     }
 
     void testFind()
     {
-        const QString relative = QStringLiteral("libexec/kf5");
-        qDebug() << KLibexec::findLibexec(QStringLiteral("some-binary"), {KLibexec::path(relative)});
+        QCOMPARE(KLibexec::findLibexec(m_fixtureName, {KLibexec::path(m_relative)}), m_fixturePath);
     }
 };
 
