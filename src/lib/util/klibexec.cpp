@@ -32,16 +32,16 @@ QString libraryPathFromAddress(void *address)
     }
     return QString::fromLocal8Bit(info.dli_fname);
 #elif defined(Q_OS_WIN)
-    HMODULE *hModule = nullptr;
-    if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, static_cast<LPCSTR>(address), &hModule)) {
         qWarning() << "Failed to GetModuleHandleEx" << GetLastError();
+    HMODULE hModule = nullptr;
+    if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, static_cast<LPCTSTR>(address), &hModule)) {
         return {};
     }
     if (!hModule) {
         qWarning() << "hModule null unexpectedly";
         return {};
     }
-    // TODO The API uses LPSTR which I think means char, not wchar_t (that'd be LPWSTR). figure this out properly
+
     QVarLengthArray<TCHAR, MAX_PATH> pathArray;
     DWORD pathSize = pathArray.size();
     while (pathSize == pathArray.size()) { // pathSize doesn't include the null byte on success, so this only ever true if we need to grow
