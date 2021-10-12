@@ -13,7 +13,12 @@ class KLibexecTest : public QObject
     Q_OBJECT
 
     const QString m_relative = QStringLiteral("fakeexec/kf5");
-    const QString m_fixtureName = QStringLiteral("klibexectest-fixture-binary");
+    const QString m_fixtureName =
+#ifdef Q_OS_WIN
+        QStringLiteral("klibexectest-fixture-binary.exe");
+#else
+        QStringLiteral("klibexectest-fixture-binary.exe");
+#endif
     QString m_fixtureDir;
     QString m_fixturePath;
 
