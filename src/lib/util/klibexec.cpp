@@ -30,8 +30,8 @@ QString libraryPathFromAddress(void *address)
     return QString::fromLocal8Bit(info.dli_fname);
 #elif defined(Q_OS_WIN)
     HMODULE hModule = nullptr;
-    if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, static_cast<LPCTSTR>(address), &hModule)) {
-        qCWarning(KCOREADDONS_DEBUG) << "Failed to GetModuleHandleEx" << GetLastError();
+    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, static_cast<LPWSTR>(address), &hModule)) {
+        qCWarning(KCOREADDONS_DEBUG) << "Failed to GetModuleHandleExW" << GetLastError();
         return {};
     }
     if (!hModule) {
@@ -39,13 +39,13 @@ QString libraryPathFromAddress(void *address)
         return {};
     }
 
-    QVarLengthArray<TCHAR, MAX_PATH> pathArray;
+    QVarLengthArray<wchar_t, MAX_PATH> pathArray;
     DWORD pathSize = pathArray.size();
     while (pathSize == pathArray.size()) { // pathSize doesn't include the null byte on success, so this only ever true if we need to grow
         pathArray.resize(pathArray.size() + MAX_PATH);
-        pathSize = GetModuleFileName(hModule, pathArray.data(), pathArray.size());
+        pathSize = GetModuleFileNameW(hModule, pathArray.data(), pathArray.size());
         if (pathSize == 0) {
-            qCWarning(KCOREADDONS_DEBUG) << "Failed to GetModuleFileName" << GetLastError();
+            qCWarning(KCOREADDONS_DEBUG) << "Failed to GetModuleFileNameW" << GetLastError();
             return {};
         }
     }
