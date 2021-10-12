@@ -10,8 +10,6 @@
 #include <dlfcn.h>
 #elif defined(Q_OS_WIN)
 #include <windows.h>
-#include <errhandlingapi.h> // TODO do we need these or is windows.h sufficient?
-#include <libloaderapi.h>
 
 #include <QVarLengthArray>
 #endif
