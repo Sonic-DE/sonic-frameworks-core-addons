@@ -75,86 +75,13 @@ void KPluginFactory::setMetaData(const KPluginMetaData &metaData)
 void KPluginFactory::registerPlugin(const QString &keyword, const QMetaObject *metaObject, CreateInstanceFunction instanceFunction)
 {
     Q_D(KPluginFactory);
-
-    Q_ASSERT(metaObject);
-
-    // we allow different interfaces to be registered without keyword
-    if (!keyword.isEmpty()) {
-        if (d->createInstanceHash.contains(keyword)) {
-            qCWarning(KCOREADDONS_DEBUG) << "A plugin with the keyword" << keyword << "was already registered. A keyword must be unique!";
-        }
-        d->createInstanceHash.insert(keyword, KPluginFactoryPrivate::Plugin(metaObject, instanceFunction));
-    } else {
-        const QList<KPluginFactoryPrivate::Plugin> clashes(d->createInstanceHash.values(keyword));
-        const QMetaObject *superClass = metaObject->superClass();
-
-        // check hierarchy of all registered with the same keyword registered classes
-        if (superClass) {
-            for (const KPluginFactoryPrivate::Plugin &plugin : clashes) {
-                for (const QMetaObject *otherSuper = plugin.first->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
-                    if (superClass == otherSuper) {
-                        qCWarning(KCOREADDONS_DEBUG) << "Two plugins with the same interface(" << superClass->className()
-                                                     << ") were registered. Use keywords to identify the plugins.";
-                    }
-                }
-            }
-        }
-        // check hierarchy of newly newly registered plugin against all registered classes with the same keyword
-        for (const KPluginFactoryPrivate::Plugin &plugin : clashes) {
-            superClass = plugin.first->superClass();
-            if (superClass) {
-                for (const QMetaObject *otherSuper = metaObject->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
-                    if (superClass == otherSuper) {
-                        qCWarning(KCOREADDONS_DEBUG) << "Two plugins with the same interface(" << superClass->className()
-                                                     << ") were registered. Use keywords to identify the plugins.";
-                    }
-                }
-            }
-        }
-        d->createInstanceHash.insert(keyword, KPluginFactoryPrivate::Plugin(metaObject, instanceFunction));
-    }
+    d->insertPluginInHash(keyword, metaObject, d->createInstanceHash, KPluginFactoryPrivate::Plugin(metaObject, instanceFunction));
 }
 
 void KPluginFactory::registerPlugin(const QString &keyword, const QMetaObject *metaObject, CreateInstanceWithMetaDataFunction instanceFunction)
 {
     Q_D(KPluginFactory);
-
-    Q_ASSERT(metaObject);
-
-    // we allow different interfaces to be registered without keyword
-    if (!keyword.isEmpty()) {
-        if (d->createInstanceWithMetaDataHash.contains(keyword)) {
-            qCWarning(KCOREADDONS_DEBUG) << "A plugin with the keyword" << keyword << "was already registered. A keyword must be unique!";
-        }
-        d->createInstanceWithMetaDataHash.insert(keyword, {metaObject, instanceFunction});
-    } else {
-        const QList<KPluginFactoryPrivate::PluginWithMetadata> clashes(d->createInstanceWithMetaDataHash.values(keyword));
-        const QMetaObject *superClass = metaObject->superClass();
-        // check hierarchy of all registered with the same keyword registered classes
-        if (superClass) {
-            for (const KPluginFactoryPrivate::PluginWithMetadata &plugin : clashes) {
-                for (const QMetaObject *otherSuper = plugin.first->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
-                    if (superClass == otherSuper) {
-                        qCWarning(KCOREADDONS_DEBUG) << "Two plugins with the same interface(" << superClass->className()
-                                                     << ") were registered. Use keywords to identify the plugins.";
-                    }
-                }
-            }
-        }
-        // check hierarchy of newly newly registered plugin against all registered classes with the same keyword
-        for (const KPluginFactoryPrivate::PluginWithMetadata &plugin : clashes) {
-            superClass = plugin.first->superClass();
-            if (superClass) {
-                for (const QMetaObject *otherSuper = metaObject->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
-                    if (superClass == otherSuper) {
-                        qCWarning(KCOREADDONS_DEBUG) << "Two plugins with the same interface(" << superClass->className()
-                                                     << ") were registered. Use keywords to identify the plugins.";
-                    }
-                }
-            }
-        }
-        d->createInstanceWithMetaDataHash.insert(keyword, {metaObject, instanceFunction});
-    }
+    d->insertPluginInHash(keyword, metaObject, d->createInstanceWithMetaDataHash, KPluginFactoryPrivate::PluginWithMetadata(metaObject, instanceFunction));
 }
 
 void KPluginFactory::logFailedInstantiationMessage(KPluginMetaData data)
