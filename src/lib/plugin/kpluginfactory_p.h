@@ -24,8 +24,10 @@ public:
     ~KPluginFactoryPrivate() = default;
 
 protected:
-    typedef QPair<const QMetaObject *, KPluginFactory::CreateInstanceFunction> Plugin;
-    using PluginWithMetadata = QPair<const QMetaObject *, KPluginFactory::CreateInstanceWithMetaDataFunction>;
+    template<class T>
+    using HashDataPair = QPair<const QMetaObject *, T>;
+    using Plugin = HashDataPair<KPluginFactory::CreateInstanceFunction>;
+    using PluginWithMetadata = HashDataPair<KPluginFactory::CreateInstanceWithMetaDataFunction>;
 
     KPluginFactoryPrivate() = default;
 
@@ -34,7 +36,10 @@ protected:
     QMultiHash<QString, PluginWithMetadata> createInstanceWithMetaDataHash;
 
     template<class T>
-    void insertPluginInHash(const QString &keyword, const QMetaObject *metaObject, QMultiHash<QString, > &instanceHash, T instancePair)
+    void insertPluginInHash(const QString &keyword,
+                            const QMetaObject *metaObject,
+                            QMultiHash<QString, QPair<const QMetaObject *, T>> &instanceHash,
+                            const HashDataPair<T> &instancePair)
     {
         Q_ASSERT(metaObject);
         // we allow different interfaces to be registered without keyword
@@ -44,7 +49,7 @@ protected:
             }
             instanceHash.insert(keyword, instancePair);
         } else {
-            const auto clashes(instanceHash.values(keyword));
+            const QList<HashDataPair<T>> clashes(instanceHash.values(keyword));
             const QMetaObject *superClass = metaObject->superClass();
             // check hierarchy of all registered with the same keyword registered classes
             if (superClass) {
