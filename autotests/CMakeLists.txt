@@ -100,7 +100,8 @@ kcoreaddons_add_plugin(static_jsonplugin_cmake_macro_2 SOURCES statickpluginclas
 target_link_libraries(static_jsonplugin_cmake_macro_2 KF5::CoreAddons autotests_static)
 target_link_libraries(kpluginfactorytest static_jsonplugin_cmake_macro_2)
 
-kcoreaddons_target_static_plugins(kpluginfactorytest)
+kcoreaddons_target_static_plugins(kpluginfactorytest "staticnamespace")
+kcoreaddons_target_static_plugins(kpluginfactorytest "staticnamespace2")
 
 if(NOT CMAKE_CROSSCOMPILING)
     ecm_add_tests(desktoptojsontest.cpp LINK_LIBRARIES Qt5::Test KF5::CoreAddons autotests_static)
