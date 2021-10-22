@@ -94,11 +94,9 @@ ecm_add_tests(
 set_target_properties(kpluginfactorytest PROPERTIES ENABLE_EXPORTS 1)
 kcoreaddons_add_plugin(static_jsonplugin_cmake_macro SOURCES statickpluginclass.cpp INSTALL_NAMESPACE "staticnamespace" STATIC)
 target_link_libraries(static_jsonplugin_cmake_macro KF5::CoreAddons autotests_static)
-target_link_libraries(kpluginfactorytest static_jsonplugin_cmake_macro)
 
 kcoreaddons_add_plugin(static_jsonplugin_cmake_macro_2 SOURCES statickpluginclass_2.cpp INSTALL_NAMESPACE "staticnamespace2" STATIC)
 target_link_libraries(static_jsonplugin_cmake_macro_2 KF5::CoreAddons autotests_static)
-target_link_libraries(kpluginfactorytest static_jsonplugin_cmake_macro_2)
 
 kcoreaddons_target_static_plugins(kpluginfactorytest "staticnamespace")
 kcoreaddons_target_static_plugins(kpluginfactorytest "staticnamespace2")
