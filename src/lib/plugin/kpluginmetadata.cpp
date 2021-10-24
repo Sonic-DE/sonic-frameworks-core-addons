@@ -617,6 +617,7 @@ bool KPluginMetaData::isStaticPlugin() const
 
 QStaticPlugin KPluginMetaData::getStaticPlugin() const
 {
+    Q_ASSERT(d);
     Q_ASSERT(d->staticPlugin.has_value());
     return d->staticPlugin.value();
 }
