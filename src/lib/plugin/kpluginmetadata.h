@@ -535,6 +535,14 @@ public:
         return !(*this == other);
     }
 
+    /**
+     * @note for loading plugin the plugin independently of it being static/dynamic
+     * use @ref KPluginFactory::loadFactory or @ref KPluginFactory::instantiatePlugin.
+     * @returns true is the instance represents a static plugin
+     * @since 5.88
+     */
+    bool isStaticPlugin() const;
+
 private:
     QJsonObject rootObject() const;
     void loadFromDesktopFile(const QString &file, const QStringList &serviceTypes);
@@ -543,7 +551,6 @@ private:
     QVariantList authorsVariant() const;
     QVariantList translatorsVariant() const;
     QVariantList otherContributorsVariant() const;
-    bool isStaticPlugin() const;
     QStaticPlugin staticPlugin() const;
 
     QJsonObject m_metaData;
