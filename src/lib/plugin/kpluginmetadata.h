@@ -535,6 +535,12 @@ public:
         return !(*this == other);
     }
 
+    /**
+     * @returns true is the instance represents a static plugin
+     * @since 5.88
+     */
+    bool isStaticPlugin() const;
+
 private:
     QJsonObject rootObject() const;
     void loadFromDesktopFile(const QString &file, const QStringList &serviceTypes);
@@ -543,7 +549,6 @@ private:
     QVariantList authorsVariant() const;
     QVariantList translatorsVariant() const;
     QVariantList otherContributorsVariant() const;
-    bool isStaticPlugin() const;
     QStaticPlugin getStaticPlugin() const;
 
     QJsonObject m_metaData;
