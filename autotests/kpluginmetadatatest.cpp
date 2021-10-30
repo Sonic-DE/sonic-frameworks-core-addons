@@ -16,6 +16,7 @@
 #include <kaboutdata.h>
 #include <kpluginloader.h>
 #include <kpluginmetadata.h>
+#include <kstaticpluginhelpers_p.h>
 
 #include <QLocale>
 #include <QLoggingCategory>
@@ -541,7 +542,7 @@ private Q_SLOTS:
 
     void testStaticPlugins()
     {
-        QCOMPARE(QPluginLoader::staticPlugins().count(), 2);
+        QCOMPARE(QPluginLoader::staticPlugins().count(), 0);
 
         const auto plugins = KPluginMetaData::findPlugins(QStringLiteral("staticnamespace"));
         QCOMPARE(plugins.count(), 1);
