@@ -410,10 +410,11 @@ QJsonValue ServiceTypeDefinitions::parseValue(const QByteArray &key, const QStri
 {
     // check whether the key has a special type associated with it
     for (const auto &def : m_definitions) {
-        for (const CustomPropertyDefinition &propertyDef : def.m_propertyDefs) {
-            if (propertyDef.key == key) {
-                return propertyDef.fromString(value);
-            }
+        auto it = std::find_if(def.m_propertyDefs.cbegin(), def.m_propertyDefs.cend(), [&key](const CustomPropertyDefinition &propertyDef) {
+            return propertyDef.key == key;
+        });
+        if (it != def.m_propertyDefs.cend()) {
+            return it->fromString(value);
         }
     }
     qCDebug(DESKTOPPARSER) << "Unknown property type for key" << key << "-> falling back to string";
