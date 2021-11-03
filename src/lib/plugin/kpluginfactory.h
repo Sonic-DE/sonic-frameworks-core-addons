@@ -663,6 +663,7 @@ protected:
     template<bool B, class T = void>
     using enable_if_t = typename std::enable_if<B, T>::type;
 
+#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 88)
     /**
      * Registers a metadata-less plugin with the factory. Call this function from the constructor of the
      * KPluginFactory subclass to make the create function able to instantiate the plugin when asked
@@ -680,12 +681,15 @@ protected:
      *
      * @param instanceFunction A function pointer to a function that creates an instance of the
      * plugin.
+     * @deprecated Since 5.88, providing a custom CreateInstanceFunction is deprecated. Use registerPlugin<T>() instead
      */
     template<class T>
+    KCOREADDONS_DEPRECATED_VERSION(5, 88, "Providing a custom CreateInstanceFunction is deprecated. Use registerPlugin<T>() instead")
     void registerPlugin(const QString &keyword, CreateInstanceFunction instanceFunction)
     {
         registerPlugin(keyword, &T::staticMetaObject, instanceFunction);
     }
+#endif
 
     /**
      * Overload for registerPlugin<T>(const QString &keyword, CreateInstanceFunction instanceFunction)
@@ -728,6 +732,7 @@ protected:
     }
 #endif
 
+#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 88)
     /**
      * Registers a metadata-taking plugin with the factory. Call this function from the constructor of the
      * KPluginFactory subclass to make the create function able to instantiate the plugin when asked
@@ -745,12 +750,15 @@ protected:
      *
      * @param instanceFunction A function pointer to a function that creates an instance of the
      * plugin.
+     * @deprecated Since 5.88, providing a custom CreateInstanceWithMetaDataFunction is deprecated. Use registerPlugin<T>() instead
      */
     template<class T>
+    KCOREADDONS_DEPRECATED_VERSION(5, 88, "Providing a custom CreateInstanceWithMetaDataFunction is deprecated. Use registerPlugin<T>() instead")
     void registerPlugin(const QString &keyword, CreateInstanceWithMetaDataFunction instanceFunction)
     {
         registerPlugin(keyword, &T::staticMetaObject, instanceFunction);
     }
+#endif
 
     /**
      * Overload for registerPlugin<T>(CreateInstanceWithMetaDataFunction instanceFunction)
