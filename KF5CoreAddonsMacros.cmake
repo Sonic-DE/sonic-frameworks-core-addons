@@ -131,7 +131,7 @@ function(kcoreaddons_add_plugin plugin)
     endif()
 
     if (KCA_ADD_PLUGIN_STATIC)
-        add_library(${plugin} OBJECT ${KCA_ADD_PLUGIN_SOURCES})
+        add_library(${plugin} STATIC ${KCA_ADD_PLUGIN_SOURCES})
         target_compile_definitions(${plugin} PRIVATE QT_STATICPLUGIN)
         set_property(TARGET ${plugin} PROPERTY AUTOMOC_MOC_OPTIONS -MX-KDE-FileName=${KCA_ADD_PLUGIN_INSTALL_NAMESPACE}/${plugin})
         string(REPLACE "/" "_" SANATIZED_PLUGIN_NAMESPACE ${KCA_ADD_PLUGIN_INSTALL_NAMESPACE})
