@@ -452,6 +452,21 @@ public:
     int initialPreference() const;
 
     /**
+     * Reads if the plugin is enabled from the given config. This can be used in conjunction
+     * with KPluginWidget/KPluginSelector.
+     * The @p config param should be a KConfigGroup object, because KCoreAddons can not depend
+     * on KConfig directly, this parameter is templated.
+     * @param config KCOnfigGroup where the enabled state if stored
+     * @since 5.89
+     */
+    template<typename T>
+    bool isEnabled(const T &config)
+    {
+        Q_ASSERT(config.isValid());
+        return config.readEntry(pluginId() + QLatin1String("Enabled"), isEnabledByDefault());
+    }
+
+    /**
      * @return the value for @p key from the metadata or @p defaultValue if the key does not exist
      * or the value for @p key is not of type string
      *
