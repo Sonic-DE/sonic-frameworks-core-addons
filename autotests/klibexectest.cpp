@@ -17,7 +17,7 @@ class KLibexecTest : public QObject
 #ifdef Q_OS_WIN
         QStringLiteral("klibexectest-fixture-binary.exe");
 #else
-        QStringLiteral("klibexectest-fixture-binary.exe");
+        QStringLiteral("klibexectest-fixture-binary");
 #endif
     QString m_fixtureDir;
     QString m_fixturePath;
