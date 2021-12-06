@@ -19,7 +19,7 @@ KCOREADDONS_EXPORT QString findLibexecFromAddress(const QString &exectuableName,
 KCOREADDONS_EXPORT QStringList pathCandidates(const QStringList &fallbackPaths);
 
 /**
- * @brief Absolute libexec path relative from the current shared object.
+ * @brief Absolute libexec path resolved from relative path to the current shared object.
  *
  * This function helps locate the absolute libexec path relative to the caller's binary artifact.
  *
