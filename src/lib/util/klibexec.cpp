@@ -14,14 +14,17 @@
 #include <QVarLengthArray>
 #endif
 
+#include <QCoreApplication>
 #include <QDir>
+#include <QLibraryInfo>
+#include <QStandardPaths>
 
 #include <kcoreaddons_debug.h>
 
 QString libraryPathFromAddress(void *address)
 {
 #if HAVE_DLADDR
-    Dl_info info {};
+    Dl_info info{};
     if (dladdr(address, &info) == 0) {
         qCWarning(KCOREADDONS_DEBUG) << "Failed to match address to shared object.";
         // Do not call dlerror. It's only expected to return something useful on freebsd!
@@ -49,7 +52,7 @@ QString libraryPathFromAddress(void *address)
             return {};
         }
     }
-    return QString::fromWCharArray(pathArray.data());
+    return QDir::fromNativeSeparators(QString::fromWCharArray(pathArray.data()));
 #else // unsupported
     return {};
 #endif
@@ -57,17 +60,12 @@ QString libraryPathFromAddress(void *address)
 
 QString KLibexec::pathFromAddress(const QString &relativePath, void *address)
 {
-    // presumably we get native path formats for windows, to ensure consistency run them through native separator
-    // conversion
-    const QString libraryPath = QDir::fromNativeSeparators(libraryPathFromAddress(address));
+    const QString libraryPath = libraryPathFromAddress(address);
     const QString absoluteDirPath = QFileInfo(libraryPath).absolutePath();
     const QString libexecPath = QFileInfo(absoluteDirPath + QDir::separator() + relativePath).absoluteFilePath();
     return libexecPath;
 }
 
-#include <QCoreApplication>
-#include <QLibraryInfo>
-#include <QStandardPaths>
 QStringList KLibexec::pathCandidates(const QStringList &fallbackPaths)
 {
     const QString qLibexec = QLibraryInfo::location(QLibraryInfo::LibraryExecutablesPath);
@@ -79,9 +77,4 @@ QStringList KLibexec::pathCandidates(const QStringList &fallbackPaths)
         qLibexecKF5, // on !win32 we use a kf5 suffix
     };
     return paths + fallbackPaths;
-}
-
-QString KLibexec::findLibexecFromAddress(const QString &executableName, const QStringList &fallbackPaths)
-{
-    return QStandardPaths::findExecutable(executableName, pathCandidates(fallbackPaths));;
 }
