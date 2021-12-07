@@ -17,7 +17,6 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QLibraryInfo>
-#include <QStandardPaths>
 
 #include <kcoreaddons_debug.h>
 
