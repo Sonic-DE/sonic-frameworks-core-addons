@@ -13,18 +13,26 @@
 
 namespace KLibexec
 {
-
+// Internal helpers. Do not use these but the inline variants.
 KCOREADDONS_EXPORT QString pathFromAddress(const QString &relativePath, void *address);
-KCOREADDONS_EXPORT QString findLibexecFromAddress(const QString &exectuableName, const QStringList &paths);
 KCOREADDONS_EXPORT QStringList pathCandidates(const QStringList &fallbackPaths);
 
 /**
- * @brief Absolute libexec path resolved from relative path to the current shared object.
+ * @brief Absolute libexec path resolved in relative relation to the current shared object.
  *
  * This function helps locate the absolute libexec path relative to the caller's binary artifact.
  *
- * @param relativePath relative location
+ * For example:
+ *  - The current binary artifact is `/usr/lib/foobar.so`
+ *  - You call `KLibexec::path("libexec/foobar")`
+ *  - The generated output is `/usr/lib/libexec/foobar/`
+ *  - You rename lib to lib64
+ *  - Newly generated output will be `/usr/lib64/libexec/foobar/`
+ *
+ * @param relativePath relative element to append (e.g. "libexec/foobar" resulting in /usr/lib/libexec/foobar/ as output)
+ *   when called with an empty string you effectively get the directory of your binary artifact.
  * @return QString absolute libexec path or empty string if it cannot be resolved
+ * @since 5.90
  */
 inline QString path(const QString &relativePath)
 {
@@ -33,16 +41,20 @@ inline QString path(const QString &relativePath)
     return pathFromAddress(relativePath, &marker);
 }
 
-/// TODO convenience finder appdir > qt.conf > qt.conf+kf5 > (fallbacks from caller?: relative > absolute)
-inline QString findLibexec(const QString &exectuableName, const QStringList &paths)
-{
-    // TODO: move to cpp I guess. since we need the relativePath passed in for path() anyway we may as well accept
-    // a QStringList. to the caller it makes no difference either way
-    return findLibexecFromAddress(exectuableName, paths);
-}
-
-/// TODO alternative candidate (caller gets access to the internal list and can prepend/append/qdebug/findExec it). disadvantage: callers may presume things about the list content
-inline QStringList paths(const QString &relativePath)
+/**
+ * @brief opinionated default paths list
+ *
+ * This function returns a fairly opinionated list of paths you can feed into QStandardPaths. The list includes
+ * various standard locations for Qt and KDE Frameworks and should generally be sensible for most use cases.
+ * You may wish to append the absolute installation path as final fallback.
+ *
+ * @warning The precise content and order of the list is an implementation detail and not expected to remain stable!
+ *
+ * @param relativePath see path() - not all paths get this appended!
+ * @return QStringList list of search paths
+ * @since 5.90
+ */
+inline QStringList kf5Paths(const QString &relativePath)
 {
     // intentional inline because path must be inline
     return pathCandidates({path(relativePath)});

@@ -27,10 +27,10 @@ private Q_SLOTS:
     {
         m_fixtureDir = QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + m_relative);
         m_fixturePath = QDir::cleanPath(m_fixtureDir + QDir::separator() + m_fixtureName);
-        QDir().mkpath(m_fixtureDir);
+        QVERIFY(QDir().mkpath(m_fixtureDir));
         QFile fixture(m_fixturePath);
-        QVERIFY(fixture.open(QFile::WriteOnly));
-        fixture.setPermissions(QFile::ExeOwner);
+        QVERIFY(fixture.open(QFile::ReadWrite));
+        fixture.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner);
     }
 
     void testPath()
@@ -38,9 +38,12 @@ private Q_SLOTS:
         QCOMPARE(KLibexec::path(m_relative), m_fixtureDir);
     }
 
-    void testFind()
+    void testKF5Paths()
     {
-        QCOMPARE(KLibexec::findLibexec(m_fixtureName, {KLibexec::path(m_relative)}), m_fixturePath);
+        auto paths = KLibexec::kf5Paths(m_relative);
+        QVERIFY(paths.contains(QCoreApplication::applicationDirPath()));
+        QVERIFY(paths.contains(m_fixtureDir));
+        // not exhaustive verification
     }
 };
 
