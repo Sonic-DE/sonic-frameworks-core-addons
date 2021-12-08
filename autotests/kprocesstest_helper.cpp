@@ -27,6 +27,8 @@ int main(int argc, char **argv)
     fputs(ROUT, stdout);
     fputs(p.readAllStandardOutput().constData(), stdout);
     fputs(RERR, stdout);
-    fputs(p.readAllStandardError().constData(), stdout);
+    if (p.outputChannelMode() != QProcess::MergedChannels) { // reading a non-existing channel crashes in Qt6
+        fputs(p.readAllStandardError().constData(), stdout);
+    }
     return 0;
 }
