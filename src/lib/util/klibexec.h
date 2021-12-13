@@ -56,7 +56,7 @@ inline QString path(const QString &relativePath)
  */
 inline QStringList kf5Paths(const QString &relativePath)
 {
-    // intentional inline because path must be inline
+    // intentionally inline because path must be inline
     return pathCandidates({path(relativePath)});
 }
 
