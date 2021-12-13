@@ -20,7 +20,7 @@
 
 #include <kcoreaddons_debug.h>
 
-QString libraryPathFromAddress(void *address)
+static QString libraryPathFromAddress(void *address)
 {
 #if HAVE_DLADDR
     Dl_info info{};
