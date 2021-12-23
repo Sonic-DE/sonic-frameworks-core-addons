@@ -117,6 +117,13 @@ target_include_directories(ktexttohtmltest PRIVATE ${KCoreAddons_BINARY_DIR}/src
 # fake static linking to prevent the export macros on Windows from kicking in
 target_compile_definitions(ktexttohtmltest PRIVATE -DKCOREADDONS_STATIC_DEFINE=1)
 
+add_executable(ktexttohtmlbenchmarktest ktexttohtmlbenchmarktest.cpp ${CMAKE_SOURCE_DIR}/src/lib/text/ktexttohtml.cpp)
+target_link_libraries(ktexttohtmlbenchmarktest PRIVATE Qt${QT_MAJOR_VERSION}::Test autotests_static)
+# include the binary dir in order to get kcoreaddons_export.h
+target_include_directories(ktexttohtmlbenchmarktest PRIVATE ${KCoreAddons_BINARY_DIR}/src/lib)
+# fake static linking to prevent the export macros on Windows from kicking in
+target_compile_definitions(ktexttohtmlbenchmarktest PRIVATE -DKCOREADDONS_STATIC_DEFINE=1)
+
 add_executable(kprocesstest_helper kprocesstest_helper.cpp)
 target_link_libraries(kprocesstest_helper KF5::CoreAddons)
 
