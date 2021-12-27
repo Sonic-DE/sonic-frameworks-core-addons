@@ -36,17 +36,17 @@ KPluginFactory::Result<KPluginFactory> KPluginFactory::loadFactory(const KPlugin
     QObject *obj = nullptr;
     if (data.isStaticPlugin()) {
         obj = data.staticPlugin().instance();
+        Q_ASSERT_X(obj, "KPluginFactory::loadFactory", "static plugin instance must be non-nullptr");
     } else {
         QPluginLoader loader(data.fileName());
         obj = loader.instance();
-    }
-
-    if (!obj) {
-        result.errorString = tr("Could not load plugin from %1").arg(data.fileName());
-        result.errorText = QStringLiteral("Could not load plugin from %1").arg(data.fileName());
-        result.errorReason = INVALID_PLUGIN;
-        qCWarning(KCOREADDONS_DEBUG) << result.errorText;
-        return result;
+        if (!obj) {
+           result.errorString = tr("Could not load plugin from %1: %2").arg(data.fileName(), loader.errorString());
+           result.errorText = QStringLiteral("Could not load plugin from %1: %2").arg(data.fileName(), loader.errorString());
+           result.errorReason = INVALID_PLUGIN;
+           qCWarning(KCOREADDONS_DEBUG) << result.errorText;
+           return result;
+        }
     }
 
     KPluginFactory *factory = qobject_cast<KPluginFactory *>(obj);
