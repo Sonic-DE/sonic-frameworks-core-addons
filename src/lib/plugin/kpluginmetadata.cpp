@@ -36,6 +36,9 @@ public:
     // If we want to load a file, but it does not exist we want to keep the requested file name for logging
     QString m_requestedFileName;
     QString metaDataFileName;
+    // TODO KF6, use std::optional for m_metaData, currently this is a member of the exported class
+    // see https://phabricator.kde.org/T14958
+    KPluginMetaData::KPluginMetaDataOption m_option = KPluginMetaData::DoNotAllowEmptyMetaData;
     std::optional<QStaticPlugin> staticPlugin = std::nullopt;
     static void forEachPlugin(const QString &directory, std::function<void(const QString &)> callback)
     {
@@ -100,11 +103,19 @@ KPluginMetaData::~KPluginMetaData()
 }
 
 KPluginMetaData::KPluginMetaData(const QString &file)
+    : KPluginMetaData(file, DoNotAllowEmptyMetaData)
+{
+}
+
+KPluginMetaData::KPluginMetaData(const QString &file, KPluginMetaDataOption option)
     : d(new KPluginMetaDataPrivate)
 {
+    d->m_option = option;
     if (file.endsWith(QLatin1String(".desktop"))) {
+        Q_ASSERT_X(option == DoNotAllowEmptyMetaData, Q_FUNC_INFO, "The AllowEmptyMetaData flag is only allowed for binary plugins");
         loadFromDesktopFile(file, QStringList());
     } else if (file.endsWith(QLatin1String(".json"))) {
+        Q_ASSERT_X(option == DoNotAllowEmptyMetaData, Q_FUNC_INFO, "The AllowEmptyMetaData flag is only allowed for binary plugins");
         loadFromJsonFile(file);
     } else {
         QPluginLoader loader(file);
@@ -114,7 +125,7 @@ KPluginMetaData::KPluginMetaData(const QString &file)
         if (!qtMetaData.isEmpty()) {
             m_metaData = qtMetaData.value(QStringLiteral("MetaData")).toObject();
             d->metaDataFileName = m_fileName;
-            if (m_metaData.isEmpty()) {
+            if (m_metaData.isEmpty() && option == DoNotAllowEmptyMetaData) {
                 qCDebug(KCOREADDONS_DEBUG) << "plugin metadata in" << file << "does not have a valid 'MetaData' object";
             }
         } else {
@@ -154,11 +165,17 @@ KPluginMetaData::KPluginMetaData(const QJsonObject &metaData, const QString &plu
 }
 
 KPluginMetaData::KPluginMetaData(QStaticPlugin plugin, const QJsonObject &metaData)
+    : KPluginMetaData(plugin, DoNotAllowEmptyMetaData, metaData)
 {
-    d = new KPluginMetaDataPrivate();
+}
+
+KPluginMetaData::KPluginMetaData(QStaticPlugin plugin, KPluginMetaDataOption option, const QJsonObject &metaData)
+    : d(new KPluginMetaDataPrivate)
+{
     d->staticPlugin = plugin;
     auto metaDataObject = plugin.metaData().value(QLatin1String("MetaData")).toObject();
     m_metaData = metaDataObject.isEmpty() ? metaData : metaDataObject;
+    d->m_option = option;
     auto names = plugin.metaData().value(QLatin1String("X-KDE-FileName")).toVariant().toStringList();
     if (!names.isEmpty()) {
         m_fileName = names.constFirst();
@@ -267,17 +284,25 @@ QString KPluginMetaData::metaDataFileName() const
 
 QVector<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter)
 {
+    return findPlugins(directory, filter, KPluginMetaData::DoNotAllowEmptyMetaData);
+}
+
+QVector<KPluginMetaData>
+KPluginMetaData::findPlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter, KPluginMetaDataOption option)
+{
     QVector<KPluginMetaData> ret;
     const auto staticPlugins = KStaticPluginHelpers::staticPlugins(directory);
     for (QStaticPlugin p : staticPlugins) {
-        KPluginMetaData metaData(p);
-        if (!filter || filter(metaData)) {
-            ret << metaData;
+        KPluginMetaData metaData(p, option);
+        if (metaData.isValid()) {
+            if (!filter || filter(metaData)) {
+                ret << metaData;
+            }
         }
     }
     QSet<QString> addedPluginIds;
     KPluginMetaDataPrivate::forEachPlugin(directory, [&](const QString &pluginPath) {
-        KPluginMetaData metadata(pluginPath);
+        KPluginMetaData metadata(pluginPath, option);
         if (!metadata.isValid()) {
             qCDebug(KCOREADDONS_DEBUG) << pluginPath << "does not contain valid JSON metadata";
             return;
@@ -296,8 +321,8 @@ QVector<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory, 
 
 bool KPluginMetaData::isValid() const
 {
-    // it can be valid even if m_fileName is empty (as long as the plugin id is set in the metadata)
-    return !pluginId().isEmpty() && !m_metaData.isEmpty();
+    // it can be valid even if m_fileName is empty (as long as the plugin id is set)
+    return !pluginId().isEmpty() && (!m_metaData.isEmpty() || d->m_option == AllowEmptyMetaData);
 }
 
 bool KPluginMetaData::isHidden() const
