@@ -51,7 +51,8 @@ private Q_SLOTS:
 
     void testPluginWithoutMetaData()
     {
-        KPluginFactory::Result<KPluginFactory> factoryResult = KPluginFactory::loadFactory(KPluginMetaData(QStringLiteral("pluginwithoutmetadata")));
+        qWarning() << QCoreApplication::libraryPaths();
+        KPluginFactory::Result<KPluginFactory> factoryResult = KPluginFactory::loadFactory(KPluginMetaData(QStringLiteral("namespace/pluginwithoutmetadata")));
         QVERIFY(factoryResult);
         auto plugin = factoryResult.plugin->create<QObject>();
         QVERIFY(plugin);
