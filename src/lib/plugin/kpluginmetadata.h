@@ -119,6 +119,14 @@ class KCOREADDONS_EXPORT KPluginMetaData
     Q_PROPERTY(int initialPreference READ isEnabledByDefault CONSTANT)
 
 public:
+    /**
+     * @since 5.91
+     */
+    enum KPluginMetaDataOption {
+        DoNotAllowEmptyMetaData,
+        AllowEmptyMetaData,
+    };
+
     /** Creates an invalid KPluginMetaData instance */
     KPluginMetaData();
 
@@ -153,6 +161,13 @@ public:
      * @see KPluginMetaData::fromDesktopFile()
      */
     KPluginMetaData(const QString &file);
+
+    /**
+     *
+     * @since 5.91
+     * @overload
+     */
+    KPluginMetaData(const QString &file, KPluginMetaDataOption option);
 
     /**
      * Creates a KPluginMetaData from a QJsonObject holding the metadata and a file name
@@ -245,6 +260,13 @@ public:
      * @since 5.86
      */
     static QVector<KPluginMetaData> findPlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter = {});
+
+    /**
+     * @since 5.91
+     * @overload
+     */
+    static QVector<KPluginMetaData>
+    findPlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter, KPluginMetaData::KPluginMetaDataOption option);
 
     /**
      * @return whether this object holds valid information about a plugin.
