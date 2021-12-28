@@ -1,6 +1,6 @@
 include(ECMAddTests)
 include(ConfigureChecks.cmake) #configure checks for QFileSystemWatcher
-set(ECM_GLOBAL_FIND_VERSION "5.88.0")
+set(ECM_GLOBAL_FIND_VERSION "5.90.0")
 include(../KF5CoreAddonsMacros.cmake)
 
 find_package(Qt${QT_MAJOR_VERSION}Test ${REQUIRED_QT_VERSION} CONFIG QUIET)
@@ -31,7 +31,6 @@ macro(build_plugin pname)
 endmacro()
 
 # Build some sample plugins
-build_plugin(pluginwithoutmetadata pluginwithoutmetadata.cpp)
 build_plugin(jsonplugin jsonplugin.cpp)
 build_plugin(jsonplugin2 jsonplugin2.cpp)
 build_plugin(versionedplugin versionedplugin.cpp)
@@ -43,6 +42,10 @@ build_plugin(qtplugin qtplugin.cpp)
 kcoreaddons_add_plugin(jsonplugin_cmake_macro SOURCES kpluginclass.cpp INSTALL_NAMESPACE "namespace")
 ecm_mark_as_test(jsonplugin_cmake_macro)
 target_link_libraries(jsonplugin_cmake_macro KF5::CoreAddons autotests_static)
+
+kcoreaddons_add_plugin(pluginwithoutmetadata SOURCES pluginwithoutmetadata.cpp INSTALL_NAMESPACE "namespace")
+ecm_mark_as_test(pluginwithoutmetadata)
+target_link_libraries(pluginwithoutmetadata KF5::CoreAddons autotests_static)
 
 add_definitions( -DKDELIBS4CONFIGMIGRATOR_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data" )
 
