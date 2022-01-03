@@ -61,14 +61,14 @@ QString KLibexec::pathFromAddress(const QString &relativePath, void *address)
 {
     const QString libraryPath = libraryPathFromAddress(address);
     const QString absoluteDirPath = QFileInfo(libraryPath).absolutePath();
-    const QString libexecPath = QFileInfo(absoluteDirPath + QDir::separator() + relativePath).absoluteFilePath();
+    const QString libexecPath = QFileInfo(absoluteDirPath + QLatin1Char('/') + relativePath).absoluteFilePath();
     return libexecPath;
 }
 
 QStringList KLibexec::pathCandidates(const QString &relativePath)
 {
     const QString qLibexec = QLibraryInfo::location(QLibraryInfo::LibraryExecutablesPath);
-    const QString qLibexecKF5 = QDir(qLibexec).filePath(QStringLiteral("kf5"));
+    const QString qLibexecKF5 = qLibexec + QLatin1String("/kf5");
 
     return {
         QCoreApplication::applicationDirPath(), // look where our application binary is located
