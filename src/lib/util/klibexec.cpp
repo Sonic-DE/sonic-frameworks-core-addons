@@ -65,15 +65,15 @@ QString KLibexec::pathFromAddress(const QString &relativePath, void *address)
     return libexecPath;
 }
 
-QStringList KLibexec::pathCandidates(const QStringList &fallbackPaths)
+QStringList KLibexec::pathCandidates(const QString &relativePath)
 {
     const QString qLibexec = QLibraryInfo::location(QLibraryInfo::LibraryExecutablesPath);
     const QString qLibexecKF5 = QDir(qLibexec).filePath(QStringLiteral("kf5"));
 
-    const QStringList paths = {
+    return {
         QCoreApplication::applicationDirPath(), // look where our application binary is located
         qLibexec, // look where libexec path is (can be set in qt.conf)
         qLibexecKF5, // on !win32 we use a kf5 suffix
+        relativePath,
     };
-    return paths + fallbackPaths;
 }
