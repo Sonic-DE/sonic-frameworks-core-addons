@@ -29,7 +29,7 @@ static QString libraryPathFromAddress(void *address)
         // Do not call dlerror. It's only expected to return something useful on freebsd!
         return {};
     }
-    return QString::fromLocal8Bit(info.dli_fname);
+    return QFile::decodeName(info.dli_fname);
 #elif defined(Q_OS_WIN)
     HMODULE hModule = nullptr;
     if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, static_cast<LPWSTR>(address), &hModule)) {
