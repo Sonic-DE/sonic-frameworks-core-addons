@@ -23,11 +23,16 @@ KCOREADDONS_EXPORT QStringList pathCandidates(const QStringList &fallbackPaths);
  * This function helps locate the absolute libexec path relative to the caller's binary artifact.
  *
  * For example:
- *  - The current binary artifact is `/usr/lib/foobar.so`
- *  - You call `KLibexec::path("libexec/foobar")`
- *  - The generated output is `/usr/lib/libexec/foobar/`
- *  - You rename lib to lib64
- *  - Newly generated output will be `/usr/lib64/libexec/foobar/`
+ *
+ * - Your source gets built with prefix /usr
+ * - Your binary artifact's presumed absolute path will be `/usr/lib/libfoobar.so`
+ * - You call `KLibexec::path("libexec/foobar")`
+ *
+ * Scenario 1 - The binaries are actually installed in /usr:
+ * - The function's output is `/usr/lib/libexec/foobar/` (resolved relatively from `/usr/lib/libfoobar.so`)
+ *
+ * Scenario 2 - The **same** binaries are installed in /opt (or moved there):
+ * - The function's output is `/opt/lib/libexec/foobar/` (resolved relatively from `/opt/lib/libfoobar.so`)
  *
  * @param relativePath relative element to append (e.g. "libexec/foobar" resulting in /usr/lib/libexec/foobar/ as output)
  *   when called with an empty string you effectively get the directory of your binary artifact.
