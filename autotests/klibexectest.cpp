@@ -38,9 +38,9 @@ private Q_SLOTS:
         QCOMPARE(KLibexec::path(m_relative), m_fixtureDir);
     }
 
-    void testKF5Paths()
+    void testKDEFrameworksPaths()
     {
-        auto paths = KLibexec::kf5Paths(m_relative);
+        auto paths = KLibexec::kdeFrameworksPaths(m_relative);
         QVERIFY(paths.contains(QCoreApplication::applicationDirPath()));
         QVERIFY(paths.contains(m_fixtureDir));
         // not exhaustive verification
