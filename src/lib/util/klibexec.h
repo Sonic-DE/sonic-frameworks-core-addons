@@ -47,7 +47,7 @@ inline QString path(const QString &relativePath)
 }
 
 /**
- * @brief opinionated default paths list
+ * @brief default paths list for KDE Frameworks
  *
  * This function returns a fairly opinionated list of paths you can feed into QStandardPaths. The list includes
  * various standard locations for Qt and KDE Frameworks and should generally be sensible for most use cases.
@@ -59,7 +59,7 @@ inline QString path(const QString &relativePath)
  * @return QStringList list of search paths
  * @since 5.90
  */
-inline QStringList kf5Paths(const QString &relativePath)
+inline QStringList kdeFrameworksPaths(const QString &relativePath)
 {
     // intentionally inline because path must be inline
     return pathCandidates(path(relativePath));
