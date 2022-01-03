@@ -15,7 +15,7 @@ namespace KLibexec
 {
 // Internal helpers. Do not use these but the inline variants.
 KCOREADDONS_EXPORT QString pathFromAddress(const QString &relativePath, void *address);
-KCOREADDONS_EXPORT QStringList pathCandidates(const QStringList &fallbackPaths);
+KCOREADDONS_EXPORT QStringList pathCandidates(const QString &relativePath);
 
 /**
  * @brief Absolute libexec path resolved in relative relation to the current shared object.
@@ -62,7 +62,7 @@ inline QString path(const QString &relativePath)
 inline QStringList kf5Paths(const QString &relativePath)
 {
     // intentionally inline because path must be inline
-    return pathCandidates({path(relativePath)});
+    return pathCandidates(path(relativePath));
 }
 
 } // namespace KLibexec
