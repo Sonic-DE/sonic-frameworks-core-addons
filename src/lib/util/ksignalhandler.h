@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QSet>
 #include <QSocketNotifier>
+#include <kcoreaddons_export.h>
 
 class KSignalHandlerPrivate;
 
@@ -29,7 +30,7 @@ class KSignalHandlerPrivate;
  *
  * @since 5.92
  */
-class KSignalHandler : public QObject
+class KCOREADDONS_EXPORT KSignalHandler : public QObject
 {
     Q_OBJECT
 public:
@@ -41,7 +42,7 @@ public:
      *
      * @see signalReceived
      */
-    void addSignal(int signal);
+    void watchSignal(int signal);
 
     /**
      * Fetches an instance we can use to register our signals.
@@ -61,7 +62,6 @@ Q_SIGNALS:
 private:
     KSignalHandler();
     void handleSignal();
-    static void signalHandler(int signal);
 
     QScopedPointer<KSignalHandlerPrivate> d;
 };
