@@ -13,6 +13,8 @@
 class KSignalHandlerPrivate
 {
 public:
+    static void signalHandler(int signal);
+
     QSet<int> m_signalsRegistered;
     static int signalFd[2];
     QSocketNotifier *m_handler = nullptr;
@@ -40,15 +42,15 @@ KSignalHandler::~KSignalHandler()
     close(KSignalHandlerPrivate::signalFd[1]);
 }
 
-void KSignalHandler::addSignal(int signalToTrack)
+void KSignalHandler::watchSignal(int signalToTrack)
 {
     d->m_signalsRegistered.insert(signalToTrack);
-    signal(signalToTrack, signalHandler);
+    signal(signalToTrack, KSignalHandlerPrivate::signalHandler);
 }
 
-void KSignalHandler::signalHandler(int signal)
+void KSignalHandlerPrivate::signalHandler(int signal)
 {
-    ::write(KSignalHandlerPrivate::signalFd[0], &signal, sizeof(signal));
+    ::write(signalFd[0], &signal, sizeof(signal));
 }
 
 void KSignalHandler::handleSignal()
