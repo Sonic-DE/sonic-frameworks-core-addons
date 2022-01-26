@@ -53,6 +53,7 @@ class QStaticPlugin;
  * Version            | version()            | string
  * Website            | website()            | string
  * EnabledByDefault   | isEnabledByDefault() | bool
+ * Keywords           | keywords()           | string (since 5.91, "," as separator)
  * ServiceTypes       | serviceTypes()       | string array
  * MimeTypes          | mimeTypes()          | string array
  * FormFactors        | formFactors()        | string array
@@ -61,6 +62,13 @@ class QStaticPlugin;
  *
  * The Authors, Translators and OtherContributors keys are expected to be
  * list of objects that match the structure expected by KAboutPerson::fromJSON().
+ *
+ * The Keywords key is expected to be a string with "," as separators between
+ * the words. This is needed to allow different numbers of items in different
+ * translations and integrate with existing translation tools.
+ * For backward-compatibility with existing plugin data sets and code using that,
+ * if there is no entry "Keywords" in the object "KPlugin", instead the keywords
+ * string will be taken from the entry "X-KDE-Keywords" in the root metadata object.
  *
  * An example metadata json file could look like this:
  * @verbatim
@@ -71,6 +79,7 @@ class QStaticPlugin;
         "Icon": "preferences-system-time",
         "Authors": [ { "Name": "Aaron Seigo", "Email": "aseigo@kde.org" } ],
         "Category": "Date and Time",
+        "Keywords": "Date,Time,Timezone",
         "EnabledByDefault": "true",
         "License": "LGPL",
         "Id": "time",
@@ -107,6 +116,8 @@ class KCOREADDONS_EXPORT KPluginMetaData
     Q_PROPERTY(QString pluginId READ pluginId CONSTANT)
     Q_PROPERTY(QString version READ version CONSTANT)
     Q_PROPERTY(QString website READ website CONSTANT)
+    Q_PROPERTY(QStringList keywords READ keywords CONSTANT) ///< @since 5.91
+    Q_PROPERTY(QStringList untranslatedKeywords READ untranslatedKeywords CONSTANT) ///< @since 5.91
 #if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 79)
     Q_PROPERTY(QStringList dependencies READ dependencies CONSTANT)
 #endif
@@ -444,6 +455,18 @@ public:
      * @since 5.12
      */
     QStringList formFactors() const;
+
+    /**
+     * @return a list of keywords to use for matching in text-based searches for plugins
+     * @since 5.91
+     */
+    QStringList keywords() const;
+
+    /**
+     * @return a list of keywords (untranslated) to use for matching in text-based searches for plugins
+     * @since 5.91
+     */
+    QStringList untranslatedKeywords() const;
 
     /**
      * @return whether the plugin should be enabled by default.

@@ -454,6 +454,34 @@ QString KPluginMetaData::website() const
     return rootObject()[QStringLiteral("Website")].toString();
 }
 
+QStringList KPluginMetaData::keywords() const
+{
+    // keywords are not a string array, but a plain string with "," separators, to integrate with translation tools
+    const auto stringValue = KJsonUtils::readTranslatedString(rootObject(), QStringLiteral("Keywords"));
+    auto list = stringValue.split(QLatin1Char(','), Qt::SkipEmptyParts);
+#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 91)
+    if (list.isEmpty()) {
+        const auto oldStringValue = KJsonUtils::readTranslatedString(m_metaData, QStringLiteral("X-KDE-Keywords"));
+        list = oldStringValue.split(QLatin1Char(','), Qt::SkipEmptyParts);
+    }
+#endif
+    return list;
+}
+
+QStringList KPluginMetaData::untranslatedKeywords() const
+{
+    // keywords are not a string array, but a plain string with "," separators, to integrate with translation tools
+    const auto stringValue = rootObject()[QStringLiteral("Keywords")].toString();
+    auto list = stringValue.split(QLatin1Char(','), Qt::SkipEmptyParts);
+#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 91)
+    if (list.isEmpty()) {
+        const auto oldStringValue = m_metaData[QStringLiteral("X-KDE-Keywords")].toString();
+        list = oldStringValue.split(QLatin1Char(','), Qt::SkipEmptyParts);
+    }
+#endif
+    return list;
+}
+
 #if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 79)
 QStringList KPluginMetaData::dependencies() const
 {
