@@ -456,6 +456,7 @@ void DesktopFileParser::convertToJson(const QByteArray &key,
 
         Name=User Visible Name (translatable)
         Comment=Description of what the plugin does (translatable)
+        Keywords=A;B;C (since KF 5.92, translatable)
 
         X-KDE-PluginInfo-Author=Author's Name
         X-KDE-PluginInfo-Email=author@foo.bar
@@ -488,6 +489,29 @@ void DesktopFileParser::convertToJson(const QByteArray &key,
         kplugin[QStringLiteral("Version")] = value;
     } else if (key == QByteArrayLiteral("X-KDE-PluginInfo-Website")) {
         kplugin[QStringLiteral("Website")] = value;
+    } else if (key == QByteArrayLiteral("X-KDE-Keywords")) {
+        const QString kpluginKey = QStringLiteral("Keywords");
+        // do not override anything set by "Keywords"
+        if (!kplugin.contains(kpluginKey)) {
+            const auto keywords = deserializeList(value);
+            kplugin[kpluginKey] = keywords.join(QLatin1Char(','));
+        }
+    } else if (key.startsWith(QByteArrayLiteral("X-KDE-Keywords["))) {
+        const QString kpluginKey = QStringLiteral("Keywords") + QString::fromUtf8(key.mid(qstrlen("X-KDE-Keywords")));
+        // do not override anything set by "Keywords[]"
+        if (!kplugin.contains(kpluginKey)) {
+            const auto keywords = deserializeList(value);
+            kplugin[kpluginKey] = keywords.join(QLatin1Char(','));
+        }
+    } else if (key == QByteArrayLiteral("Keywords")) {
+        // Keywords is a XDG string list and not a KConfig list so we need to use ';' as the separator
+        const auto keywords = deserializeList(value, ';');
+        kplugin[QStringLiteral("Keywords")] = keywords.join(QLatin1Char(','));
+    } else if (key.startsWith(QByteArrayLiteral("Keywords["))) {
+        const QString languageSuffix = QString::fromUtf8(key.mid(qstrlen("Keywords")));
+        // Keywords is a XDG string list and not a KConfig list so we need to use ';' as the separator
+        const auto keywords = deserializeList(value, ';');
+        kplugin[QStringLiteral("Keywords") + languageSuffix] = keywords.join(QLatin1Char(','));
     }
 #if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 79)
     else if (key == QByteArrayLiteral("X-KDE-PluginInfo-Depends")) {

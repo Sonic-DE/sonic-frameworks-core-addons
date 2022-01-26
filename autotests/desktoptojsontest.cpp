@@ -87,6 +87,10 @@ private Q_SLOTS:
             // ignore comments:
             "#Comment=Comment\n"
             "  #Comment=Comment\n"
+            // keywords are converted as string with "," separators, not a list
+            "Keywords=one;two\n"
+            // same for keyword translations, with different number possible
+            "Keywords[de_DE]=Eins;Zwei;Drei\n"
             "Categories=foo;bar;a\\;b\n"
             // As the case is significant, the keys Name and NAME are not equivalent:
             "CaseSensitive=ABC\n"
@@ -133,6 +137,8 @@ private Q_SLOTS:
         expectedResult[QStringLiteral("EscapeSequences")] = QStringLiteral("So me esc\nap\te se\\qu\re\\nces");
         kpluginObj[QStringLiteral("Name")] = QStringLiteral("Example");
         kpluginObj[QStringLiteral("Name[de_DE]")] = QStringLiteral("Beispiel");
+        kpluginObj[QStringLiteral("Keywords")] = QStringLiteral("one,two");
+        kpluginObj[QStringLiteral("Keywords[de_DE]")] = QStringLiteral("Eins,Zwei,Drei");
         kpluginObj[QStringLiteral("Category")] = QStringLiteral("Examples");
 #if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 79)
         kpluginObj[QStringLiteral("Dependencies")] =
@@ -144,6 +150,8 @@ private Q_SLOTS:
         QJsonObject compatResult = expectedResult;
         compatResult[QStringLiteral("Name")] = QStringLiteral("Example");
         compatResult[QStringLiteral("Name[de_DE]")] = QStringLiteral("Beispiel");
+        compatResult[QStringLiteral("Keywords")] = QStringLiteral("one;two");
+        compatResult[QStringLiteral("Keywords[de_DE]")] = QStringLiteral("Eins;Zwei;Drei");
         compatResult[QStringLiteral("X-KDE-PluginInfo-Category")] = QStringLiteral("Examples");
         compatResult[QStringLiteral("X-KDE-PluginInfo-Version")] = QStringLiteral("1.0");
 #if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 79)
