@@ -25,6 +25,7 @@
 #include <QStandardPaths>
 
 #include "kaboutdata.h"
+#include "kcoreaddons_deprecations.h"
 #include "kpluginfactory.h"
 #include "kpluginloader.h"
 
@@ -130,14 +131,20 @@ KPluginMetaData::KPluginMetaData(const QString &file)
 KPluginMetaData::KPluginMetaData(const QString &file, KPluginMetaDataOption option)
     : d(new KPluginMetaDataPrivate)
 {
-    d->m_option = option;
+#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 91)
+        d->m_option = option;
     if (file.endsWith(QLatin1String(".desktop"))) {
         Q_ASSERT_X(option == DoNotAllowEmptyMetaData, Q_FUNC_INFO, "The AllowEmptyMetaData flag is only allowed for binary plugins");
+        qCDebug(KCOREADDONS_DEPRECATED_LOG)
+            << "Using the KPluginMetaData(const QString &file) constructor for desktop files is deprcated, use KPluginMetaData::fromDesktopFile instead";
         loadFromDesktopFile(file, QStringList());
     } else if (file.endsWith(QLatin1String(".json"))) {
         Q_ASSERT_X(option == DoNotAllowEmptyMetaData, Q_FUNC_INFO, "The AllowEmptyMetaData flag is only allowed for binary plugins");
+        qCDebug(KCOREADDONS_DEPRECATED_LOG)
+            << "Using the KPluginMetaData(const QString &file) constructor for json files is deprcated, use KPluginMetaData::fromJsonFile instead";
         loadFromJsonFile(file);
     } else {
+#endif
         QPluginLoader loader(file);
         d->m_requestedFileName = file;
         m_fileName = QFileInfo(loader.fileName()).absoluteFilePath();
@@ -151,7 +158,9 @@ KPluginMetaData::KPluginMetaData(const QString &file, KPluginMetaDataOption opti
         } else {
             qCDebug(KCOREADDONS_DEBUG) << "no metadata found in" << file << loader.errorString();
         }
+#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 91)
     }
+#endif
 }
 
 KPluginMetaData::KPluginMetaData(const QPluginLoader &loader)
