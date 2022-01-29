@@ -235,6 +235,7 @@ KPluginMetaData KPluginMetaData::findPluginById(const QString &directory, const 
     return metaData;
 }
 
+#if KCOREADDONS_BUILD_DEPRECATED_SINCE(5, 91)
 KPluginMetaData KPluginMetaData::fromDesktopFile(const QString &file, const QStringList &serviceTypes)
 {
     KPluginMetaData result;
@@ -259,6 +260,7 @@ void KPluginMetaData::loadFromDesktopFile(const QString &file, const QStringList
         m_fileName = d->metaDataFileName;
     }
 }
+#endif
 
 void KPluginMetaData::loadFromJsonFile(const QString &file)
 {
