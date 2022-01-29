@@ -183,13 +183,20 @@ ecm_qt_declare_logging_category(KF5CoreAddons
     DESCRIPTION "kcoreaddons (kcoreaddons lib)"
     EXPORT KCOREADDONS
 )
+ecm_qt_declare_logging_category(KF5CoreAddons
+    HEADER kcoreaddons_deprecations.h
+    IDENTIFIER KCOREADDONS_DEPRECATED_LOG
+    CATEGORY_NAME kf.coreaddons.deprecations
+    DESCRIPTION "kcoreaddons deprecations"
+    EXPORT KCOREADDONS
+)
 
 ecm_generate_export_header(KF5CoreAddons
     BASE_NAME KCoreAddons
     GROUP_BASE_NAME KF
     VERSION ${KF_VERSION}
     DEPRECATED_BASE_VERSION 0
-    DEPRECATION_VERSIONS 4.0 5.0 5.2 5.65 5.67 5.70 5.72 5.75 5.76 5.78 5.79 5.80 5.84 5.86 5.87 5.88 5.89
+    DEPRECATION_VERSIONS 4.0 5.0 5.2 5.65 5.67 5.70 5.72 5.75 5.76 5.78 5.79 5.80 5.84 5.86 5.87 5.88 5.89 5.91
     EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}
 )
 
