@@ -595,9 +595,6 @@ public:
     bool isStaticPlugin() const;
 
 private:
-    // This is only relevant in the findPlugins context and thus internal API.
-    // If one has a static plugin from QPluginLoader::staticPlugins and does not want it to have metadata, using KPluginMetaData makes no sense
-    KPluginMetaData(QStaticPlugin plugin, KPluginMetaDataOption option, const QJsonObject &metaData = {});
     QJsonObject rootObject() const;
     void loadFromDesktopFile(const QString &file, const QStringList &serviceTypes);
     void loadFromJsonFile(const QString &file);

@@ -77,9 +77,29 @@ public:
             }
         }
     }
+
+    struct StaticPluginLoadResult {
+        QString fileName;
+        QJsonObject metaData;
+    };
+    // This is only relevant in the findPlugins context and thus internal API.
+    // If one has a static plugin from QPluginLoader::staticPlugins and does not want it to have metadata, using KPluginMetaData makes no sense
+    StaticPluginLoadResult loadStaticPlugin(QStaticPlugin plugin, KPluginMetaData::KPluginMetaDataOption option)
+    {
+        staticPlugin = plugin;
+        auto metaDataObject = plugin.metaData().value(QLatin1String("MetaData")).toObject();
+        m_option = option;
+        auto names = plugin.metaData().value(QLatin1String("X-KDE-FileName")).toVariant().toStringList();
+        QString fileName;
+        if (!names.isEmpty()) {
+            fileName = names.constFirst();
+        }
+        return {fileName, metaDataObject};
+    }
 };
 
 KPluginMetaData::KPluginMetaData()
+    : d(new KPluginMetaDataPrivate)
 {
 }
 
@@ -165,21 +185,11 @@ KPluginMetaData::KPluginMetaData(const QJsonObject &metaData, const QString &plu
 }
 
 KPluginMetaData::KPluginMetaData(QStaticPlugin plugin, const QJsonObject &metaData)
-    : KPluginMetaData(plugin, DoNotAllowEmptyMetaData, metaData)
-{
-}
-
-KPluginMetaData::KPluginMetaData(QStaticPlugin plugin, KPluginMetaDataOption option, const QJsonObject &metaData)
     : d(new KPluginMetaDataPrivate)
 {
-    d->staticPlugin = plugin;
-    auto metaDataObject = plugin.metaData().value(QLatin1String("MetaData")).toObject();
-    m_metaData = metaDataObject.isEmpty() ? metaData : metaDataObject;
-    d->m_option = option;
-    auto names = plugin.metaData().value(QLatin1String("X-KDE-FileName")).toVariant().toStringList();
-    if (!names.isEmpty()) {
-        m_fileName = names.constFirst();
-    }
+    const auto result = d->loadStaticPlugin(plugin, DoNotAllowEmptyMetaData);
+    m_fileName = result.fileName;
+    m_metaData = result.metaData.isEmpty() ? metaData : result.metaData;
 }
 
 KPluginMetaData KPluginMetaData::findPluginById(const QString &directory, const QString &pluginId)
@@ -293,7 +303,10 @@ KPluginMetaData::findPlugins(const QString &directory, std::function<bool(const 
     QVector<KPluginMetaData> ret;
     const auto staticPlugins = KStaticPluginHelpers::staticPlugins(directory);
     for (QStaticPlugin p : staticPlugins) {
-        KPluginMetaData metaData(p, option);
+        KPluginMetaData metaData;
+        const auto loadingResult = metaData.d->loadStaticPlugin(p, option);
+        metaData.m_fileName = loadingResult.fileName;
+        metaData.m_metaData = loadingResult.metaData;
         if (metaData.isValid()) {
             if (!filter || filter(metaData)) {
                 ret << metaData;
