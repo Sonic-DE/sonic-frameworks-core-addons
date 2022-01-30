@@ -47,6 +47,9 @@ public:
             dirsToCheck << directory;
         } else {
             dirsToCheck = QCoreApplication::libraryPaths();
+            const QString appDirPath = QCoreApplication::applicationDirPath();
+            dirsToCheck.removeAll(appDirPath);
+            dirsToCheck.prepend(appDirPath);
 
             for (QString &libDir : dirsToCheck) {
                 libDir += QLatin1Char('/') + directory;
