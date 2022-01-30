@@ -47,6 +47,7 @@ public:
             dirsToCheck << directory;
         } else {
             dirsToCheck = QCoreApplication::libraryPaths();
+            dirsToCheck.prepend(QCoreApplication::applicationDirPath());
 
             for (QString &libDir : dirsToCheck) {
                 libDir += QLatin1Char('/') + directory;
