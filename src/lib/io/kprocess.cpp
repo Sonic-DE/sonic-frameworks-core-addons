@@ -114,10 +114,19 @@ void KProcess::setProgram(const QString &exe, const QStringList &args)
 {
     Q_D(KProcess);
 
+#ifdef Q_OS_WIN
     d->prog = exe;
     d->args = args;
-#ifdef Q_OS_WIN
     setNativeArguments(QString());
+#else
+    const QString execPath = QStandardPaths::findExecutable(exe);
+    if (execPath.isEmpty()) {
+        qCWarning(KCOREADDONS_DEBUG) << "Could not find executable:" << exe << "in PATH:" << qgetenv("PATH");
+        clearProgram();
+        return;
+    }
+    d->prog = execPath;
+    d->args = args;
 #endif
 }
 
@@ -131,10 +140,14 @@ void KProcess::setProgram(const QStringList &argv)
         return;
     }
 
+#ifdef Q_OS_WIN
     d->args = argv;
     d->prog = d->args.takeFirst();
-#ifdef Q_OS_WIN
     setNativeArguments(QString());
+#else
+    QStringList argsList = argv;
+    QString exec = argsList.takeFirst();
+    setProgram(exec, argsList);
 #endif
 }
 
@@ -298,8 +311,14 @@ int KProcess::startDetached()
 // static
 int KProcess::startDetached(const QString &exe, const QStringList &args)
 {
+    const QString execPath = QStandardPaths::findExecutable(exe);
+    if (execPath.isEmpty()) {
+        qCWarning(KCOREADDONS_DEBUG) << "Could not find executable:" << exe << "in PATH:" << qgetenv("PATH");
+        return 0;
+    }
+
     qint64 pid;
-    if (!QProcess::startDetached(exe, args, QString(), &pid)) {
+    if (!QProcess::startDetached(execPath, args, QString(), &pid)) {
         return 0;
     }
     return static_cast<int>(pid);
