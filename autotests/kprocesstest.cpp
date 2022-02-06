@@ -24,6 +24,7 @@ class KProcessTest : public QObject
 private Q_SLOTS:
     void test_channels();
     void test_setShellCommand();
+    void test_setProgram();
 };
 
 // IOCCC nomination pending
@@ -82,6 +83,40 @@ void KProcessTest::test_setShellCommand()
     p.setShellCommand(QStringLiteral("true || false"));
     QCOMPARE(p.program(), QStringList() << QStringLiteral("/bin/sh") << QStringLiteral("-c") << QString::fromLatin1("true || false"));
 #endif
+}
+
+void KProcessTest::test_setProgram()
+{
+    KProcess proc;
+
+    // Setting a program, the full path to the executable will be used if found
+    proc.setProgram("true", QStringList{"--version"});
+    QCOMPARE(proc.program(), (QStringList{"/usr/bin/true", "--version"}));
+
+    // The same, but with the setProgram(QStringList) overload
+    proc.setProgram(QStringList{"true", "--version"});
+    QCOMPARE(proc.program(), (QStringList{"/usr/bin/true", "--version"}));
+
+    // Setting a non-existing program, will clear the d->prog and d->args, since the executable
+    // can't be found
+    proc.setProgram("fooo", QStringList{"--version"});
+    QCOMPARE(proc.program(), QStringList{QString()});
+
+    // The same, but with the setProgram(QStringList) overload
+    proc.setProgram(QStringList{"fooo", "--version"});
+    QCOMPARE(proc.program(), QStringList{QString()});
+
+    QTemporaryDir dir;
+    const QString dirPath = dir.path();
+    QVERIFY(QFile::copy("/usr/bin/true", dirPath + "/true-copy"));
+    proc.setWorkingDirectory(dirPath);
+    proc.setProgram("true-copy");
+    // Executable in the current working dir is ignored
+    QCOMPARE(proc.program(), QStringList{QString()});
+
+    // Using the full path, the executable is found/used as expected
+    proc.setProgram(dirPath + "/true-copy");
+    QCOMPARE(proc.program(), QStringList{dirPath + "/true-copy"});
 }
 
 QTEST_MAIN(KProcessTest)
