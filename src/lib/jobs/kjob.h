@@ -367,6 +367,31 @@ public:
      */
     bool isAutoDelete() const;
 
+    /**
+     * This method can be used to indicate to classes that are listening to signals from
+     * a job that they should ideally show a progress bar, but not a finished notification.
+     *
+     * For example When opening a remote URL, a job will emit the progress of the
+     * download, which can be used to show a progress dialog of or a Plasma notification,
+     * then when the job is done it'll emit e.g. the finished signal. Showing the user the
+     * progress dialog is useful, however the dialog/notification about the download being
+     * finished isn't of much interest, because the user can see the application that invoked
+     * the job opening the actual file that was downloaded.
+     *
+     * @since 5.92
+     */
+    void setFinishedNotificationHidden(bool hide = true);
+
+    /**
+     * Whether to <em>not</em> show a finished notification when a job's finished
+     * singal is emitted.
+     *
+     * @see setHideFinishedNotification()
+     *
+     * @since 5.92
+     */
+    bool isFinishedNotificationHidden();
+
 Q_SIGNALS:
     /**
      * Emitted when the job is finished, in any case. It is used to notify

@@ -16,6 +16,7 @@
 
 #include <QEventLoop>
 #include <QTimer>
+#include <QVariant>
 
 KJobPrivate::KJobPrivate()
 {
@@ -387,6 +388,18 @@ void KJob::setAutoDelete(bool autodelete)
 {
     Q_D(KJob);
     d->isAutoDelete = autodelete;
+}
+
+static const char s_progressReportingProperty[] = "transientProgressReporting";
+
+void KJob::setFinishedNotificationHidden(bool hide)
+{
+    setProperty(s_progressReportingProperty, hide);
+}
+
+bool KJob::isFinishedNotificationHidden()
+{
+    return property(s_progressReportingProperty).toBool();
 }
 
 #include "moc_kjob.cpp"
