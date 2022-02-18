@@ -16,6 +16,7 @@
 
 #include <QEventLoop>
 #include <QTimer>
+#include <QVariant>
 
 KJobPrivate::KJobPrivate()
 {
@@ -387,6 +388,16 @@ void KJob::setAutoDelete(bool autodelete)
 {
     Q_D(KJob);
     d->isAutoDelete = autodelete;
+}
+
+void KJob::setTransientProgress(bool transient)
+{
+    setProperty("transientProgressReporting", transient);
+}
+
+bool KJob::isTransientProgress()
+{
+    return property("transientProgressReporting").toBool();
 }
 
 #include "moc_kjob.cpp"
