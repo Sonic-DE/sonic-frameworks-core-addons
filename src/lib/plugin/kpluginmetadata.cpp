@@ -204,19 +204,14 @@ KPluginMetaData KPluginMetaData::findPluginById(const QString &directory, const 
 
 {
     KPluginMetaData metaData;
-    KPluginMetaDataPrivate::forEachPlugin(directory, [&](const QString &pluginPath) {
-        if (metaData.isValid()) {
-            return; // We have already found the match
-        }
-        if (QFileInfo(pluginPath).baseName() != pluginId) {
-            return;
-        }
+    QPluginLoader loader(directory + QLatin1Char('/') + pluginId);
+    if (loader.load()) {
         // Load the JSON metadata and make sure the pluginId matches
-        KPluginMetaData uncheckedMetadata(pluginPath);
+        KPluginMetaData uncheckedMetadata(loader.metaData().value(QLatin1String("MetaData")).toObject(), loader.fileName());
         if (uncheckedMetadata.isValid() && uncheckedMetadata.pluginId() == pluginId) {
             metaData = uncheckedMetadata;
         }
-    });
+    }
 
     if (metaData.isValid()) {
         return metaData;
