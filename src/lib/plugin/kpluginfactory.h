@@ -564,6 +564,17 @@ public:
     template<typename T>
     T *create(QWidget *parentWidget, QObject *parent, const QVariantList &args);
 
+    // TODO KF6: Merge with method above
+    /**
+     * Utility-overload for creating a part
+     * @since 5.93
+     */
+    template<typename T>
+    T *create(QWidget *parentWidget, QObject *parent)
+    {
+        return create<T>(parentWidget, parent, QVariantList());
+    }
+
 #if KCOREADDONS_ENABLE_DEPRECATED_SINCE(5, 89)
     /**
      * @overload
@@ -572,7 +583,7 @@ public:
      */
     template<typename T>
     KCOREADDONS_DEPRECATED_VERSION(5, 89, "Use overload without keyword instead")
-    T *create(QWidget *parentWidget, QObject *parent, const QString &keyword = QString(), const QVariantList &args = QVariantList());
+    T *create(QWidget *parentWidget, QObject *parent, const QString &keyword, const QVariantList &args = QVariantList());
 #endif
 
 #if KCOREADDONS_ENABLE_DEPRECATED_SINCE(4, 0)
