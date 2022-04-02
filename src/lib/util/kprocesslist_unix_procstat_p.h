@@ -99,7 +99,8 @@ public:
             QString command;
             char pathname[PATH_MAX];
             struct kinfo_proc *proc = &processes.procs[pos];
-            if (procstat_getpathname(processes.parent.pstat, proc, pathname, sizeof(pathname)) != 0) {
+            // getpathname() returns 0 on success, typically -1 on error
+            if (procstat_getpathname(processes.parent.pstat, proc, pathname, sizeof(pathname)) == 0) {
                 command = QString::fromLocal8Bit(pathname);
             } else {
                 command = QString::fromLocal8Bit(proc->ki_comm);
