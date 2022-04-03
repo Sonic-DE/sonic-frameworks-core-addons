@@ -80,7 +80,7 @@ private:
         auto findInfoForPid =
             [](qint64 pid) {
                 return KProcessList::processInfo(pid);
-            }
+            };
 #endif
         for (const auto &pidStr : pidList) {
             qint64 pid = pidStr.toLongLong();
