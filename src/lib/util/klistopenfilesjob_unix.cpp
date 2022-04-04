@@ -56,10 +56,11 @@ private:
         }
         const QString out(QString::fromLocal8Bit(lsofProcess.readAll()));
 
+        static const QRegularExpression re(QStringLiteral("\\s+"));
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        const QVector<QStringView> pidList = QStringView(out).split(QRegularExpression(QStringLiteral("\\s+")), Qt::SkipEmptyParts);
+        const QVector<QStringView> pidList = QStringView(out).split(re, Qt::SkipEmptyParts);
 #else
-        const QVector<QStringRef> pidList = out.splitRef(QRegularExpression(QStringLiteral("\\s+")), Qt::SkipEmptyParts);
+        const QVector<QStringRef> pidList = out.splitRef(re, Qt::SkipEmptyParts);
 #endif
 
         // Define a lambda findInfoForPid that calls a suitable function.
