@@ -1,3 +1,6 @@
+find_package(Qt${QT_MAJOR_VERSION}DBus ${QT_MIN_VERSION} CONFIG QUIET)
+set(HAVE_QTDBUS ${Qt${QT_MAJOR_VERSION}DBus_FOUND})
+
 # Configure checks for the caching subdir
 include(CheckIncludeFiles)
 check_include_files("sys/types.h;sys/mman.h" HAVE_SYS_MMAN_H)
@@ -90,6 +93,20 @@ if (UNIX)
         )
     endif ()
 endif ()
+
+add_feature_info(XDGPortalDragAndDrop HAVE_QTDBUS "Drag and Drop support via xdg-desktop-portal requies QtDBus")
+if(HAVE_QTDBUS)
+    set(_dbus_SRCS)
+
+    set_source_files_properties(io/org.freedesktop.portal.FileTransfer.xml PROPERTIES INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/io/dbustypes_p.h)
+    qt_add_dbus_interface(_dbus_SRCS io/org.freedesktop.portal.FileTransfer.xml io/org.freedesktop.portal.FileTransfer)
+
+    set_source_files_properties(io/org.kde.KIOFuse.VFS.xml PROPERTIES NO_NAMESPACE TRUE)
+    qt_add_dbus_interface(_dbus_SRCS io/org.kde.KIOFuse.VFS.xml io/org.kde.KIOFuse.VFS)
+
+    target_sources(KF5CoreAddons PRIVATE ${_dbus_SRCS})
+    target_link_libraries(KF5CoreAddons PRIVATE Qt${QT_MAJOR_VERSION}::DBus)
+endif()
 
 target_sources(KF5CoreAddons PRIVATE
     kaboutdata.cpp
