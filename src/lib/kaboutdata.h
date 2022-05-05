@@ -189,23 +189,23 @@ class KCOREADDONS_EXPORT KAboutLicense
 
 public:
     /**
-     * Describes the license of the software.
+     * Describes the license of the software; see: https://spdx.org/licenses/
      */
     enum LicenseKey {
-        Custom = -2,
-        File = -1,
-        Unknown = 0,
-        GPL = 1,
-        GPL_V2 = 1,
-        LGPL = 2,
-        LGPL_V2 = 2,
-        BSDL = 3,
-        Artistic = 4,
-        QPL = 5,
-        QPL_V1_0 = 5,
-        GPL_V3 = 6,
-        LGPL_V3 = 7,
-        LGPL_V2_1 = 8, ///< @since 5.25
+        Custom = -2, ///< Custom license
+        File = -1, ///< License set from text file, see setLicenseFromPath()
+        Unknown = 0, ///< Unknown license
+        GPL = 1, ///< GPL
+        GPL_V2 = GPL, ///< GPL_V2, this has the same enumeration value as LicenseKey::GPL
+        LGPL = 2, ///< LGPL
+        LGPL_V2 = LGPL, ///< LGPL_V2
+        BSDL = 3, ///< BSDL
+        Artistic = 4, ///< Artistic
+        QPL = 5, ///< QPL
+        QPL_V1_0 = QPL, ///< QPL_V1_0
+        GPL_V3 = 6, ///< GPL_V3
+        LGPL_V3 = 7, ///< LGPL_V3
+        LGPL_V2_1 = 8, ///< LGPL_V2_1 @since 5.25
     };
     Q_ENUM(LicenseKey)
 
