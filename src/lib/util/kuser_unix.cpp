@@ -55,6 +55,16 @@ static int os_pw_size() // hint for size of passwd struct
     return 1024;
 }
 
+static int os_gr_size() // hint for size of group struct
+{
+#if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD)
+    int size_max = sysconf(_SC_GETGR_R_SIZE_MAX);
+    if (size_max != -1)
+        return size_max;
+#endif
+    return 1024;
+}
+
 class KUserPrivate : public QSharedData
 {
 public:
@@ -384,7 +394,24 @@ public:
     }
     KUserGroupPrivate(K_GID gid)
     {
-        fillGroup(getgrgid(gid));
+        static int bufsize = os_gr_size();
+        QVarLengthArray<char, 1024> buf(bufsize);
+        struct group *gr = nullptr;
+#if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD) && (!defined(Q_OS_ANDROID) || defined(Q_OS_ANDROID) && (__ANDROID_API__ >= 24))
+        struct group entry;
+        // Some large systems have more members than the POSIX max size
+        // Loop over by doubling the buffer size (upper limit 250k)
+        for (unsigned size = bufsize; size < 256000; size += size) {
+            buf.resize(size);
+            // ERANGE indicates that the buffer was too small
+            if (!getgrgid_r(gid, &entry, buf.data(), buf.size(), &gr) || errno != ERANGE) {
+                break;
+            }
+        }
+#else
+        gr = getgrgid(gid); // not thread-safe!
+#endif
+        fillGroup(gr);
     }
     KUserGroupPrivate(const ::group *p)
     {
