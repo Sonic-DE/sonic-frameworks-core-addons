@@ -4,6 +4,8 @@
 #ifndef KSANDBOX_H
 #define KSANDBOX_H
 
+#include <QProcess>
+
 #include <kcoreaddons_export.h>
 
 /**
@@ -21,6 +23,9 @@ KCOREADDONS_EXPORT bool isFlatpak();
 
 /// @returns whether the application is inside a snap sandbox
 KCOREADDONS_EXPORT bool isSnap();
+
+/// Starts the QProcess on the host (if the current context is inside a sandbox, otherwise it simply runs QProcess::start)
+KCOREADDONS_EXPORT void startHostProcess(QProcess &process, QProcess::OpenMode mode = QProcess::ReadWrite);
 
 } // namespace KSandbox
 
