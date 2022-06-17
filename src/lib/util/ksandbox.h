@@ -4,6 +4,8 @@
 #ifndef KSANDBOX_H
 #define KSANDBOX_H
 
+#include <QProcess>
+
 #include <kcoreaddons_export.h>
 
 /**
@@ -21,6 +23,20 @@ KCOREADDONS_EXPORT bool isFlatpak();
 
 /// @returns whether the application is inside a snap sandbox
 KCOREADDONS_EXPORT bool isSnap();
+
+struct ProcessContext {
+    const QString program;
+    const QStringList arguments;
+};
+
+KCOREADDONS_EXPORT ProcessContext makeContext(const QProcess &process);
+
+template<typename... Args>
+KCOREADDONS_EXPORT auto startHostProcess(QProcess &process, Args &&...args)
+{
+    const auto context = makeContext(process);
+    return process.start(context.program, context.arguments, std::forward<Args>(args)...);
+}
 
 } // namespace KSandbox
 
