@@ -213,10 +213,6 @@ int KMacroMapExpander<QString, VT>::expandEscapedMacro(const QString &str, int p
         return 0;
     }
 
-    if (str.unicode()[pos + 1] == escapeChar()) {
-        ret += QString(escapeChar());
-        return 2;
-    }
     int sl;
     int rsl;
     int rpos;
