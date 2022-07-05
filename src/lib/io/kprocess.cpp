@@ -290,7 +290,7 @@ int KProcess::startDetached()
     Q_D(KProcess);
 
     qint64 pid;
-    if (!QProcess::startDetached(QProcess::program(), arguments(), workingDirectory(), &pid)) {
+    if (!QProcess::startDetached(QProcess::program(), QProcesss::arguments(), workingDirectory(), &pid)) {
         return 0;
     }
     return static_cast<int>(pid);
