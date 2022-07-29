@@ -137,33 +137,26 @@ QList<QUrl> KUrlMimeData::urlsFromMimeData(const QMimeData *mimeData, DecodeOpti
 {
     QList<QUrl> uris;
 
-    if (decodeOptions == PreferLocalUrls) {
-        // Extracting uris from text/uri-list, use the much faster QMimeData method urls()
-        uris = mimeData->urls();
-        if (uris.isEmpty()) {
-            uris = extractKdeUriList(mimeData);
-        }
-    } else {
-        uris = extractKdeUriList(mimeData);
-        if (uris.isEmpty()) {
-            uris = mimeData->urls();
-        }
-    }
-
 #if HAVE_QTDBUS
-    // XDG Document Portal doesn't support directories and silently drops them.
-    // To protect against that, we check if there are any directories, and skip portal in that case.
-    // Even then we only use the portal URIs list if it has as many as the regular URI list.
-    bool hasDirs = std::any_of(uris.begin(), uris.end(), [](const QUrl uri) {
-        return uri.isLocalFile() && QFileInfo(uri.toLocalFile()).isDir();
-    });
-    if (!hasDirs && isDocumentsPortalAvailable() && mimeData->hasFormat(portalFormat())) {
-        const QList<QUrl> portalUris = extractPortalUriList(mimeData);
-        if (portalUris.count() == uris.count()) {
-            uris = portalUris;
-        }
+    if (isDocumentsPortalAvailable() && mimeData->hasFormat(portalFormat())) {
+        uris = extractPortalUriList(mimeData);
     }
 #endif
+
+    if (uris.isEmpty()) {
+        if (decodeOptions == PreferLocalUrls) {
+            // Extracting uris from text/uri-list, use the much faster QMimeData method urls()
+            uris = mimeData->urls();
+            if (uris.isEmpty()) {
+                uris = extractKdeUriList(mimeData);
+            }
+        } else {
+            uris = extractKdeUriList(mimeData);
+            if (uris.isEmpty()) {
+                uris = mimeData->urls();
+            }
+        }
+    }
 
     if (metaData) {
         const QByteArray metaDataPayload = mimeData->data(QStringLiteral("application/x-kio-metadata"));
@@ -241,6 +234,15 @@ bool KUrlMimeData::exportUrlsToPortal(QMimeData *mimeData)
     if (!isDocumentsPortalAvailable() || !isKIOFuseAvailable()) {
         return false;
     }
+    QList<QUrl> urls = mimeData->urls();
+
+    // XDG Document Portal doesn't support directories and silently drops them.
+    bool hasDirs = std::any_of(urls.begin(), urls.end(), [](const QUrl url) {
+        return url.isLocalFile() && QFileInfo(url.toLocalFile()).isDir();
+    });
+    if (hasDirs) {
+        return false;
+    }
 
     auto iface =
         new OrgFreedesktopPortalFileTransferInterface(portalServiceName(), QStringLiteral("/org/freedesktop/portal/documents"), QDBusConnection::sessionBus());
@@ -251,7 +253,7 @@ bool KUrlMimeData::exportUrlsToPortal(QMimeData *mimeData)
     const QString transferId = iface->StartTransfer({{QStringLiteral("autostop"), QVariant::fromValue(false)}});
     mimeData->setData(QStringLiteral("application/vnd.portal.filetransfer"), QFile::encodeName(transferId));
 
-    auto optionalPaths = fuseRedirect(mimeData->urls());
+    auto optionalPaths = fuseRedirect(urls);
     if (!optionalPaths.has_value()) {
         qCWarning(KCOREADDONS_DEBUG) << "Failed to mount with fuse!";
         return false;
