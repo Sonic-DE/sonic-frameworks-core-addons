@@ -137,12 +137,6 @@ QList<QUrl> KUrlMimeData::urlsFromMimeData(const QMimeData *mimeData, DecodeOpti
 {
     QList<QUrl> uris;
 
-#if HAVE_QTDBUS
-    if (isDocumentsPortalAvailable() && mimeData->hasFormat(portalFormat())) {
-        uris = extractPortalUriList(mimeData);
-    }
-#endif
-
     if (uris.isEmpty()) {
         if (decodeOptions == PreferLocalUrls) {
             // Extracting uris from text/uri-list, use the much faster QMimeData method urls()
@@ -157,6 +151,17 @@ QList<QUrl> KUrlMimeData::urlsFromMimeData(const QMimeData *mimeData, DecodeOpti
             }
         }
     }
+
+#if HAVE_QTDBUS
+    // XDG Document Portal doesn't support directories and silently drops them.
+    // To protect against that, we only use the portal URIs list if it has as many as the regular URI list.
+    if (isDocumentsPortalAvailable() && mimeData->hasFormat(portalFormat())) {
+        QList<QUrl> portalUris = extractPortalUriList(mimeData);
+        if (portalUris.count() == uris.count()) {
+            uris = portalUris;
+        }
+    }
+#endif
 
     if (metaData) {
         const QByteArray metaDataPayload = mimeData->data(QStringLiteral("application/x-kio-metadata"));
