@@ -154,11 +154,11 @@ QList<QUrl> KUrlMimeData::urlsFromMimeData(const QMimeData *mimeData, DecodeOpti
     // XDG Document Portal doesn't support directories and silently drops them.
     // To protect against that, we check if there are any directories, and skip portal in that case.
     // Even then we only use the portal URIs list if it has as many as the regular URI list.
-    bool hasDirs = std::any_of(uris.begin(), uris.end(), [](QUrl uri) {
+    bool hasDirs = std::any_of(uris.begin(), uris.end(), [](const QUrl uri) {
         return uri.isLocalFile() && QFileInfo(uri.toLocalFile()).isDir();
     });
     if (!hasDirs && isDocumentsPortalAvailable() && mimeData->hasFormat(portalFormat())) {
-        QList<QUrl> portalUris = extractPortalUriList(mimeData);
+        const QList<QUrl> portalUris = extractPortalUriList(mimeData);
         if (portalUris.count() == uris.count()) {
             uris = portalUris;
         }
