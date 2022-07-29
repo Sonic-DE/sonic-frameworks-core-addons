@@ -137,25 +137,27 @@ QList<QUrl> KUrlMimeData::urlsFromMimeData(const QMimeData *mimeData, DecodeOpti
 {
     QList<QUrl> uris;
 
-    if (uris.isEmpty()) {
-        if (decodeOptions == PreferLocalUrls) {
-            // Extracting uris from text/uri-list, use the much faster QMimeData method urls()
-            uris = mimeData->urls();
-            if (uris.isEmpty()) {
-                uris = extractKdeUriList(mimeData);
-            }
-        } else {
+    if (decodeOptions == PreferLocalUrls) {
+        // Extracting uris from text/uri-list, use the much faster QMimeData method urls()
+        uris = mimeData->urls();
+        if (uris.isEmpty()) {
             uris = extractKdeUriList(mimeData);
-            if (uris.isEmpty()) {
-                uris = mimeData->urls();
-            }
+        }
+    } else {
+        uris = extractKdeUriList(mimeData);
+        if (uris.isEmpty()) {
+            uris = mimeData->urls();
         }
     }
 
 #if HAVE_QTDBUS
     // XDG Document Portal doesn't support directories and silently drops them.
-    // To protect against that, we only use the portal URIs list if it has as many as the regular URI list.
-    if (isDocumentsPortalAvailable() && mimeData->hasFormat(portalFormat())) {
+    // To protect against that, we check if there are any directories, and skip portal in that case.
+    // Even then we only use the portal URIs list if it has as many as the regular URI list.
+    bool hasDirs = std::any_of(uris.begin(), uris.end(), [](QUrl uri) {
+        return uri.isLocalFile() && QFileInfo(uri.toLocalFile()).isDir();
+    });
+    if (!hasDirs && isDocumentsPortalAvailable() && mimeData->hasFormat(portalFormat())) {
         QList<QUrl> portalUris = extractPortalUriList(mimeData);
         if (portalUris.count() == uris.count()) {
             uris = portalUris;
