@@ -7,39 +7,63 @@
 */
 
 #include "kfilesystemtype.h"
-#include "kcoreaddons_debug.h"
 #include "knetworkmounts.h"
 
 #include <QCoreApplication>
 #include <QFile>
 
-#ifndef Q_OS_WIN
-inline KFileSystemType::Type kde_typeFromName(const char *name)
-{
-    /* clang-format off */
-    if (qstrncmp(name, "nfs", 3) == 0
-        || qstrncmp(name, "autofs", 6) == 0
-        || qstrncmp(name, "cachefs", 7) == 0
-        || qstrncmp(name, "fuse.sshfs", 10) == 0
-        || qstrncmp(name, "xtreemfs@", 9) == 0) { // #178678
+struct FsInfo {
+    KFileSystemType::Type type = KFileSystemType::Unknown;
+    const char *name = nullptr;
+};
 
-        return KFileSystemType::Nfs;
+// Used in fileSystemName() to return translated type names
+static const std::array<FsInfo, 9> s_fsMap = {{
+    {KFileSystemType::Nfs, "NFS"},
+    {KFileSystemType::Smb, "SMB"},
+    {KFileSystemType::Fat, "FAT"},
+    {KFileSystemType::Ramfs, "RAMFS"},
+    {KFileSystemType::Other, "Other"},
+    {KFileSystemType::Ntfs, "NTFS"},
+    {KFileSystemType::Exfat, "ExFAT"},
+    {KFileSystemType::Unknown, "Unknown"},
+}};
+
+// Alternate names for some types, all lower case
+static const std::array<FsInfo, 9> s_fsAltMap = {{
+    {KFileSystemType::Nfs, "autofs"},
+    {KFileSystemType::Nfs, "cachefs"},
+    {KFileSystemType::Nfs, "fuse.sshfs"},
+    {KFileSystemType::Nfs, "xtreemfs@"}, // #178678
+    {KFileSystemType::Smb, "smbfs"},
+    {KFileSystemType::Smb, "cifs"},
+    {KFileSystemType::Fat, "vfat"},
+    {KFileSystemType::Fat, "msdos"},
+}};
+
+#ifndef Q_OS_WIN
+inline KFileSystemType::Type kde_typeFromName(const QLatin1String name)
+{
+    auto it = std::find_if(s_fsMap.cbegin(), s_fsMap.cend(), [name](const auto &fsInfo) {
+        return name.compare(QLatin1String(fsInfo.name), Qt::CaseInsensitive) == 0;
+    });
+    if (it != s_fsMap.cend()) {
+        return it->type;
     }
-    if (qstrncmp(name, "fat", 3) == 0
-        || qstrncmp(name, "vfat", 4) == 0
-        || qstrncmp(name, "msdos", 5) == 0) {
-        return KFileSystemType::Fat;
+
+    auto itAlt = std::find_if(s_fsAltMap.cbegin(), s_fsAltMap.cend(), [name](const auto &fsInfo) {
+        return QLatin1String(fsInfo.name) == name;
+    });
+    if (itAlt != s_fsMap.cend()) {
+        return itAlt->type;
     }
-    if (qstrncmp(name, "cifs", 4) == 0
-        || qstrncmp(name, "smbfs", 5) == 0) {
-        return KFileSystemType::Smb;
-    }
-    if (qstrncmp(name, "ramfs", 5) == 0) {
-        return KFileSystemType::Ramfs;
-    }
-    /* clang-format on */
 
     return KFileSystemType::Other;
+}
+
+inline KFileSystemType::Type kde_typeFromName(const char *c)
+{
+    return kde_typeFromName(QLatin1String(c));
 }
 
 #if defined(Q_OS_BSD4) && !defined(Q_OS_NETBSD)
@@ -181,23 +205,11 @@ KFileSystemType::Type KFileSystemType::fileSystemType(const QString &path)
 
 QString KFileSystemType::fileSystemName(KFileSystemType::Type type)
 {
-    switch (type) {
-    case KFileSystemType::Nfs:
-        return QCoreApplication::translate("KFileSystemType", "NFS");
-    case KFileSystemType::Smb:
-        return QCoreApplication::translate("KFileSystemType", "SMB");
-    case KFileSystemType::Fat:
-        return QCoreApplication::translate("KFileSystemType", "FAT");
-    case KFileSystemType::Ramfs:
-        return QCoreApplication::translate("KFileSystemType", "RAMFS");
-    case KFileSystemType::Other:
-        return QCoreApplication::translate("KFileSystemType", "Other");
-    case KFileSystemType::Ntfs:
-        return QCoreApplication::translate("KFileSystemType", "NTFS");
-    case KFileSystemType::Exfat:
-        return QCoreApplication::translate("KFileSystemType", "ExFAT");
-    case KFileSystemType::Unknown:
-        return QCoreApplication::translate("KFileSystemType", "Unknown");
+    auto it = std::find_if(s_fsMap.cbegin(), s_fsMap.cend(), [type](const auto &fsInfo) {
+        return fsInfo.type == type;
+    });
+    if (it != s_fsMap.cend()) {
+        return QCoreApplication::translate("KFileSystemType", it->name);
     }
 
     Q_UNREACHABLE();
