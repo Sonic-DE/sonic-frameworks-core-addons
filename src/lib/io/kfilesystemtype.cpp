@@ -9,6 +9,11 @@
 #include "kfilesystemtype.h"
 #include "knetworkmounts.h"
 
+#include <config-kfilesystemtype.h>
+#if HAVE_UDEV
+#include <libudev.h>
+#endif
+
 #include <QCoreApplication>
 #include <QFile>
 
@@ -28,6 +33,7 @@ static const std::array<FsInfo, 9> s_fsMap = {{
     {KFileSystemType::Other, "Other"},
     {KFileSystemType::Ntfs, "NTFS"},
     {KFileSystemType::Exfat, "ExFAT"},
+    {KFileSystemType::Fuse, "Fuse"},
     {KFileSystemType::Unknown, "Unknown"},
 }};
 
@@ -41,6 +47,7 @@ static const std::array<FsInfo, 9> s_fsAltMap = {{
     {KFileSystemType::Smb, "cifs"},
     {KFileSystemType::Fat, "vfat"},
     {KFileSystemType::Fat, "msdos"},
+    {KFileSystemType::Fuse, "fuseblk"},
 }};
 
 #ifndef Q_OS_WIN
@@ -86,6 +93,7 @@ KFileSystemType::Type determineFileSystemTypeImpl(const QByteArray &path)
 
 #ifdef Q_OS_LINUX
 #include <linux/magic.h> // A lot of the filesystem superblock MAGIC numbers
+#include <sys/stat.h>
 #endif
 
 // From /usr/src/linux-5.13.2-1-vanilla/fs/ntfs/ntfs.h
@@ -135,6 +143,38 @@ KFileSystemType::Type determineFileSystemTypeImpl(const QByteArray &path)
 #endif
 #endif
 
+KFileSystemType::Type probeFuseBlkType(const QByteArray &path)
+{
+    using namespace KFileSystemType;
+
+#if HAVE_UDEV
+    struct stat buf;
+    if (stat(path.constData(), &buf) != 0) {
+        return Fuse;
+    }
+
+    using UdevPtr = std::unique_ptr<struct udev, decltype(&udev_unref)>;
+    using UDevicePtr = std::unique_ptr<struct udev_device, decltype(&udev_device_unref)>;
+
+    // Code originally copied from util-linux/misc-utils/lsblk.c
+    auto udevP = UdevPtr(udev_new(), udev_unref);
+    if (!udevP) {
+        return Fuse;
+    }
+
+    // 'b' for block devices
+    auto devPtr = UDevicePtr(udev_device_new_from_devnum(udevP.get(), 'b', buf.st_dev), udev_device_unref);
+    if (!devPtr) {
+        return Fuse;
+    }
+
+    const QLatin1String fsType(udev_device_get_property_value(devPtr.get(), "ID_FS_TYPE"));
+    return kde_typeFromName(fsType);
+#endif
+
+    return Fuse;
+}
+
 // Reverse-engineering without C++ code:
 // strace stat -f /mnt 2>&1|grep statfs|grep mnt, and look for f_type
 //
@@ -151,8 +191,9 @@ static KFileSystemType::Type determineFileSystemTypeImpl(const QByteArray &path)
     case NFS_SUPER_MAGIC:
     case AUTOFS_SUPER_MAGIC:
     case AUTOFSNG_SUPER_MAGIC:
-    case FUSE_SUPER_MAGIC: // TODO could be anything. Need to use statfs() to find out more.
         return KFileSystemType::Nfs;
+    case FUSE_SUPER_MAGIC:
+        return probeFuseBlkType(path);
     case SMB_SUPER_MAGIC:
     case SMB2_MAGIC_NUMBER:
     case CIFS_MAGIC_NUMBER:
