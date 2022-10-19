@@ -8,8 +8,9 @@ if(NOT @BUILD_SHARED_LIBS@)
         find_dependency(Threads)
     endif()
 
+    # purposefully not find_dependency, see https://bugs.kde.org/show_bug.cgi?id=460656
     if(@Inotify_FOUND@)
-        find_dependency(Inotify)
+        find_package(Inotify)
     endif()
 
     if(@Procstat_FOUND@)
