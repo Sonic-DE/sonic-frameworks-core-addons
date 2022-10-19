@@ -8,7 +8,8 @@ if(NOT @BUILD_SHARED_LIBS@)
         find_dependency(Threads)
     endif()
 
-    if(@Inotify_FOUND@)
+    # purposefully not if(@Inotify_FOUND@), see https://bugs.kde.org/show_bug.cgi?id=460656
+    if(@Inotify_LIBRARIES@)
         find_dependency(Inotify)
     endif()
 
