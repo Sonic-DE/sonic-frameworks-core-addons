@@ -7,8 +7,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KPLUGINFACTORY_P_H
-#define KPLUGINFACTORY_P_H
+#pragma once
 
 #include "kpluginfactory.h"
 #include <KPluginMetaData>
@@ -31,5 +30,3 @@ protected:
     QMultiHash<QString, Plugin> createInstanceHash;
     QMultiHash<QString, PluginWithMetadata> createInstanceWithMetaDataHash;
 };
-
-#endif // KPLUGINFACTORY_P_H

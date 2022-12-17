@@ -4,8 +4,7 @@
     SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#ifndef JSONPLUGIN_H
-#define JSONPLUGIN_H
+#pragma once
 
 #include <QObject>
 
@@ -16,5 +15,3 @@ class JsonPlugin : public QObject
 public:
     explicit JsonPlugin(QObject *parent, const QVariantList &args);
 };
-
-#endif // JSONPLUGIN_H

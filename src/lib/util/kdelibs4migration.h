@@ -7,8 +7,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KDELIBS4MIGRATION_H
-#define KDELIBS4MIGRATION_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -112,4 +111,3 @@ private:
 };
 
 #endif
-#endif // KFORMAT_H

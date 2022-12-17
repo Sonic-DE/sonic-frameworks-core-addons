@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KCOMPOSITEJOB_H
-#define KCOMPOSITEJOB_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 #include <kjob.h>
@@ -109,5 +108,3 @@ protected:
 private:
     Q_DECLARE_PRIVATE(KCompositeJob)
 };
-
-#endif

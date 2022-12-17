@@ -4,8 +4,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KNETWORKMOUNTS_P_H
-#define KNETWORKMOUNTS_P_H
+#pragma once
 
 #include "knetworkmounts.h"
 
@@ -77,5 +76,3 @@ static QString enumToString(EnumType type)
     const int intValue = static_cast<int>(type);
     return QString::fromUtf8(QMetaEnum::fromType<EnumType>().valueToKey(intValue));
 }
-
-#endif

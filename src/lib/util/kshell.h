@@ -5,8 +5,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KSHELL_H
-#define KSHELL_H
+#pragma once
 
 #include <QStringList>
 #include <kcoreaddons_export.h>
@@ -194,5 +193,3 @@ KCOREADDONS_EXPORT QString tildeExpand(const QString &path);
  */
 KCOREADDONS_EXPORT QString tildeCollapse(const QString &path);
 }
-
-#endif /* KSHELL_H */

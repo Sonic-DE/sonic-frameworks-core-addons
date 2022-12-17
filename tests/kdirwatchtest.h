@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef _KDIRWATCHTEST_H_
-#define _KDIRWATCHTEST_H_
+#pragma once
 
 #include <QObject>
 #include <stdio.h>
@@ -36,5 +35,3 @@ public Q_SLOTS:
         printf("Deleted: %s\n", f.toLocal8Bit().constData());
     }
 };
-
-#endif

@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KLISTOPENFILESJOBTEST_WIN_H
-#define KLISTOPENFILESJOBTEST_WIN_H
+#pragma once
 
 #include <QObject>
 
@@ -17,5 +16,3 @@ class KListOpenFilesJobTest : public QObject
 private Q_SLOTS:
     void testNotSupported();
 };
-
-#endif

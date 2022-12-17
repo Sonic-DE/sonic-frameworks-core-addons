@@ -4,8 +4,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KSIGNALHANDLER_H
-#define KSIGNALHANDLER_H
+#pragma once
 
 #include <QObject>
 #include <kcoreaddons_export.h>
@@ -62,5 +61,3 @@ private:
 
     QScopedPointer<KSignalHandlerPrivate> d;
 };
-
-#endif

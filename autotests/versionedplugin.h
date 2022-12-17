@@ -5,8 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#ifndef VERSIONEDPLUGIN_H
-#define VERSIONEDPLUGIN_H
+#pragma once
 
 #include <QObject>
 
@@ -17,5 +16,3 @@ class VersionedPlugin : public QObject
 public:
     VersionedPlugin(QObject *parent, const QVariantList &args);
 };
-
-#endif // VERSIONEDPLUGIN_H

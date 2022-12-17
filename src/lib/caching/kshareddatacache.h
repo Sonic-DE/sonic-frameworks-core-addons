@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KSHAREDDATACACHE_H
-#define KSHAREDDATACACHE_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -209,5 +208,3 @@ private:
     class Private;
     Private *d;
 };
-
-#endif

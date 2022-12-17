@@ -6,8 +6,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KFUZZYMATCHER_H
-#define KFUZZYMATCHER_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -221,5 +220,3 @@ KCOREADDONS_EXPORT Result match(QStringView pattern, QStringView str);
 KCOREADDONS_EXPORT QVector<KFuzzyMatcher::Range> matchedRanges(QStringView pattern, QStringView str, RangeType type = RangeType::FullyMatched);
 
 } // namespace KFuzzyMatcher
-
-#endif // KFUZZYMATCHER_H

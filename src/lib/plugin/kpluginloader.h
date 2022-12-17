@@ -5,8 +5,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-only
 */
-#ifndef KPLUGINLOADER_H
-#define KPLUGINLOADER_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -521,5 +520,4 @@ inline KPluginName KPluginName::fromErrorString(const QString &errorString)
     return KPluginName(errorString, true);
 }
 
-#endif
 #endif

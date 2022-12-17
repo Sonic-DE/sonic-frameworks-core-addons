@@ -5,8 +5,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-only
 */
-#ifndef _KDIRWATCH_H
-#define _KDIRWATCH_H
+#pragma once
 
 #include <QDateTime>
 #include <QObject>
@@ -304,5 +303,3 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KDirWatch::WatchModes)
-
-#endif

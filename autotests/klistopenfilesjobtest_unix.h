@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KLISTOPENFILESJOBTEST_UNIX_H
-#define KLISTOPENFILESJOBTEST_UNIX_H
+#pragma once
 
 #include <QObject>
 
@@ -20,5 +19,3 @@ private Q_SLOTS:
     void testNonExistingDir();
     void testLsofNotFound();
 };
-
-#endif

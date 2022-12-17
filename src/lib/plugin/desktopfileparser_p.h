@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 
-#ifndef DESKTOPFILEPARSER_H
-#define DESKTOPFILEPARSER_H
+#pragma once
 
 #include <QByteArray>
 #include <QVector>
@@ -52,5 +51,3 @@ extern bool s_verbose;
 extern bool s_compatibilityMode;
 #endif
 }
-
-#endif // DESKTOPFILEPARSER_H

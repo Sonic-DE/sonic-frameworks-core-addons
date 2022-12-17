@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 // SPDX-FileCopyrightText: 2022 Harald Sitter <sitter@kde.org>
 
-#ifndef KSANDBOX_H
-#define KSANDBOX_H
+#pragma once
 
 #include <QProcess>
 
@@ -46,5 +45,3 @@ KCOREADDONS_EXPORT KSandbox::ProcessContext makeHostContext(const QProcess &proc
 KCOREADDONS_EXPORT void startHostProcess(QProcess &process, QProcess::OpenMode mode = QProcess::ReadWrite);
 
 } // namespace KSandbox
-
-#endif // KSANDBOX_H

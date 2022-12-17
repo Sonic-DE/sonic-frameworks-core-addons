@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KMACROEXPANDER_P_H
-#define KMACROEXPANDER_P_H
+#pragma once
 
 #include "kmacroexpander.h"
 
@@ -20,5 +19,3 @@ public:
     }
     QChar escapechar;
 };
-
-#endif

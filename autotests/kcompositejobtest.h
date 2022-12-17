@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KCOMPOSITEJOBTEST_H
-#define KCOMPOSITEJOBTEST_H
+#pragma once
 
 #include <QEventLoop>
 #include <QObject>
@@ -57,5 +56,3 @@ private Q_SLOTS:
 private:
     QEventLoop loop;
 };
-
-#endif // KCOMPOSITEJOBTEST_H

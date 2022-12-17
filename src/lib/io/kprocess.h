@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KPROCESS_H
-#define KPROCESS_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -328,5 +327,3 @@ private:
     using QProcess::processChannelMode;
     using QProcess::setProcessChannelMode;
 };
-
-#endif

@@ -11,8 +11,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KABOUTDATA_H
-#define KABOUTDATA_H
+#pragma once
 
 #include <QSharedDataPointer>
 #include <QString>
@@ -1387,5 +1386,3 @@ Q_DECLARE_METATYPE(KAboutData)
 Q_DECLARE_METATYPE(KAboutLicense)
 Q_DECLARE_METATYPE(KAboutPerson)
 Q_DECLARE_METATYPE(KAboutComponent)
-
-#endif

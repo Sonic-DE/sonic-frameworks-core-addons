@@ -9,8 +9,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KLISTOPENFILESJOB_H
-#define KLISTOPENFILESJOB_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -66,5 +65,3 @@ private:
     friend class KListOpenFilesJobPrivate;
     std::unique_ptr<KListOpenFilesJobPrivate> const d;
 };
-
-#endif // KLISTOPENFILESJOB_H

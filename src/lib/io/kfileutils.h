@@ -6,8 +6,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KFILEUTILS_H
-#define KFILEUTILS_H
+#pragma once
 
 #include "kcoreaddons_export.h"
 
@@ -71,4 +70,3 @@ KCOREADDONS_EXPORT QString makeSuggestedName(const QString &oldName);
  */
 KCOREADDONS_EXPORT QStringList findAllUniqueFiles(const QStringList &dirs, const QStringList &nameFilters = {});
 }
-#endif

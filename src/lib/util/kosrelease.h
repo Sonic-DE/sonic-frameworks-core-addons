@@ -4,8 +4,7 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 
-#ifndef KOSRELEASE_H
-#define KOSRELEASE_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -91,5 +90,3 @@ private:
 
     std::unique_ptr<class KOSReleasePrivate> const d;
 };
-
-#endif // KOSRELEASE_H

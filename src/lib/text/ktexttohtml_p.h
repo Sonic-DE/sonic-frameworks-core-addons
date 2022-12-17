@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KTEXTTOHTML_P_H
-#define KTEXTTOHTML_P_H
+#pragma once
 
 #include "kcoreaddons_export.h"
 #include "ktexttohtmlemoticonsinterface.h"
@@ -41,5 +40,3 @@ public:
     int mMaxAddressLen;
     int mPos;
 };
-
-#endif

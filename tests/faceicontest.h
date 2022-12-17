@@ -4,8 +4,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef FACEICONTEST_H
-#define FACEICONTEST_H
+#pragma once
 
 #include <QWidget>
 
@@ -18,5 +17,3 @@ public:
 private:
     class QListWidget *listWidget;
 };
-
-#endif

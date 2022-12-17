@@ -7,8 +7,7 @@
     SPDX-License-Identifier: LGPL-2.1-only WITH Qt-LGPL-exception-1.1 OR LicenseRef-Qt-Commercial
 */
 
-#ifndef KPROCESSLIST_P_H
-#define KPROCESSLIST_P_H
+#pragma once
 
 #include "kprocesslist.h"
 #include <QSharedData>
@@ -28,5 +27,3 @@ public:
 };
 
 } // KProcessList namespace
-
-#endif // KPROCESSLIST_P_H

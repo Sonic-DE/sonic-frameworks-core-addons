@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KNETWORKMOUNTSTESTCANONICAL_H
-#define KNETWORKMOUNTSTESTCANONICAL_H
+#pragma once
 
 #include <QObject>
 #include <QTemporaryDir>
@@ -25,5 +24,3 @@ private:
     QString m_configFileName;
     QTemporaryDir m_tmpDir;
 };
-
-#endif

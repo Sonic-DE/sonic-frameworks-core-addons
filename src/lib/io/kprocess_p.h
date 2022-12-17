@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KPROCESS_P_H
-#define KPROCESS_P_H
+#pragma once
 
 #include "kprocess.h"
 
@@ -25,5 +24,3 @@ protected:
 
     KProcess *q_ptr;
 };
-
-#endif

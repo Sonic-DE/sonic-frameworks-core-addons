@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KCOREADDONS_H
-#define KCOREADDONS_H
+#pragma once
 
 #include <QString>
 #include <kcoreaddons_export.h>
@@ -40,5 +39,3 @@ KCOREADDONS_EXPORT QString versionString();
  */
 KCOREADDONS_EXPORT unsigned int version();
 }
-
-#endif

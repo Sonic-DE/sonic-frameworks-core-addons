@@ -7,8 +7,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KURLMIMEDATA_H
-#define KURLMIMEDATA_H
+#pragma once
 
 #include "kcoreaddons_export.h"
 #include <QMap>
@@ -104,5 +103,3 @@ enum DecodeOptions {
 KCOREADDONS_EXPORT QList<QUrl> urlsFromMimeData(const QMimeData *mimeData, DecodeOptions decodeOptions = PreferKdeUrls, MetaDataMap *metaData = nullptr);
 
 }
-
-#endif /* KURLMIMEDATA_H */

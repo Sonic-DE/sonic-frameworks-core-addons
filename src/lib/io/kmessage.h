@@ -5,8 +5,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KDECORE_KMESSAGE_H
-#define KDECORE_KMESSAGE_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -125,7 +124,5 @@ public:
      */
     virtual void message(KMessage::MessageType type, const QString &text, const QString &title) = 0;
 };
-
-#endif
 
 #endif

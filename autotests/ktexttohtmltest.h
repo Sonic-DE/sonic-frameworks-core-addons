@@ -4,8 +4,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KTEXTTOHTMLTEST_H
-#define KTEXTTOHTMLTEST_H
+#pragma once
 
 #include <QObject>
 
@@ -21,5 +20,3 @@ private Q_SLOTS:
 private:
     void testGetUrl2(const QString &left, const QString &right);
 };
-
-#endif

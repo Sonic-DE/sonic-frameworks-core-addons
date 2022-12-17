@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KEXPORTPLUGIN_H
-#define KEXPORTPLUGIN_H
+#pragma once
 
 #include <QPluginLoader>
 #include <QtPlugin>
@@ -44,5 +43,3 @@ class KCOREADDONS_DEPRECATED_EXPORT K_EXPORT_PLUGIN_is_deprecated_see_KDE5PORTIN
 #endif
 
 #endif
-
-#endif // KEXPORTPLUGIN_H

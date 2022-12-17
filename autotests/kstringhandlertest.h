@@ -1,5 +1,4 @@
-#ifndef KSTRINGHANDLERTEST_H
-#define KSTRINGHANDLERTEST_H
+#pragma once
 
 #include <QObject>
 
@@ -27,5 +26,3 @@ private Q_SLOTS:
 private:
     static QString test;
 };
-
-#endif

@@ -8,8 +8,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KPLUGINFACTORY_H
-#define KPLUGINFACTORY_H
+#pragma once
 
 #include "kcoreaddons_export.h"
 #include "kpluginmetadata.h"
@@ -987,5 +986,3 @@ inline T *KPluginFactory::create(QWidget *parentWidget, QObject *parent, const Q
 #endif
 
 Q_DECLARE_INTERFACE(KPluginFactory, KPluginFactory_iid)
-
-#endif // KPLUGINFACTORY_H

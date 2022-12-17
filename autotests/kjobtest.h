@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KJOBTEST_H
-#define KJOBTEST_H
+#pragma once
 
 #include "kjob.h"
 #include "kjobuidelegate.h"
@@ -105,5 +104,3 @@ public:
     void start() override;
     void makeItFinish();
 };
-
-#endif

@@ -5,8 +5,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KMEMORYINFOTEST_H
-#define KMEMORYINFOTEST_H
+#pragma once
 
 #include <QObject>
 
@@ -24,5 +23,3 @@ private Q_SLOTS:
 
     void operators();
 };
-
-#endif // KMEMORYINFOTEST_H

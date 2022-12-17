@@ -3,8 +3,7 @@
     SPDX-FileCopyrightText: 2021 Harald Sitter <sitter@kde.org>
 */
 
-#ifndef KLIBEXEC_H
-#define KLIBEXEC_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -66,5 +65,3 @@ inline QStringList kdeFrameworksPaths(const QString &relativePath)
 }
 
 } // namespace KLibexec
-
-#endif // KLIBEXEC_H

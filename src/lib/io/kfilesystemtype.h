@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.1-only
 */
 
-#ifndef KFILESYSTEMTYPE_P_H
-#define KFILESYSTEMTYPE_P_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -53,5 +52,3 @@ KCOREADDONS_EXPORT Type fileSystemType(const QString &path);
  */
 KCOREADDONS_EXPORT QString fileSystemName(KFileSystemType::Type type);
 }
-
-#endif

@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KDELIBS4CONFIGMIGRATOR_H
-#define KDELIBS4CONFIGMIGRATOR_H
+#pragma once
 
 #include <QStringList>
 #include <kcoreaddons_export.h>
@@ -79,4 +78,3 @@ private:
 };
 
 #endif
-#endif // KDELIBS4CONFIGMIGRATOR_H

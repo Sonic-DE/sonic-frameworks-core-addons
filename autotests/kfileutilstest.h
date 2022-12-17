@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KFILEUTILSTEST_H
-#define KFILEUTILSTEST_H
+#pragma once
 
 #include <QObject>
 
@@ -18,5 +17,3 @@ private Q_SLOTS:
     void testSuggestName();
     void testfindAllUniqueFiles();
 };
-
-#endif

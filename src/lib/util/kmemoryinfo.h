@@ -5,8 +5,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KMEMORYINFO_H
-#define KMEMORYINFO_H
+#pragma once
 
 #include <QSharedDataPointer>
 
@@ -130,5 +129,3 @@ private:
 
     QSharedDataPointer<KMemoryInfoPrivate> d;
 };
-
-#endif // KMEMORYINFO_H

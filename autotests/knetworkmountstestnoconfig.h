@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KNETWORKMOUNTSTESTNOCONFIG_H
-#define KNETWORKMOUNTSTESTNOCONFIG_H
+#pragma once
 
 #include <QObject>
 
@@ -29,5 +28,3 @@ private Q_SLOTS:
 private:
     QString m_configFileName;
 };
-
-#endif

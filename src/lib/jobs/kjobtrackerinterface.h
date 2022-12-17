@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KJOBTRACKERINTERFACE_H
-#define KJOBTRACKERINTERFACE_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 #include <kjob.h>
@@ -177,5 +176,3 @@ protected Q_SLOTS:
 private:
     std::unique_ptr<class KJobTrackerInterfacePrivate> const d;
 };
-
-#endif

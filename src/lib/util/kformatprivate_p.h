@@ -10,8 +10,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KFORMATPRIVATE_P_H
-#define KFORMATPRIVATE_P_H
+#pragma once
 
 #include "kformat.h"
 
@@ -43,5 +42,3 @@ public:
 private:
     QLocale m_locale;
 };
-
-#endif // KFORMATPRIVATE_P_H

@@ -5,8 +5,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KFUZZYMATCHERTEST_H
-#define KFUZZYMATCHERTEST_H
+#pragma once
 
 #include <QObject>
 
@@ -22,5 +21,3 @@ private Q_SLOTS:
     void testMatchedRanges_data();
     void testMatchedRanges();
 };
-
-#endif // KFUZZYMATCHERTEST_H

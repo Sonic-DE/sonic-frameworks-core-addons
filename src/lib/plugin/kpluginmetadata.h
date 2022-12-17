@@ -7,8 +7,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KPLUGINMETADATA_H
-#define KPLUGINMETADATA_H
+#pragma once
 
 #include "kcoreaddons_export.h"
 
@@ -640,5 +639,3 @@ inline uint qHash(const KPluginMetaData &md, uint seed)
 }
 
 Q_DECLARE_METATYPE(KPluginMetaData)
-
-#endif // KPLUGINMETADATA_H

@@ -8,8 +8,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KJOB_H
-#define KJOB_H
+#pragma once
 
 #include <QObject>
 #include <QPair>
@@ -823,5 +822,3 @@ private:
 
 Q_DECLARE_METATYPE(KJob::Unit)
 Q_DECLARE_OPERATORS_FOR_FLAGS(KJob::Capabilities)
-
-#endif

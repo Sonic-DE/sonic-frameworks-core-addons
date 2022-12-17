@@ -6,8 +6,7 @@
     SPDX-License-Identifier: MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later
 */
 
-#ifndef POSIX_FALLOCATE_MAC_H
-#define POSIX_FALLOCATE_MAC_H
+#pragma once
 
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -82,5 +81,3 @@ static int posix_fallocate(int fd, off_t offset, off_t len)
     }
     return ret;
 }
-
-#endif

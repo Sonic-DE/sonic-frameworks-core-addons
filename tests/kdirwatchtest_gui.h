@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KDIRWATCHTEST_GUI_H
-#define KDIRWATCHTEST_GUI_H
+#pragma once
 
 #include <QDialog>
 
@@ -36,5 +35,3 @@ private:
     class QLineEdit *l1, *l2, *l3;
     QTextBrowser *m_eventBrowser;
 };
-
-#endif

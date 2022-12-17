@@ -9,8 +9,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KFORMATTEST_H
-#define KFORMATTEST_H
+#pragma once
 
 #include <QObject>
 
@@ -27,5 +26,3 @@ private Q_SLOTS:
     void formatRelativeDate();
     void formatValue();
 };
-
-#endif // KFORMATTEST_H

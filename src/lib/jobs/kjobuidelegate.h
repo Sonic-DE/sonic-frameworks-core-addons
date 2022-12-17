@@ -8,8 +8,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KJOBUIDELEGATE_H
-#define KJOBUIDELEGATE_H
+#pragma once
 
 #include <QObject>
 #include <kcoreaddons_export.h>
@@ -155,5 +154,3 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KJobUiDelegate::Flags)
-
-#endif // KJOBUIDELEGATE_H

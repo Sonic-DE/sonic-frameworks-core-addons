@@ -8,8 +8,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KBACKUP_H
-#define KBACKUP_H
+#pragma once
 
 #include <QString>
 #include <kcoreaddons_export.h>
@@ -132,5 +131,3 @@ KCOREADDONS_DEPRECATED_VERSION(5, 75, "No known users")
 bool rcsBackupFile(const QString &filename, const QString &backupDir = QString(), const QString &backupMessage = QString());
 #endif
 }
-
-#endif

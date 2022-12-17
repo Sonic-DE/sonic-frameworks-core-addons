@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KCOREADDONS_KTEXTTOHTML_H
-#define KCOREADDONS_KTEXTTOHTML_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -81,5 +80,3 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Options)
 KCOREADDONS_EXPORT QString convertToHtml(const QString &plainText, const KTextToHTML::Options &options, int maxUrlLen = 4096, int maxAddressLen = 255);
 
 }
-
-#endif

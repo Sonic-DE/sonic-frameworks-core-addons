@@ -8,8 +8,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KUSER_H
-#define KUSER_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -659,5 +658,3 @@ inline bool KUserGroup::operator!=(const KUserGroup &other) const
 {
     return !operator==(other);
 }
-
-#endif

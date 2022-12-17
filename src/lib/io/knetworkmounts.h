@@ -4,8 +4,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KNETWORKMOUNTS_H
-#define KNETWORKMOUNTS_H
+#pragma once
 
 #include <memory>
 
@@ -280,5 +279,3 @@ private:
 
     std::unique_ptr<class KNetworkMountsPrivate> const d;
 };
-
-#endif // KNETWORKMOUNTS_H

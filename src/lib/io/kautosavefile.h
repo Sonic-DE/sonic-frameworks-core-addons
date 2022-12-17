@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KAUTOSAVEFILE_H
-#define KAUTOSAVEFILE_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -242,5 +241,3 @@ private:
     friend class KAutoSaveFilePrivate;
     std::unique_ptr<KAutoSaveFilePrivate> const d;
 };
-
-#endif // KAUTOSAVEFILE_H

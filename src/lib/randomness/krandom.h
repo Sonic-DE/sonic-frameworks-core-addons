@@ -8,8 +8,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KRANDOM_H
-#define KRANDOM_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -83,5 +82,3 @@ void shuffle(T &container)
 }
 
 }
-
-#endif

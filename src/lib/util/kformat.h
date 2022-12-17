@@ -10,8 +10,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KFORMAT_H
-#define KFORMAT_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -425,5 +424,3 @@ public:
 private:
     QSharedDataPointer<KFormatPrivate> d;
 };
-
-#endif // KFORMAT_H

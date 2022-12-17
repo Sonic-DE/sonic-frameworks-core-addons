@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef KSHAREDDATACACHE_P_H
-#define KSHAREDDATACACHE_P_H
+#pragma once
 
 #include <config-caching.h> // HAVE_SYS_MMAN_H
 
@@ -490,5 +489,3 @@ static bool ensureFileAllocated(int fd, size_t fileSize)
     return true;
 #endif
 }
-
-#endif /* KSHAREDDATACACHE_P_H */

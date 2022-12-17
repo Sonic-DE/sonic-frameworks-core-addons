@@ -14,8 +14,7 @@
     because KDirWatchPrivate has signals and slots
 */
 
-#ifndef KDIRWATCH_P_H
-#define KDIRWATCH_P_H
+#pragma once
 
 #include "kdirwatch.h"
 #include <io/config-kdirwatch.h>
@@ -252,5 +251,3 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const KDirWatchPrivate::Entry &entry);
-
-#endif // KDIRWATCH_P_H

@@ -6,8 +6,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef KMACROEXPANDER_H
-#define KMACROEXPANDER_H
+#pragma once
 
 #include <QChar>
 #include <QStringList>
@@ -394,5 +393,3 @@ KCOREADDONS_EXPORT QString expandMacros(const QString &str, const QHash<QString,
 KCOREADDONS_EXPORT QString expandMacrosShellQuote(const QString &str, const QHash<QChar, QStringList> &map, QChar c = QLatin1Char('%'));
 KCOREADDONS_EXPORT QString expandMacrosShellQuote(const QString &str, const QHash<QString, QStringList> &map, QChar c = QLatin1Char('%'));
 }
-
-#endif /* KMACROEXPANDER_H */

@@ -5,8 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef kautosavefiletest_h
-#define kautosavefiletest_h
+#pragma once
 
 #include <QObject>
 #include <QStringList>
@@ -27,5 +26,3 @@ private Q_SLOTS:
 private:
     QStringList filesToRemove;
 };
-
-#endif

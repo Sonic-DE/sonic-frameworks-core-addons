@@ -8,8 +8,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KJOB_P_H
-#define KJOB_P_H
+#pragma once
 
 #include "kjob.h"
 #include <QEventLoopLocker>
@@ -61,5 +60,3 @@ public:
 
     Q_DECLARE_PUBLIC(KJob)
 };
-
-#endif

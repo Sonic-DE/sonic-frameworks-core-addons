@@ -4,8 +4,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-#ifndef KTEXTTOHTMLEMOTICONSINTERFACE_H
-#define KTEXTTOHTMLEMOTICONSINTERFACE_H
+#pragma once
 
 #include <QMetaType>
 #include <QStringList>
@@ -30,5 +29,3 @@ public:
 Q_DECLARE_METATYPE(KTextToHTMLEmoticonsInterface *)
 
 #define KTEXTTOHTMLEMOTICONS_PROPERTY "KTextToHTMLEmoticons"
-
-#endif

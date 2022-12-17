@@ -6,8 +6,7 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#ifndef K_RANDOM_SEQUENCE_H
-#define K_RANDOM_SEQUENCE_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -156,7 +155,5 @@ public:
 private:
     QSharedDataPointer<class KRandomSequencePrivate> d;
 };
-
-#endif
 
 #endif

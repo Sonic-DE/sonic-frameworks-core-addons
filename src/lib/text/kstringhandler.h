@@ -8,8 +8,7 @@
 
     SPDX-License-Identifier: LGPL-2.0-only
 */
-#ifndef KSTRINGHANDLER_H
-#define KSTRINGHANDLER_H
+#pragma once
 
 #include <kcoreaddons_export.h>
 
@@ -259,4 +258,3 @@ KCOREADDONS_EXPORT QString preProcessWrap(const QString &text);
 KCOREADDONS_EXPORT int logicalLength(const QString &text);
 
 }
-#endif
