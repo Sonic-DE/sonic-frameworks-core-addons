@@ -224,7 +224,7 @@ KDirWatchPrivate::KDirWatchPrivate()
         (void)fcntl(m_inotify_fd, F_SETFD, FD_CLOEXEC);
 
         mSn = new QSocketNotifier(m_inotify_fd, QSocketNotifier::Read, this);
-        connect(mSn, SIGNAL(activated(int)), this, SLOT(inotifyEventReceived()));
+        connect(mSn, &QSocketNotifier::activated, this, &KDirWatchPrivate::inotifyEventReceived);
     }
 #endif
 #if HAVE_QFILESYSTEMWATCHER
@@ -232,7 +232,7 @@ KDirWatchPrivate::KDirWatchPrivate()
     fsWatcher = nullptr;
 #endif
 
-    if (s_verboseDebug) {
+    if (KDIRWATCH().isDebugEnabled()) {
         qCDebug(KDIRWATCH) << "Available methods: " << availableMethods << "preferred=" << methodToString(m_preferredMethod);
     }
 }
@@ -328,7 +328,7 @@ void KDirWatchPrivate::inotifyEventReceived()
             }
 
             if (event->mask & IN_DELETE_SELF) {
-                if (s_verboseDebug) {
+                if (KDIRWATCH().isDebugEnabled()) {
                     qCDebug(KDIRWATCH) << "-->got deleteself signal for" << e->path;
                 }
                 e->m_status = NonExistent;
@@ -351,7 +351,7 @@ void KDirWatchPrivate::inotifyEventReceived()
             if (event->mask & (IN_CREATE | IN_MOVED_TO)) {
                 Entry *sub_entry = e->findSubEntry(tpath);
 
-                if (s_verboseDebug) {
+                if (KDIRWATCH().isDebugEnabled()) {
                     qCDebug(KDIRWATCH) << "-->got CREATE signal for" << (tpath) << "sub_entry=" << sub_entry;
                     qCDebug(KDIRWATCH) << *e;
                 }
@@ -381,7 +381,7 @@ void KDirWatchPrivate::inotifyEventReceived()
                 }
             }
             if (event->mask & (IN_DELETE | IN_MOVED_FROM)) {
-                if (s_verboseDebug) {
+                if (KDIRWATCH().isDebugEnabled()) {
                     qCDebug(KDIRWATCH) << "-->got DELETE signal for" << tpath;
                 }
                 if ((e->isDir) && (!e->m_clients.empty())) {
@@ -401,7 +401,7 @@ void KDirWatchPrivate::inotifyEventReceived()
             }
             if (event->mask & (IN_MODIFY | IN_ATTRIB)) {
                 if ((e->isDir) && (!e->m_clients.empty())) {
-                    if (s_verboseDebug) {
+                    if (KDIRWATCH().isDebugEnabled()) {
                         qCDebug(KDIRWATCH) << "-->got MODIFY signal for" << (tpath);
                     }
                     // A file in this directory has been changed.  No
@@ -1028,7 +1028,7 @@ void KDirWatchPrivate::removeWatch(Entry *e)
 
 void KDirWatchPrivate::removeEntry(KDirWatch *instance, const QString &_path, Entry *sub_entry)
 {
-    if (s_verboseDebug) {
+    if (KDIRWATCH().isDebugEnabled()) {
         qCDebug(KDIRWATCH) << "path=" << _path << "sub_entry:" << sub_entry;
     }
     Entry *e = entry(_path);
