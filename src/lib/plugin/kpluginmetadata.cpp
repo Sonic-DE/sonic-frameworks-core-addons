@@ -129,27 +129,27 @@ KPluginMetaData::~KPluginMetaData()
 {
 }
 
-KPluginMetaData::KPluginMetaData(const QString &file)
-    : KPluginMetaData(file, DoNotAllowEmptyMetaData)
+KPluginMetaData::KPluginMetaData(const QString &pluginPath)
+    : KPluginMetaData(pluginPath, DoNotAllowEmptyMetaData)
 {
 }
 
-KPluginMetaData::KPluginMetaData(const QString &file, KPluginMetaDataOption option)
+KPluginMetaData::KPluginMetaData(const QString &pluginPath, KPluginMetaDataOption option)
     : d(new KPluginMetaDataPrivate)
 {
     d->m_option = option;
     QPluginLoader loader;
-    KPluginMetaDataPrivate::getPluginLoaderForPath(loader, file);
-    d->m_requestedFileName = file;
+    KPluginMetaDataPrivate::getPluginLoaderForPath(loader, pluginPath);
+    d->m_requestedFileName = pluginPath;
     d->m_fileName = QFileInfo(loader.fileName()).absoluteFilePath();
     const auto qtMetaData = loader.metaData();
     if (!qtMetaData.isEmpty()) {
         d->m_metaData = qtMetaData.value(QStringLiteral("MetaData")).toObject();
         if (d->m_metaData.isEmpty() && option == DoNotAllowEmptyMetaData) {
-            qCDebug(KCOREADDONS_DEBUG) << "plugin metadata in" << file << "does not have a valid 'MetaData' object";
+            qCDebug(KCOREADDONS_DEBUG) << "plugin metadata in" << pluginPath << "does not have a valid 'MetaData' object";
         }
     } else {
-        qCDebug(KCOREADDONS_DEBUG) << "no metadata found in" << file << loader.errorString();
+        qCDebug(KCOREADDONS_DEBUG) << "no metadata found in" << pluginPath << loader.errorString();
     }
 }
 
@@ -158,11 +158,11 @@ KPluginMetaData::KPluginMetaData(const QPluginLoader &loader)
 {
 }
 
-KPluginMetaData::KPluginMetaData(const QJsonObject &metaData, const QString &pluginFile)
+KPluginMetaData::KPluginMetaData(const QJsonObject &metaData, const QString &fileName)
     : d(new KPluginMetaDataPrivate)
 {
     d->m_metaData = metaData;
-    d->m_fileName = pluginFile;
+    d->m_fileName = fileName;
 }
 
 KPluginMetaData::KPluginMetaData(QStaticPlugin plugin, const QJsonObject &metaData)
