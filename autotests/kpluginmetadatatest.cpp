@@ -539,6 +539,14 @@ private Q_SLOTS:
         QVERIFY(QFile::remove(pluginAppPath));
         QCOMPARE(KPluginMetaData(relativePathWithNamespace).fileName(), pluginInNamespacePath);
     }
+
+    void testMetaDataQDebugOperator()
+    {
+        const auto list = KPluginMetaData::findPlugins(QStringLiteral("namespace"));
+        qDebug() << list.first();
+        qDebug() << list;
+        qDebug() << (QList<KPluginMetaData>() << list << list << list);
+    }
 };
 
 QTEST_MAIN(KPluginMetaDataTest)
