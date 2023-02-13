@@ -224,12 +224,14 @@ ecm_qt_declare_logging_category(KF6CoreAddons
     EXPORT KCOREADDONS
 )
 
+set(include_version_header_code "#include <kcoreaddons_version.h>\n")
 ecm_generate_export_header(KF6CoreAddons
     BASE_NAME KCoreAddons
     GROUP_BASE_NAME KF
     VERSION ${KF_VERSION}
     DEPRECATED_BASE_VERSION 0
     EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}
+    CUSTOM_CONTENT_FROM_VARIABLE include_version_header_code
 )
 
 target_include_directories(KF6CoreAddons PUBLIC "$<BUILD_INTERFACE:${kcoreaddons_INCLUDE_DIRS}>")
