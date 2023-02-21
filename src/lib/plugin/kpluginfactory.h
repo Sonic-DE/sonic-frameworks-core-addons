@@ -620,6 +620,7 @@ template<typename T>
 inline T *KPluginFactory::create(QObject *parent, const QVariantList &args)
 {
     QObject *o = create(T::staticMetaObject.className(), parent && parent->isWidgetType() ? reinterpret_cast<QWidget *>(parent) : nullptr, parent, args);
+    qWarning() << Q_FUNC_INFO << o << qobject_cast<T *>(o) << o->metaObject()->superClass()->className();
 
     T *t = qobject_cast<T *>(o);
     if (!t) {
