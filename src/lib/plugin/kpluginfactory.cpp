@@ -79,33 +79,34 @@ void KPluginFactory::setMetaData(const KPluginMetaData &metaData)
 void KPluginFactory::registerPlugin(const QMetaObject *metaObject, CreateInstanceWithMetaDataFunction instanceFunction)
 {
     Q_ASSERT(metaObject);
-        const QMetaObject *superClass = metaObject->superClass();
+    const QMetaObject *superClass = metaObject->superClass();
+    qWarning() << Q_FUNC_INFO << superClass->className();
 
-        if (superClass) {
-            for (const KPluginFactoryPrivate::PluginWithMetadata &plugin : d->createInstanceWithMetaDataHash) {
-                for (const QMetaObject *otherSuper = plugin.first->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
-                    if (superClass == otherSuper) {
-                        qCWarning(KCOREADDONS_DEBUG).nospace() << "Two plugins with the same interface (" << superClass->className()
-                                                               << ") were registered in the KPluginFactory " << this->metaObject()->className() << ". "
-                                                               << "This might be due to a missing Q_OBJECT macro in one of the registered classes";
-                    }
-                }
-            }
-        }
-        // check hierarchy of newly newly registered plugin against all registered classes with the same keyword
+    if (superClass) {
         for (const KPluginFactoryPrivate::PluginWithMetadata &plugin : d->createInstanceWithMetaDataHash) {
-            superClass = plugin.first->superClass();
-            if (superClass) {
-                for (const QMetaObject *otherSuper = metaObject->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
-                    if (superClass == otherSuper) {
-                        qCWarning(KCOREADDONS_DEBUG).nospace() << "Two plugins with the same interface (" << superClass->className()
-                                                               << ") were registered in the KPluginFactory " << this->metaObject()->className() << ". "
-                                                               << "This might be due to a missing Q_OBJECT macro in one of the registered classes";
-                    }
+            for (const QMetaObject *otherSuper = plugin.first->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
+                if (superClass == otherSuper) {
+                    qCWarning(KCOREADDONS_DEBUG).nospace() << "Two plugins with the same interface (" << superClass->className()
+                                                           << ") were registered in the KPluginFactory " << this->metaObject()->className() << ". "
+                                                           << "This might be due to a missing Q_OBJECT macro in one of the registered classes";
                 }
             }
         }
-        d->createInstanceWithMetaDataHash.push_back({metaObject, instanceFunction});
+    }
+    // check hierarchy of newly newly registered plugin against all registered classes with the same keyword
+    for (const KPluginFactoryPrivate::PluginWithMetadata &plugin : d->createInstanceWithMetaDataHash) {
+        superClass = plugin.first->superClass();
+        if (superClass) {
+            for (const QMetaObject *otherSuper = metaObject->superClass(); otherSuper; otherSuper = otherSuper->superClass()) {
+                if (superClass == otherSuper) {
+                    qCWarning(KCOREADDONS_DEBUG).nospace() << "Two plugins with the same interface (" << superClass->className()
+                                                           << ") were registered in the KPluginFactory " << this->metaObject()->className() << ". "
+                                                           << "This might be due to a missing Q_OBJECT macro in one of the registered classes";
+                }
+            }
+        }
+    }
+    d->createInstanceWithMetaDataHash.push_back({metaObject, instanceFunction});
 }
 
 void KPluginFactory::logFailedInstantiationMessage(KPluginMetaData data)
