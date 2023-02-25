@@ -1,11 +1,7 @@
-# Generating export for a test is overkill, hence this little workaround
+add_library(plugins_STATIC)
 if (NOT WIN32)
-    add_library(plugins_STATIC plugins.cpp)
-    target_compile_definitions(plugins_STATIC PUBLIC -DEXPORT_MACRO=Q_DECL_EXPORT)
-else()
-    add_library(plugins_STATIC STATIC plugins.cpp)
-    target_compile_definitions(plugins_STATIC PUBLIC -DEXPORT_MACRO=)
-    set_property(TARGET plugins_STATIC PROPERTY POSITION_INDEPENDENT_CODE ON)
+    # Generating export for a test is overkill, thus we skip this bit on windows
+    target_sources(plugins_STATIC PRIVATE plugins.cpp)
 endif()
 target_link_libraries(plugins_STATIC Qt6::Core)
 
