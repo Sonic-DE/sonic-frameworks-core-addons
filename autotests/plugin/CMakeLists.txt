@@ -1,11 +1,12 @@
-# Generating export for a test is overkill, hence this little workaround
+add_library(plugins_STATIC)
 if (NOT WIN32)
-    add_library(plugins_STATIC plugins.cpp)
-    target_compile_definitions(plugins_STATIC PUBLIC -DEXPORT_MACRO=Q_DECL_EXPORT)
-else()
-    add_library(plugins_STATIC STATIC plugins.cpp)
-    target_compile_definitions(plugins_STATIC PUBLIC -DEXPORT_MACRO=)
-    set_property(TARGET plugins_STATIC PROPERTY POSITION_INDEPENDENT_CODE ON)
+    # Generating export for a test is overkill, thus we skip this bit on windows
+    target_sources(plugins_STATIC PRIVATE plugins.cpp)
+
+    kcoreaddons_add_plugin(jsonplugin_cmake_macro SOURCES kpluginclass.cpp INSTALL_NAMESPACE "namespace")
+    ecm_mark_as_test(jsonplugin_cmake_macro)
+    target_link_libraries(jsonplugin_cmake_macro KF6::CoreAddons autotests_static plugins_STATIC)
+
 endif()
 target_link_libraries(plugins_STATIC Qt6::Core)
 
@@ -13,16 +14,12 @@ kcoreaddons_add_plugin(qtplugin SOURCES qtplugin.cpp INSTALL_NAMESPACE "namespac
 ecm_mark_as_test(qtplugin)
 target_link_libraries(qtplugin KF6::CoreAddons autotests_static)
 
-kcoreaddons_add_plugin(jsonplugin_cmake_macro SOURCES kpluginclass.cpp INSTALL_NAMESPACE "namespace")
-ecm_mark_as_test(jsonplugin_cmake_macro)
-target_link_libraries(jsonplugin_cmake_macro KF6::CoreAddons autotests_static plugins_STATIC)
-
 kcoreaddons_add_plugin(pluginwithoutmetadata SOURCES pluginwithoutmetadata.cpp INSTALL_NAMESPACE "namespace")
 ecm_mark_as_test(pluginwithoutmetadata)
 target_link_libraries(pluginwithoutmetadata KF6::CoreAddons autotests_static)
 
-add_library(org.kde.test MODULE kpluginclass.cpp)
-target_link_libraries(org.kde.test KF6::CoreAddons plugins_STATIC)
+add_library(org.kde.test MODULE qtplugin.cpp)
+target_link_libraries(org.kde.test KF6::CoreAddons)
 
 
 ecm_add_tests(
