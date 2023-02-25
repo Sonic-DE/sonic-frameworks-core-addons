@@ -1,5 +1,6 @@
 add_library(plugins_STATIC STATIC plugins.cpp)
 target_link_libraries(plugins_STATIC Qt6::Core)
+set_property(TARGET plugins_STATIC PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 kcoreaddons_add_plugin(qtplugin SOURCES qtplugin.cpp INSTALL_NAMESPACE "namespace")
 ecm_mark_as_test(qtplugin)
