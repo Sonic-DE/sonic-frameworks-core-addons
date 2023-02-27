@@ -197,7 +197,6 @@ set(kcoreaddons_INCLUDE_DIRS
 ecm_qt_export_logging_category(
     IDENTIFIER KDIRWATCH
     CATEGORY_NAME kf.coreaddons.kdirwatch
-    OLD_CATEGORY_NAMES kf5.kcoreaddons.kdirwatch
     DEFAULT_SEVERITY Warning
     DESCRIPTION "KDirWatch (KCoreAddons)"
     EXPORT KCOREADDONS
@@ -205,7 +204,6 @@ ecm_qt_export_logging_category(
 ecm_qt_export_logging_category(
     IDENTIFIER KABOUTDATA
     CATEGORY_NAME kf.coreaddons.kaboutdata
-    OLD_CATEGORY_NAMES kf5.kcoreaddons.kaboutdata
     DESCRIPTION "KAboutData (KCoreAddons)"
     EXPORT KCOREADDONS
 )
@@ -220,7 +218,6 @@ ecm_qt_declare_logging_category(KF6CoreAddons
     HEADER kcoreaddons_debug.h
     IDENTIFIER KCOREADDONS_DEBUG
     CATEGORY_NAME kf.coreaddons
-    OLD_CATEGORY_NAMES org.kde.kcoreaddons
     DESCRIPTION "kcoreaddons (kcoreaddons lib)"
     EXPORT KCOREADDONS
 )
