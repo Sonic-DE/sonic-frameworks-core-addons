@@ -207,7 +207,9 @@ public:
      */
     bool contains(const QString &path) const;
 
+#ifndef QT_NO_FILESYSTEMWATCHER
     void deleteQFSWatcher(); // KF6 TODO: remove from public API
+#endif
 
     enum Method {
         FAM,

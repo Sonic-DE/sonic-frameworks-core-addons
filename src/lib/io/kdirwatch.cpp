@@ -1877,12 +1877,14 @@ bool KDirWatch::exists()
     return s_pKDirWatchSelf.exists() && dwp_self.hasLocalData();
 }
 
+#if HAVE_QFILESYSTEMWATCHER
 static void postRoutine_KDirWatch()
 {
     if (s_pKDirWatchSelf.exists()) {
         s_pKDirWatchSelf()->deleteQFSWatcher();
     }
 }
+#endif
 
 KDirWatch::KDirWatch(QObject *parent)
     : QObject(parent)
@@ -1893,10 +1895,12 @@ KDirWatch::KDirWatch(QObject *parent)
     const int counter = nameCounter.fetchAndAddRelaxed(1); // returns the old value
     setObjectName(QStringLiteral("KDirWatch-%1").arg(counter));
 
+#if HAVE_QFILESYSTEMWATCHER
     if (counter == 1) { // very first KDirWatch instance
         // Must delete QFileSystemWatcher before qApp is gone - bug 261541
         qAddPostRoutine(postRoutine_KDirWatch);
     }
+#endif
 }
 
 KDirWatch::~KDirWatch()
@@ -2017,12 +2021,14 @@ bool KDirWatch::contains(const QString &_path) const
     return false;
 }
 
+#if HAVE_QFILESYSTEMWATCHER
 void KDirWatch::deleteQFSWatcher()
 {
     delete d->fsWatcher;
     d->fsWatcher = nullptr;
     d = nullptr;
 }
+#endif
 
 void KDirWatch::setCreated(const QString &_file)
 {
