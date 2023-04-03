@@ -927,6 +927,7 @@ void KDirWatchPrivate::addEntry(KDirWatch *instance, const QString &_path, Entry
     }
 
     if (exists && e->isDir && (watchModes != KDirWatch::WatchDirOnly)) {
+        // recursive watch for folders
         QFlags<QDir::Filter> filters = QDir::NoDotAndDotDot;
 
         if ((watchModes & KDirWatch::WatchSubDirs) && (watchModes & KDirWatch::WatchFiles)) {
@@ -938,7 +939,7 @@ void KDirWatchPrivate::addEntry(KDirWatch *instance, const QString &_path, Entry
         }
 
 #if HAVE_SYS_INOTIFY_H
-        if (e->m_mode == INotifyMode || (e->m_mode == UnknownMode && m_preferredMethod == KDirWatch::INotify)) {
+        if (m_preferredMethod == KDirWatch::INotify) {
             // qCDebug(KDIRWATCH) << "Ignoring WatchFiles directive - this is implicit with inotify";
             // Placing a watch on individual files is redundant with inotify
             // (inotify gives us WatchFiles functionality "for free") and indeed
