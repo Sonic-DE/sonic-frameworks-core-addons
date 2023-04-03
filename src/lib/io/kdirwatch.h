@@ -209,12 +209,6 @@ public:
 
     void deleteQFSWatcher(); // KF6 TODO: remove from public API
 
-    /**
-     * Dump statistic information about the KDirWatch::self() instance.
-     * This checks for consistency, too.
-     */
-    static void statistics(); // TODO implement a QDebug operator for KDirWatch instead.
-
     enum Method {
         FAM,
         INotify,
@@ -302,6 +296,12 @@ Q_SIGNALS:
 private:
     KDirWatchPrivate *d;
 };
+
+/**
+ * Dump debug information about the KDirWatch::self() instance.
+ * This checks for consistency, too.
+ */
+QDebug operator<<(QDebug debug, const KDirWatch &watch);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KDirWatch::WatchModes)
 
