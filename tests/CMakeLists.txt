@@ -14,3 +14,9 @@ target_link_libraries(faceicontest Qt6::Widgets KF6::CoreAddons)
 
 add_executable(texttohtmltest ktexttohtmltest.cpp)
 target_link_libraries(texttohtmltest Qt6::Widgets KF6::CoreAddons)
+
+if (ENABLE_PCH)
+    target_precompile_headers(kdirwatchtest_gui REUSE_FROM KF6CoreAddons)
+    target_precompile_headers(faceicontest REUSE_FROM KF6CoreAddons)
+    target_precompile_headers(texttohtmltest REUSE_FROM KF6CoreAddons)
+endif()
