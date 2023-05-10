@@ -1,2 +1,2 @@
 include:
-  - https://invent.kde.org/alex/ci-utilities/-/raw/39b223299833846a955d652fa57c8132455e52c0/gitlab-templates/linting.yml
+  - https://invent.kde.org/alex/ci-utilities/-/raw/9b4f78736082abc7cc58c0b072671b35c4069351/gitlab-templates/linting.yml
