@@ -24,7 +24,7 @@ struct FsInfo {
     const char *name = nullptr;
 };
 
-static const std::array<FsInfo, 18> s_fsMap = {{
+static const std::array<FsInfo, 19> s_fsMap = {{
     {KFileSystemType::Nfs, "nfs"},
     {KFileSystemType::Smb, "smb"},
     {KFileSystemType::Fat, "fat"},
