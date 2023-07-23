@@ -53,3 +53,5 @@ kcoreaddons_target_static_plugins(kpluginmetadatatest NAMESPACE "staticnamespace
 kcoreaddons_target_static_plugins(kpluginmetadatatest NAMESPACE "staticnamespace2")
 # Make the last one use the target by targets list instead of namespace
 kcoreaddons_target_static_plugins(kpluginmetadatatest TARGETS static_plugin_without_metadata)
+
+install(TARGETS autotests_static static_plugin_without_metadata EXPORT KF6CoreAddonsPluginTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
