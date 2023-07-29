@@ -169,7 +169,6 @@ target_sources(KF6CoreAddons PRIVATE
     jobs/kjobuidelegate.h
     plugin/kpluginfactory.h
     plugin/kpluginmetadata.h
-    plugin/kstaticpluginhelpers.h
     randomness/krandom.h
     text/kjsonutils.h
     text/kfuzzymatcher.h
@@ -312,7 +311,6 @@ ecm_generate_headers(KCoreAddons_HEADERS
     HEADER_NAMES
         KPluginFactory
         KPluginMetaData
-        KStaticPluginHelpers
     RELATIVE plugin
     REQUIRED_HEADERS KCoreAddons_HEADERS
 )
