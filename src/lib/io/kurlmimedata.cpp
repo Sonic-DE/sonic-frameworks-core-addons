@@ -321,6 +321,9 @@ bool KUrlMimeData::exportUrlsToPortal(QMimeData *mimeData)
         }
         auto reply = iface->AddFiles(transferId, pendingFds, {});
         reply.waitForFinished();
+        if (reply.isError()) {
+            qCWarning(KCOREADDONS_DEBUG) << "Some files could not be exported. " << reply.error();
+        }
         pendingFds.clear();
     };
 
