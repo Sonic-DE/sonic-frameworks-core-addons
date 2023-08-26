@@ -161,4 +161,4 @@ install(FILES ${kcoreaddons_version_header} DESTINATION ${KDE_INSTALL_INCLUDEDIR
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
-kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
+kde_configure_git_pre_commit_hook(CHECKS JSON_SCHEMA CLANG_FORMAT)
