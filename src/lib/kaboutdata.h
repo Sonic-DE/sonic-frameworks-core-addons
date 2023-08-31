@@ -478,6 +478,115 @@ private:
 Q_DECLARE_TYPEINFO(KAboutComponent, Q_RELOCATABLE_TYPE);
 
 /**
+ * This class is used to store information about a ecological aspects of
+   the software, such as sustainability certifications.
+ *
+ * Example usage:
+ *
+ * @code
+ * KAboutData about("khello", i18n("KHello"), "0.1",
+ *                   i18n("A KDE version of Hello, world!"),
+ *                   KAboutLicense::LGPL,
+ *                   i18n("Copyright (C) 2014 Developer"));
+ *
+ * about.addEco();
+ * about.setEcoCertifications(QList<KAboutEco::EcoCertification>() << KAboutEco::KDEEco << KAboutEco::BlueAngel);
+ * about.setEnergyEfficiencyData(QUrl("https://invent.kde.org/teams/eco/blue-angel-application/-/blob/master/applications/okular/de-uz-215-eng-annex-7-okular.xml));
+ * about.setSourceCode(QUrl("https://invent.kde.org/graphics/okular"));
+ * @endcode
+ *
+ * @since 5.109
+ */
+class KCOREADDONS_EXPORT KAboutEco
+{
+    Q_GADGET
+    friend class KAboutData;
+    friend class KAboutDataPrivate;
+
+public:
+    /**
+     * Describes a sustainability certification a software may have received.
+     */
+    enum EcoCertification { KDEEco, BlueAngel };
+    Q_ENUM(EcoCertification)
+
+    /**
+     * Default constructor.
+     *
+     */
+    explicit KAboutEco();
+
+    /**
+     * Copy constructor. Performs a deep copy.
+     * @param other object to copy
+     */
+    KAboutEco(const KAboutEco &other);
+
+    ~KAboutEco();
+
+    /**
+     * Assignment operator. Performs a deep copy.
+     * @param other object to copy
+     */
+    KAboutEco &operator=(const KAboutEco &other);
+
+    /**
+     * A list of eco certifications the software has received.
+     */
+    QList<EcoCertification> ecoCertifications() const;
+
+    /**
+     * A link to information about energy efficiency data for the software.
+     */
+    QUrl energyEfficiencyData() const;
+
+    /**
+     * A link to information about minimal system requirements to run the software.
+     */
+    QUrl minimalSystemRequirements() const;
+
+    /**
+     * A link to the software's open license.
+     */
+    QUrl openLicense() const;
+
+    /**
+     * A link to the software's source code.
+     */
+    QUrl sourceCode() const;
+
+    /**
+     * A link to the software's API documentation.
+     */
+    QUrl apiDocumentation() const;
+
+    /**
+     * A link to the software's data format documentation.
+     */
+    QUrl dataFormatDocumentation() const;
+
+    /**
+     * A link to information about how to install and unninstall the software.
+     */
+    QUrl installUninstallDocumentation() const;
+
+    /**
+     * A link to KDE's code of conduct.
+     */
+    QUrl codeOfConduct() const;
+
+    /**
+     * A link to KDE's privacy policy.
+     */
+    QUrl privacyPolicy() const;
+
+private:
+    QSharedDataPointer<class KAboutEcoPrivate> d;
+};
+
+Q_DECLARE_TYPEINFO(KAboutEco, Q_RELOCATABLE_TYPE);
+
+/**
  * @class KAboutData kaboutdata.h KAboutData
  *
  * This class is used to store information about a program or plugin.
