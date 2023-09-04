@@ -242,7 +242,10 @@ QString KPluginMetaData::fileName() const
     return d->m_fileName;
 }
 
-QList<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter, KPluginMetaDataOption option)
+QList<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory,
+                                                    std::function<bool(const KPluginMetaData &)> filter,
+                                                    KPluginMetaDataOption option,
+                                                    const QList<KPluginMetaData> &previousPlugins)
 {
     QList<KPluginMetaData> ret;
     const auto staticPlugins = KStaticPluginHelpers::staticPlugins(directory);
@@ -256,7 +259,10 @@ QList<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory, st
     }
     QSet<QString> addedPluginIds;
     KPluginMetaDataPrivate::forEachPlugin(directory, [&](const QString &pluginFile) {
-        KPluginMetaData metadata(pluginFile, option);
+        const auto it = std::find_if(previousPlugins.begin(), previousPlugins.end(), [&pluginFile](const KPluginMetaData &data) {
+            return pluginFile == data.fileName();
+        });
+        KPluginMetaData metadata = it == previousPlugins.cend() ? KPluginMetaData(pluginFile, option) : *it;
         if (!metadata.isValid()) {
             qCDebug(KCOREADDONS_DEBUG) << pluginFile << "does not contain valid JSON metadata";
             return;
