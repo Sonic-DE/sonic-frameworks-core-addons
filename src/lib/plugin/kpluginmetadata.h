@@ -190,13 +190,16 @@ public:
      * @param filter a callback function that returns @c true if the found plugin should be loaded
      * and @c false if it should be skipped. If this argument is omitted all plugins will be loaded
      * @param option Weather or not allow plugins with empty metadata to be considered valid
+     * @param previousPlugins List of plugins that were queried previously and can be reused.
+     * This will avoid reloading the plugin and reparsing the JSON. Since 6.0
      *
      * @return all plugins found in @p directory that fulfil the constraints of @p filter
      * @since 5.86
      */
     static QList<KPluginMetaData> findPlugins(const QString &directory,
                                               std::function<bool(const KPluginMetaData &)> filter = {},
-                                              KPluginMetaDataOption option = KPluginMetaData::DoNotAllowEmptyMetaData);
+                                              KPluginMetaDataOption option = KPluginMetaData::DoNotAllowEmptyMetaData,
+                                              const QList<KPluginMetaData> &previousPlugins = {});
 
     /**
      * @return whether this object holds valid information about a plugin.
