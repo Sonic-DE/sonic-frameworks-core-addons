@@ -199,6 +199,18 @@ public:
                                               KPluginMetaDataOption option = KPluginMetaData::DoNotAllowEmptyMetaData);
 
     /**
+     * @copydoc findPlugins
+     * @param previousPlugins List of plugins that were queried previously and can be reused.
+     * This will avoid reloading the plugin and reparsing the JSON
+     * @note It is not recommended to use caching in combination with a specific filter, because then only a small subset of plugins can be reused
+     * @since 6.0
+     */
+    static QList<KPluginMetaData> findNewPlugins(const QString &directory,
+                                                 std::function<bool(const KPluginMetaData &)> filter,
+                                                 KPluginMetaDataOption option,
+                                                 const QList<KPluginMetaData> &previousPlugins);
+
+    /**
      * @return whether this object holds valid information about a plugin.
      * If this is @c true pluginId() will return a non-empty string.
      */
