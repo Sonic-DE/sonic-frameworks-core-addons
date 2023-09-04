@@ -46,10 +46,12 @@ public:
     const QString m_fileName;
     const KPluginMetaData::KPluginMetaDataOption m_option;
     std::optional<QStaticPlugin> staticPlugin = std::nullopt;
-    // We determine this once and reuse the value. It can never change during the lifetime of the KPluginMetaData object
+    // We determine this once and reuse the value. It can never change during the
+    // lifetime of the KPluginMetaData object
     QString m_pluginId;
+    qint64 m_lastQueriedTs = 0;
 
-    static void forEachPlugin(const QString &directory, std::function<void(const QString &)> callback)
+    static void forEachPlugin(const QString &directory, std::function<void(const QFileInfo &)> callback)
     {
         QStringList dirsToCheck;
 #ifdef Q_OS_ANDROID
@@ -60,7 +62,7 @@ public:
         } else {
             dirsToCheck = QCoreApplication::libraryPaths();
             const QString appDirPath = QCoreApplication::applicationDirPath();
-            dirsToCheck.removeAll(appDirPath);
+            dirsToCheck.removeOne(appDirPath);
             dirsToCheck.prepend(appDirPath);
 
             for (QString &libDir : dirsToCheck) {
@@ -84,7 +86,7 @@ public:
 #else
                 if (QLibrary::isLibrary(it.fileName())) {
 #endif
-                    callback(it.fileInfo().absoluteFilePath());
+                    callback(it.fileInfo());
                 }
             }
         }
@@ -95,7 +97,8 @@ public:
         QJsonObject metaData;
     };
     // This is only relevant in the findPlugins context and thus internal API.
-    // If one has a static plugin from QPluginLoader::staticPlugins and does not want it to have metadata, using KPluginMetaData makes no sense
+    // If one has a static plugin from QPluginLoader::staticPlugins and does not
+    // want it to have metadata, using KPluginMetaData makes no sense
     static KPluginMetaData
     ofStaticPlugin(const QString &pluginNamespace, const QString &fileName, KPluginMetaData::KPluginMetaDataOption option, QStaticPlugin plugin)
     {
@@ -166,11 +169,14 @@ KPluginMetaData::KPluginMetaData(const QString &pluginFile, KPluginMetaDataOptio
     if (const QString id = d->m_rootObj[QLatin1String("Id")].toString(); !id.isEmpty()) {
         if (id != d->m_pluginId) {
             qWarning(KCOREADDONS_DEBUG) << "The plugin" << pluginFile
-                                        << "explicitly states an Id in the embedded metadata, which is different from the one derived from the filename"
-                                        << "The Id field from the KPlugin object in the metadata should be removed";
+                                        << "explicitly states an Id in the embedded metadata, which is "
+                                           "different from the one derived from the filename"
+                                        << "The Id field from the KPlugin object in the metadata should be "
+                                           "removed";
         } else {
             qInfo(KCOREADDONS_DEBUG) << "The plugin" << pluginFile << "explicitly states an 'Id' in the embedded metadata."
-                                     << "This value should be removed, the resulting pluginId will not be affected by it";
+                                     << "This value should be removed, the resulting pluginId will not be "
+                                        "affected by it";
         }
     }
 }
@@ -179,8 +185,7 @@ KPluginMetaData::KPluginMetaData(const QPluginLoader &loader, KPluginMetaDataOpt
     : d(new KPluginMetaDataPrivate(loader.metaData().value(QLatin1String("MetaData")).toObject(), loader.fileName(), option))
 {
     if (!loader.fileName().isEmpty()) {
-        QFileInfo info(loader.fileName());
-        d->m_pluginId = info.completeBaseName();
+        d->m_pluginId = QFileInfo(loader.fileName()).completeBaseName();
     }
 }
 
@@ -242,8 +247,15 @@ QString KPluginMetaData::fileName() const
 {
     return d->m_fileName;
 }
-
 QList<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory, std::function<bool(const KPluginMetaData &)> filter, KPluginMetaDataOption option)
+{
+    return findNewPlugins(directory, filter, option, {});
+}
+
+QList<KPluginMetaData> KPluginMetaData::findNewPlugins(const QString &directory,
+                                                       std::function<bool(const KPluginMetaData &)> filter,
+                                                       KPluginMetaDataOption option,
+                                                       const QList<KPluginMetaData> &previousPlugins)
 {
     QList<KPluginMetaData> ret;
     const auto staticPlugins = KStaticPluginHelpers::staticPlugins(directory);
@@ -256,8 +268,24 @@ QList<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory, st
         }
     }
     QSet<QString> addedPluginIds;
-    KPluginMetaDataPrivate::forEachPlugin(directory, [&](const QString &pluginFile) {
-        KPluginMetaData metadata(pluginFile, option);
+    const qint64 nowTs = QDateTime::currentMSecsSinceEpoch(); // For the initial load, stating all
+                                                              // files is not needed
+    KPluginMetaDataPrivate::forEachPlugin(directory, [&](const QFileInfo &pluginInfo) {
+        const QString pluginFile = pluginInfo.absoluteFilePath();
+        const auto it = std::find_if(previousPlugins.begin(), previousPlugins.end(), [&pluginFile](const KPluginMetaData &data) {
+            return pluginFile == data.fileName();
+        });
+        bool isNew = it == previousPlugins.cend();
+        if (!isNew) {
+            const qint64 lastQueried = (*it).d->m_lastQueriedTs;
+            Q_ASSERT(lastQueried > 0);
+            isNew = lastQueried < pluginInfo.lastModified().toMSecsSinceEpoch();
+        }
+
+        KPluginMetaData metadata = isNew ? KPluginMetaData(pluginFile, option) : *it;
+        if (isNew) {
+            metadata.d->m_lastQueriedTs = nowTs;
+        }
         if (!metadata.isValid()) {
             qCDebug(KCOREADDONS_DEBUG) << pluginFile << "does not contain valid JSON metadata";
             return;
@@ -276,7 +304,8 @@ QList<KPluginMetaData> KPluginMetaData::findPlugins(const QString &directory, st
 
 bool KPluginMetaData::isValid() const
 {
-    // it can be valid even if m_fileName is empty (as long as the plugin id is set)
+    // it can be valid even if m_fileName is empty (as long as the plugin id is
+    // set)
     return !pluginId().isEmpty() && (!d->m_metaData.isEmpty() || d->m_option == AllowEmptyMetaData);
 }
 
@@ -289,7 +318,9 @@ static inline void addPersonFromJson(const QJsonObject &obj, QList<KAboutPerson>
 {
     KAboutPerson person = KAboutPerson::fromJSON(obj);
     if (person.name().isEmpty()) {
-        qCWarning(KCOREADDONS_DEBUG) << "Invalid plugin metadata: Attempting to create a KAboutPerson from JSON without 'Name' property:" << obj;
+        qCWarning(KCOREADDONS_DEBUG) << "Invalid plugin metadata: Attempting to create a KAboutPerson from "
+                                        "JSON without 'Name' property:"
+                                     << obj;
         return;
     }
     out->append(person);
