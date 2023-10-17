@@ -239,6 +239,11 @@ public:
      */
     static bool exists();
 
+    /**
+     * @brief Trivial override. See QObject::event.
+     */
+    bool event(QEvent *event) override;
+
 public Q_SLOTS:
 
     /**
