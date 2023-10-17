@@ -2,6 +2,7 @@
     This file is part of the KDE libraries
 
     SPDX-FileCopyrightText: 2009 David Faure <faure@kde.org>
+    SPDX-FileCopyrightText: 2023 Harald Sitter <sitter@kde.org>
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -74,6 +75,7 @@ private Q_SLOTS: // test methods
     void testHardlinkChange();
     void stopAndRestart();
     void testRefcounting();
+    void testMoveToThread();
 
 protected Q_SLOTS: // internal slots
     void nestedEventLoopSlot();
@@ -706,6 +708,31 @@ void KDirWatch_UnitTest::testRefcounting()
     QVERIFY(initialExists);
     QVERIFY(!secondExists);
 #endif
+}
+
+void KDirWatch_UnitTest::testMoveToThread()
+{
+    QTemporaryDir dir;
+    {
+        auto watch = new KDirWatch;
+        watch->addDir(dir.path());
+
+        auto thread = new QThread;
+        watch->moveToThread(thread);
+        thread->start();
+
+        waitUntilMTimeChange(dir.path());
+
+        QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+        QObject::connect(thread, &QThread::finished, watch, &QObject::deleteLater);
+
+        thread->quit();
+        thread->wait();
+    }
+    // trigger an event on the now deleted watch. This should not crash!
+    const QString file = dir.path() + QLatin1String("/bar");
+    createFile(file);
+    waitUntilMTimeChange(file);
 }
 
 #include "kdirwatch_unittest.moc"
