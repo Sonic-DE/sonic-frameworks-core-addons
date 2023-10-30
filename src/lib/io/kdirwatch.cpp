@@ -234,6 +234,10 @@ KDirWatchPrivate::~KDirWatchPrivate()
         }
     }
 
+    for (auto &referenceObject : m_referencesObjects) {
+        referenceObject->d = nullptr;
+    }
+
 #if HAVE_SYS_INOTIFY_H
     if (supports_inotify) {
         QT_CLOSE(m_inotify_fd);
@@ -1492,13 +1496,15 @@ bool KDirWatchPrivate::isNoisyFile(const char *filename)
     return false;
 }
 
-void KDirWatchPrivate::ref()
+void KDirWatchPrivate::ref(KDirWatch *watch)
 {
     ++m_references;
+    m_referencesObjects.push_back(watch);
 }
 
-void KDirWatchPrivate::unref()
+void KDirWatchPrivate::unref(KDirWatch *watch)
 {
+    m_referencesObjects.removeAll(watch);
     --m_references;
     if (m_references == 0) {
         destroyPrivate();
@@ -1616,7 +1622,7 @@ KDirWatch::KDirWatch(QObject *parent)
     : QObject(parent)
     , d(createPrivate())
 {
-    d->ref();
+    d->ref(this);
     static QBasicAtomicInt nameCounter = Q_BASIC_ATOMIC_INITIALIZER(1);
     const int counter = nameCounter.fetchAndAddRelaxed(1); // returns the old value
     setObjectName(QStringLiteral("KDirWatch-%1").arg(counter));
@@ -1626,7 +1632,7 @@ KDirWatch::~KDirWatch()
 {
     if (d) {
         d->removeEntries(this);
-        d->unref();
+        d->unref(this);
     }
 }
 
