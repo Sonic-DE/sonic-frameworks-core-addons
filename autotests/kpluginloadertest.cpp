@@ -185,8 +185,11 @@ private Q_SLOTS:
     void testLoadHints()
     {
         KPluginLoader aplugin(QStringLiteral("alwaysunloadplugin"));
+        QCOMPARE(aplugin.loadHints(), QLibrary::PreventUnloadHint);
         aplugin.setLoadHints(QLibrary::ResolveAllSymbolsHint);
-        QCOMPARE(aplugin.loadHints(), QLibrary::ResolveAllSymbolsHint);
+        // setLoadHints merges in this scenario in the patch collection but not in raw Qt5
+        QVERIFY(aplugin.loadHints() == (QLibrary::ResolveAllSymbolsHint | QLibrary::PreventUnloadHint)
+                || aplugin.loadHints() == QLibrary::ResolveAllSymbolsHint);
     }
 
     void testMetaData()
