@@ -40,7 +40,7 @@ QString KFormatPrivate::formatValue(double value,
                                     KFormat::BinaryUnitDialect dialect) const
 {
     if (dialect <= KFormat::DefaultBinaryDialect || dialect > KFormat::LastBinaryDialect) {
-        dialect = KFormat::IECBinaryDialect;
+        dialect = KFormat::JEDECBinaryDialect;
     }
 
     if (static_cast<int>(prefix) < static_cast<int>(KFormat::UnitPrefix::Yocto) || static_cast<int>(prefix) > static_cast<int>(KFormat::UnitPrefix::Yotta)) {
@@ -166,8 +166,8 @@ QString KFormatPrivate::formatValue(double value,
 
 QString KFormatPrivate::formatByteSize(double size, int precision, KFormat::BinaryUnitDialect dialect, KFormat::BinarySizeUnits units) const
 {
-    // Current KDE default is IECBinaryDialect
-    const auto fallbackDialect = KFormat::IECBinaryDialect;
+    // Current KDE default is JEDECBinaryDialect
+    const auto fallbackDialect = KFormat::JEDECBinaryDialect;
 
     if (dialect <= KFormat::DefaultBinaryDialect || dialect > KFormat::LastBinaryDialect) {
         const auto kdeglobals = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, QStringLiteral("kdeglobals"));
