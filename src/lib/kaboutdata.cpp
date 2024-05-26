@@ -268,7 +268,7 @@ QString KAboutLicense::text() const
     }
 
     if (knownLicense) {
-        pathToFile = QStringLiteral(":/org.kde.kcoreaddons/licenses") + pathToFile;
+        pathToFile = QStringLiteral(":/org.kde.kcoreaddons/licenses/") + pathToFile;
         result += QCoreApplication::translate("KAboutLicense", "This program is distributed under the terms of the %1.").arg(name(KAboutLicense::ShortName));
         if (!pathToFile.isEmpty()) {
             result += lineFeed;
