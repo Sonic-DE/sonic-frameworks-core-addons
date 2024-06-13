@@ -131,7 +131,12 @@ static QList<QUrl> extractPortalUriList(const QMimeData *mimeData)
     }
     auto iface =
         new OrgFreedesktopPortalFileTransferInterface(portalServiceName(), QStringLiteral("/org/freedesktop/portal/documents"), QDBusConnection::sessionBus());
-    const QStringList list = iface->RetrieveFiles(QString::fromUtf8(transferId), {});
+    const QDBusReply<QStringList> reply = iface->RetrieveFiles(QString::fromUtf8(transferId), {});
+    if (!reply.isValid()) {
+        qCWarning(KCOREADDONS_DEBUG) << "Failed to retrieve files from portal:" << reply.error();
+        return {};
+    }
+    const QStringList list = reply.value();
     QList<QUrl> uris;
     uris.reserve(list.size());
     for (const auto &path : list) {
