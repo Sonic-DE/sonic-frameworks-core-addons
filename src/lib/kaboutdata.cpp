@@ -12,6 +12,7 @@
 */
 
 #include "kaboutdata.h"
+#include "KOSRelease"
 #include "kjsonutils.h"
 
 #include <QCommandLineOption>
@@ -560,6 +561,12 @@ KAboutData::KAboutData(const QString &_componentName,
     hostComponents.append(_componentName);
 
     d->desktopFileName = hostComponents.join(dotChar);
+
+    addComponent(QStringLiteral("KDE Frameworks"), QStringLiteral(""), QStringLiteral(KCOREADDONS_VERSION_STRING));
+    addComponent(QStringLiteral("The %1 windowing system").arg(QStringLiteral("Wayland")));
+    addComponent(QStringLiteral("Qt"),
+                 QStringLiteral(""),
+                 QStringLiteral("%2 (built against %3)").arg(QString::fromLocal8Bit(qVersion()), QStringLiteral(QT_VERSION_STR)));
 }
 
 KAboutData::KAboutData(const QString &_componentName, const QString &_displayName, const QString &_version)
@@ -1142,7 +1149,7 @@ bool KAboutData::setupCommandLine(QCommandLineParser *parser)
 
     QCoreApplication *app = QCoreApplication::instance();
     if (app && !app->applicationVersion().isEmpty()) {
-        parser->addVersionOption();
+        parser->addOption(QCommandLineOption(QStringLiteral("version"), QCoreApplication::translate("KAboutData CLI", "Displays version information.")));
     }
 
     return parser->addOption(QCommandLineOption(QStringLiteral("author"), QCoreApplication::translate("KAboutData CLI", "Show author information.")))
@@ -1184,6 +1191,12 @@ void KAboutData::processCommandLine(QCommandLineParser *parser)
         for (const KAboutLicense &license : std::as_const(d->_licenseList)) {
             printf("%s\n", qPrintable(license.text()));
         }
+    } else if (parser->isSet(QStringLiteral("version"))) {
+        foundArgument = true;
+        printf("Operating System: %s\n", qPrintable(QSysInfo::prettyProductName()));
+        printf("%s Version: %s\n", qPrintable(d->_displayName), d->_version.constData());
+        printf("KDE Frameworks Version: %s\n", KCOREADDONS_VERSION_STRING);
+        printf("Qt Version: %s\n", QT_VERSION_STR);
     }
 
     const QString desktopFileName = parser->value(QStringLiteral("desktopfile"));
