@@ -24,6 +24,7 @@ include(ECMQtDeclareLoggingCategory)
 include(ECMAddQch)
 include(ECMSetupQtPluginMacroNames)
 include(ECMDeprecationSettings)
+include(ECMGenerateQDoc)
 
 set(EXCLUDE_DEPRECATED_BEFORE_AND_AT 0 CACHE STRING "Control the range of deprecated API excluded from the build [default=0].")
 
@@ -157,6 +158,8 @@ install(FILES
     DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     COMPONENT Devel
 )
+
+ecm_generate_qdoc(KF6CoreAddons kcoreaddons.qdocconf)
 
 install(EXPORT KF6CoreAddonsTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KF6CoreAddonsTargets.cmake NAMESPACE KF6::)
 
