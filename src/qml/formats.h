@@ -10,17 +10,30 @@
 #include <KFormat>
 #include <QObject>
 
+/*!
+ * \qmltype Format
+ * \inqmlmodule org.kde.coreaddons
+ *
+ * Provides support for formatting numbers and datetimes in
+ * formats that are not supported by QLocale.
+ *
+ * \sa KFormat
+ */
 class Formats : public QObject
 {
     Q_OBJECT
 
 public:
-    /**
-     * Converts size from bytes to the appropriate string representation
+    /*!
+     * \qmlmethod string Format::formatByteSize(double size, int precision = 1)
+     *
+     * Converts \a size from bytes to the appropriate string representation
      */
     Q_INVOKABLE QString formatByteSize(double size, int precision = 1) const;
 
-    /**
+    /*!
+     * \qmlmethod string Format::formatDuration(int msecs, KFormat::DurationFormatOptions options = KFormat::DefaultDuration)
+     *
      * Given a number of milliseconds, converts that to a string containing
      * the localized equivalent, e.g. 1:23:45
      */
@@ -28,7 +41,9 @@ public:
 
     Q_DECLARE_FLAGS(DurationFormatOptions, KFormat::DurationFormatOption)
 
-    /**
+    /*!
+     * \qmlmethod string Format::formatDuration (int msecs, int options)
+     *
      * This overload exists so it can be called from QML, which does
      * not support calling Q_INVOKABLEs with Q_ENUMS from different classes
      *
@@ -37,7 +52,9 @@ public:
      */
     Q_INVOKABLE QString formatDuration(quint64 msecs, int options) const;
 
-    /**
+    /*!
+     * \qmlmethod string formatDecimalDuration(int msecs, int decimalPlaces = 2)
+     *
      * Given a number of milliseconds, converts that to a string containing
      * the localized equivalent to the requested decimal places.
      *
@@ -45,7 +62,9 @@ public:
      */
     Q_INVOKABLE QString formatDecimalDuration(quint64 msecs, int decimalPlaces = 2) const;
 
-    /**
+    /*!
+     * \qmlmethod string formatSpelloutDuration(int msecs)
+     *
      * Given a number of milliseconds, converts that to a spell-out string containing
      * the localized equivalent.
      *
@@ -60,7 +79,9 @@ public:
      */
     Q_INVOKABLE QString formatSpelloutDuration(quint64 msecs) const;
 
-    /**
+    /*!
+     * \qmlmethod string Format::formatRelativeDate(date date, format)
+     *
      * Returns a string formatted to a relative date style.
      *
      * If the date falls within one week before or after the current date
@@ -75,7 +96,9 @@ public:
      */
     Q_INVOKABLE QString formatRelativeDate(const QDate &date, QLocale::FormatType format) const;
 
-    /**
+    /*!
+     * \qmlmethod string Format::formatRelativeDate(QDateTime date, format)
+     *
      * Returns a string formatted to a relative datetime style.
      *
      * If the dateTime falls within one week before or after the current date
