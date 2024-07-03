@@ -1,0 +1,10 @@
+/*!
+    \module KCoreAddons
+    \title KCoreAddons C++ Classes
+    \ingroup modules
+    \qtcmakepackage CoreAddons
+
+    \brief Provides core non-GUI functionality.
+
+    Stuff
+*/
