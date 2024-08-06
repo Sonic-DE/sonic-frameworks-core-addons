@@ -191,6 +191,7 @@ endif()
 
 
 set(kcoreaddons_INCLUDE_DIRS
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/caching/
     ${CMAKE_CURRENT_BINARY_DIR}/io/
     ${CMAKE_CURRENT_SOURCE_DIR}/io/
