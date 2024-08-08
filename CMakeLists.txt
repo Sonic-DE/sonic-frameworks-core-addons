@@ -24,6 +24,7 @@ include(ECMQtDeclareLoggingCategory)
 include(ECMAddQch)
 include(ECMSetupQtPluginMacroNames)
 include(ECMDeprecationSettings)
+include(ECMGenerateQDoc)
 
 set(EXCLUDE_DEPRECATED_BEFORE_AND_AT 0 CACHE STRING "Control the range of deprecated API excluded from the build [default=0].")
 
@@ -157,44 +158,6 @@ install(FILES
     DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     COMPONENT Devel
 )
-
-function(ecm_generate_qdoc)
-
-    find_package(Qt6Tools REQUIRED)
-
-    set(target ${ARGV0})
-    set(doc_project ${ARGV1})
-
-    set(target_include_dirs_file ${CMAKE_CURRENT_BINARY_DIR}/qdocincludes.txt)
-
-    set(include_paths_property "$<TARGET_PROPERTY:${target},INCLUDE_DIRECTORIES>")
-    file(GENERATE
-        OUTPUT ${target_include_dirs_file}
-        CONTENT "$<$<BOOL:${include_paths_property}>:-I$<JOIN:${include_paths_property},\n-I>>"
-    )
-    set(include_path_args "@${target_include_dirs_file}")
-
-    ecm_query_qt(docs_dir QT_INSTALL_DOCS)
-
-    set(qdoc_env_args
-        "QT_INSTALL_DOCS=${docs_dir}"
-        "QT_VERSION=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-        "QT_VER=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
-        "QT_VERSION_TAG=${PROJECT_VERSION_MAJOR}${PROJECT_VERSION_MINOR}${PROJECT_VERSION_PATCH}"
-        "BUILDDIR=${CMAKE_CURRENT_BINARY_DIR}"
-    )
-
-    get_target_property(qdoc_bin Qt6::qdoc LOCATION)
-
-    add_custom_target(docs
-            COMMAND ${CMAKE_COMMAND} -E env ${qdoc_env_args}
-            ${qdoc_bin}
-            # ${qdoc_args}
-            -indexdir=/usr/share/doc/qt6
-            ${CMAKE_CURRENT_SOURCE_DIR}/${doc_project}
-            ${include_path_args}
-        )
-endfunction()
 
 ecm_generate_qdoc(KF6CoreAddons kcoreaddons.qdocconf)
 
