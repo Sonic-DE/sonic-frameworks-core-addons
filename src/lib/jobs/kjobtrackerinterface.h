@@ -172,6 +172,16 @@ protected Q_SLOTS:
      */
     virtual void speed(KJob *job, unsigned long value);
 
+    /**
+     * Called to show the time the job has been running for.
+     *
+     * @param job the job that emitted this signal
+     * @param value the time the job has been running for in ms
+     *
+     * @since 6.8
+     */
+    virtual void elapsedTime(KJob *job, qint64 elapsedTime);
+
 private:
     std::unique_ptr<class KJobTrackerInterfacePrivate> const d;
 };
