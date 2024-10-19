@@ -113,4 +113,10 @@ void KJobTrackerInterface::speed(KJob *job, unsigned long value)
     Q_UNUSED(value)
 }
 
+void KJobTrackerInterface::elapsedTime(KJob *job, qint64 elapsedTime)
+{
+    Q_UNUSED(job)
+    Q_UNUSED(elapsedTime)
+}
+
 #include "moc_kjobtrackerinterface.cpp"
