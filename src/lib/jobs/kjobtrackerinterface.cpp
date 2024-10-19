@@ -43,6 +43,9 @@ void KJobTrackerInterface::registerJob(KJob *job)
     connect(job, &KJob::warning, this, &KJobTrackerInterface::warning);
     connect(job, &KJob::totalAmountChanged, this, &KJobTrackerInterface::totalAmount);
     connect(job, &KJob::processedAmountChanged, this, &KJobTrackerInterface::processedAmount);
+    connect(job, &KJob::processedAmountChanged, this, [this, job]() {
+        elapsedTime(job, job->elapsedTime());
+    });
     connect(job, &KJob::percentChanged, this, &KJobTrackerInterface::percent);
     connect(job, &KJob::speed, this, &KJobTrackerInterface::speed);
 }
@@ -111,6 +114,12 @@ void KJobTrackerInterface::speed(KJob *job, unsigned long value)
 {
     Q_UNUSED(job)
     Q_UNUSED(value)
+}
+
+void KJobTrackerInterface::elapsedTime(KJob *job, qint64 elapsedTime)
+{
+    Q_UNUSED(job)
+    Q_UNUSED(elapsedTime)
 }
 
 #include "moc_kjobtrackerinterface.cpp"
