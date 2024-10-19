@@ -80,6 +80,8 @@ private Q_SLOTS:
     void testEmitAtMostOnce();
     void testDelegateUsage();
     void testNestedExec();
+    void testElapseTime();
+    void testElapseTimeSuspendResume();
 
     void slotResult(KJob *job);
     void slotFinished(KJob *job);
@@ -104,6 +106,10 @@ class WaitJob : public KJob
 public:
     void start() override;
     void makeItFinish();
+    void setStart(std::function<void()> func);
+
+private:
+    std::optional<std::function<void()>> m_startFunc;
 };
 
 #endif
