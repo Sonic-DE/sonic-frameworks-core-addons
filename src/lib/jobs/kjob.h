@@ -178,6 +178,7 @@ public:
      * }
      * \endcode
      */
+    // TODO KF7 make it non-virtual and expose a doStart protected instead
     Q_SCRIPTABLE virtual void start() = 0;
 
     enum KillVerbosity {
@@ -407,6 +408,19 @@ public:
      */
     bool isStartedWithExec() const;
 
+    /**
+     * The number of milliseconds the job has been running for.
+     * Starting from the last `start()` call.
+     *
+     * Sub-classes must call startElapsedTimer() from their `start()` implementation, to get `elapsedTime()` measurement.
+     * Otherwise this method will always return 0.
+     *
+     * The time when paused is excluded.
+     *
+     * @since 6.8
+     */
+    qint64 elapsedTime();
+
 Q_SIGNALS:
     /**
      * Emitted when the job is finished, in any case. It is used to notify
@@ -629,6 +643,13 @@ Q_SIGNALS:
      */
     void speed(KJob *job, unsigned long speed);
 
+    /**
+     * Emitted when processed amount changes with `elapsedTime()` value.
+     *
+     * @since 6.8
+     */
+    void elapsedTime(KJob *job, qint64 elapsedTime);
+
 protected:
     /**
      * Returns if the job has been finished and has emitted the finished() signal.
@@ -746,6 +767,16 @@ protected:
      * @param speed the speed in bytes/s
      */
     void emitSpeed(unsigned long speed);
+
+    /**
+     * Starts the internal elapsed time measurement timer.
+     *
+     * Sub-classes must call startElapsedTimer() from their `start()` implementation, to get `elapsedTime()` measurement.
+     * Otherwise `elapsedTimer()` method will always return 0.
+     *
+     * @since 6.8
+     */
+    void startElapsedTimer();
 
 protected:
     std::unique_ptr<KJobPrivate> const d_ptr;
