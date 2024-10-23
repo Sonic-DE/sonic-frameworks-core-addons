@@ -211,10 +211,6 @@ QString KAboutLicense::text() const
 
     const QString lineFeed = QStringLiteral("\n\n");
 
-    if (d->_aboutData && !d->_aboutData->copyrightStatement().isEmpty()) {
-        result = d->_aboutData->copyrightStatement() + lineFeed;
-    }
-
     bool knownLicense = false;
     QString pathToFile; // rel path if known license
     switch (d->_licenseKey) {
