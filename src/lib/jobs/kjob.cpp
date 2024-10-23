@@ -166,8 +166,11 @@ bool KJob::resume()
         if (doResume()) {
             d->suspended = false;
 
-            d->elapsedTimer = std::make_unique<QElapsedTimer>();
-            d->elapsedTimer->start();
+            // If the timer was never started previously, the reported time is wrong, so we rather keep it at zero.
+            if (d->accumulatedElapsedTime > 0) {
+                d->elapsedTimer = std::make_unique<QElapsedTimer>();
+                d->elapsedTimer->start();
+            }
 
             Q_EMIT resumed(this, QPrivateSignal());
 
