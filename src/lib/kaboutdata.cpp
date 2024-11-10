@@ -29,6 +29,8 @@
 
 #include <algorithm>
 
+using namespace Qt::StringLiterals;
+
 Q_DECLARE_LOGGING_CATEGORY(KABOUTDATA)
 // logging category for this framework, default: log stuff >= warning
 Q_LOGGING_CATEGORY(KABOUTDATA, "kf.coreaddons.kaboutdata", QtWarningMsg)
@@ -144,8 +146,10 @@ QString KAboutLicensePrivate::spdxID() const
         return QStringLiteral("GPL-2.0");
     case KAboutLicense::LGPL_V2:
         return QStringLiteral("LGPL-2.0");
-    case KAboutLicense::BSDL:
+    case KAboutLicense::BSD_2_Clause:
         return QStringLiteral("BSD-2-Clause");
+    case KAboutLicense::BSD_3_Clause:
+        return QStringLiteral("BSD-3-Clause");
     case KAboutLicense::Artistic:
         return QStringLiteral("Artistic-1.0");
     case KAboutLicense::GPL_V3:
@@ -156,6 +160,16 @@ QString KAboutLicensePrivate::spdxID() const
         return QStringLiteral("LGPL-2.1");
     case KAboutLicense::MIT:
         return QStringLiteral("MIT");
+    case KAboutLicense::ODbL_V1:
+        return QStringLiteral("ODbL-1.0");
+    case KAboutLicense::Apache_V2:
+        return QStringLiteral("Apache-2.0");
+    case KAboutLicense::FTL:
+        return QStringLiteral("FTL");
+    case KAboutLicense::BSL_V1:
+        return QStringLiteral("BSL-1.0");
+    case KAboutLicense::CC0_V1:
+        return QStringLiteral("CC0-1.0");
     case KAboutLicense::Custom:
     case KAboutLicense::File:
     case KAboutLicense::Unknown:
@@ -254,6 +268,18 @@ QString KAboutLicense::text() const
         knownLicense = true;
         pathToFile = QStringLiteral("MIT");
         break;
+    case KAboutLicense::ODbL_V1:
+    case KAboutLicense::Apache_V2:
+    case KAboutLicense::FTL:
+    case KAboutLicense::BSL_V1:
+    case KAboutLicense::BSD_3_Clause:
+    case KAboutLicense::CC0_V1:
+        knownLicense = true;
+        result += QCoreApplication::translate("KAboutLicense", "This program is distributed under the terms of the %1.").arg(name(KAboutLicense::ShortName))
+            + u"\n\n"_s
+            + QCoreApplication::translate("KAboutLicense", "You can find the full term <a href=\"https://spdx.org/licenses/%1.html\">the SPDX website</a>")
+                  .arg(d->spdxID());
+        break;
     case KAboutLicense::Custom:
         if (!d->_licenseText.isEmpty()) {
             result = d->_licenseText;
@@ -344,6 +370,30 @@ QString KAboutLicense::name(KAboutLicense::NameFormat formatName) const
     case KAboutLicense::MIT:
         licenseShort = QCoreApplication::translate("KAboutLicense", "MIT License", "@item license (short name)");
         licenseFull = QCoreApplication::translate("KAboutLicense", "MIT License", "@item license");
+        break;
+    case KAboutLicense::CC0_V1:
+        licenseShort = QCoreApplication::translate("KAboutLicense", "CC0", "@item license (short name)");
+        licenseFull = QCoreApplication::translate("KAboutLicense", "Creative Commons Zero", "@item license");
+        break;
+    case KAboutLicense::ODbL_V1:
+        licenseShort = QCoreApplication::translate("KAboutLicense", "ODbL v1.0", "@item license (short name)");
+        licenseFull = QCoreApplication::translate("KAboutLicense", "Open Data Commons Open Database License v1.0", "@item license");
+        break;
+    case KAboutLicense::Apache_V2:
+        licenseShort = QCoreApplication::translate("KAboutLicense", "Apache 2.0", "@item license (short name)");
+        licenseFull = QCoreApplication::translate("KAboutLicense", "Apache License 2.0", "@item license");
+        break;
+    case KAboutLicense::FTL:
+        licenseShort = QCoreApplication::translate("KAboutLicense", "FTL", "@item license (short name)");
+        licenseFull = QCoreApplication::translate("KAboutLicense", "Freetype Project License", "@item license");
+        break;
+    case KAboutLicense::BSL_V1:
+        licenseShort = QCoreApplication::translate("KAboutLicense", "Boost License", "@item license (short name)");
+        licenseFull = QCoreApplication::translate("KAboutLicense", "Boost Software License 1.0", "@item license");
+        break;
+    case KAboutLicense::BSD_3_Clause:
+        licenseShort = QCoreApplication::translate("KAboutLicense", "BSD-3-Clause", "@item license (short name)");
+        licenseFull = QCoreApplication::translate("KAboutLicense", "BSD 3-Clause \"New\" or \"Revised\" License", "@item license");
         break;
     case KAboutLicense::Custom:
     case KAboutLicense::File:
