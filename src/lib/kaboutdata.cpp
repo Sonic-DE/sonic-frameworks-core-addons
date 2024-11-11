@@ -226,7 +226,8 @@ QString KAboutLicense::text() const
     const QString lineFeed = QStringLiteral("\n\n");
 
     if (d->_aboutData && !d->_aboutData->copyrightStatement().isEmpty()
-        && (d->_licenseKey == KAboutLicense::BSDL || d->_licenseKey == KAboutLicense::MIT || d->_licenseKey == KAboutLicense::Artistic)) {
+        && (d->_licenseKey == KAboutLicense::BSD_2_Clause || d->_licenseKey == KAboutLicense::BSD_3_Clause || d->_licenseKey == KAboutLicense::MIT
+            || d->_licenseKey == KAboutLicense::Artistic)) {
         result = d->_aboutData->copyrightStatement() + lineFeed;
     }
 
@@ -244,7 +245,7 @@ QString KAboutLicense::text() const
         knownLicense = true;
         pathToFile = QStringLiteral("LGPL_V2");
         break;
-    case KAboutLicense::BSDL:
+    case KAboutLicense::BSD_2_Clause:
         knownLicense = true;
         pathToFile = QStringLiteral("BSD");
         break;
@@ -347,7 +348,7 @@ QString KAboutLicense::name(KAboutLicense::NameFormat formatName) const
         licenseShort = QCoreApplication::translate("KAboutLicense", "LGPL v2", "@item license (short name)");
         licenseFull = QCoreApplication::translate("KAboutLicense", "GNU Lesser General Public License Version 2", "@item license");
         break;
-    case KAboutLicense::BSDL:
+    case KAboutLicense::BSD_2_Clause:
         licenseShort = QCoreApplication::translate("KAboutLicense", "BSD License", "@item license (short name)");
         licenseFull = QCoreApplication::translate("KAboutLicense", "BSD License", "@item license");
         break;
@@ -429,7 +430,8 @@ KAboutLicense KAboutLicense::byKeyword(const QString &rawKeyword)
         {"gpl20+", KAboutLicense::GPL_V2},     {"lgpl", KAboutLicense::LGPL},
         {"lgplv2", KAboutLicense::LGPL_V2},    {"lgplv2+", KAboutLicense::LGPL_V2},
         {"lgpl20", KAboutLicense::LGPL_V2},    {"lgpl20+", KAboutLicense::LGPL_V2},
-        {"bsd", KAboutLicense::BSDL},          {"bsd2clause", KAboutLicense::BSDL},
+        {"bsd", KAboutLicense::BSD_2_Clause},  {"bsd2clause", KAboutLicense::BSD_2_Clause},
+        {"apache", KAboutLicense::Apache_V2},  {"bsd3clause", KAboutLicense::BSD_3_Clause},
         {"artistic", KAboutLicense::Artistic}, {"artistic10", KAboutLicense::Artistic},
         {"gplv3", KAboutLicense::GPL_V3},      {"gplv3+", KAboutLicense::GPL_V3},
         {"gpl30", KAboutLicense::GPL_V3},      {"gpl30+", KAboutLicense::GPL_V3},
