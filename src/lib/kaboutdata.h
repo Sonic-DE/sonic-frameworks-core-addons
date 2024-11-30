@@ -205,8 +205,8 @@ public:
         GPL_V2 = GPL, ///< GPL_V2, this has the same value as LicenseKey::GPL, see https://spdx.org/licenses/GPL-2.0.html
         LGPL = 2, ///< LGPL
         LGPL_V2 = LGPL, ///< LGPL_V2, this has the same value as LicenseKey::LGPL, see https://spdx.org/licenses/LGPL-2.0-only.html
-#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(6, 10)
-        BSDL [[deprecated("Since 6.10 use BSD_2_Clause")]] = 3, ///< BSDL, see https://spdx.org/licenses/BSD-2-Clause.html
+#if KCOREADDONS_ENABLE_DEPRECATED_SINCE(6, 9)
+        BSDL KCOREADDONS_ENUMERATOR_DEPRECATED_VERSION(6, 9, "Use BSD_2_Clause") = 3, ///< BSDL, see https://spdx.org/licenses/BSD-2-Clause.html
 #endif
         BSD_2_Clause = 3, ///< BSD_2_CLAUSE, see https://spdx.org/licenses/BSD-2-Clause.html
         Artistic = 4, ///< Artistic, see https://spdx.org/licenses/Artistic-2.0.html
