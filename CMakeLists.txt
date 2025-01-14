@@ -96,9 +96,9 @@ cmake_dependent_option(BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON "TARG
 add_feature_info(PYTHON_BINDINGS ${BUILD_PYTHON_BINDINGS} "Python bindings")
 
 # FreeBSD CI is missing required packages
-if (CMAKE_SYSTEM_NAME MATCHES FreeBSD)
-    set(BUILD_PYTHON_BINDINGS OFF)
-endif()
+# if (CMAKE_SYSTEM_NAME MATCHES FreeBSD)
+#     set(BUILD_PYTHON_BINDINGS OFF)
+# endif()
 
 # shall we use DBus?
 # enabled per default on Linux & BSD systems
