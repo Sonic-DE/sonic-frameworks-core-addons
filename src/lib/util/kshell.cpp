@@ -43,7 +43,7 @@ QString KShell::tildeExpand(const QString &fname)
     if (!fname.isEmpty() && fname[0] == QLatin1Char('~')) {
         int pos = fname.indexOf(QLatin1Char('/'));
         if (pos < 0) {
-            auto expandedValue = homeDir(fname.mid(1));
+            const auto expandedValue = homeDir(fname.mid(1));
             if (expandedValue.isEmpty()) {
                 return fname;
             }
