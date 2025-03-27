@@ -11,6 +11,7 @@
 #include <KAutoSaveFile>
 #include <KBackup>
 #include <KCompositeJob>
+#include <KCompoundJob>
 #include <KCoreAddons>
 #include <KDirWatch>
 #include <KFileSystemType>
@@ -34,6 +35,7 @@
 #include <KRandom>
 #include <KRuntimePlatform>
 #include <KSandbox>
+#include <KSequentialCompoundJob>
 #include <KSharedDataCache>
 #include <KShell>
 #include <KSignalHandler>
