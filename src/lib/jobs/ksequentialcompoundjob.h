@@ -34,19 +34,19 @@ class KCOREADDONS_EXPORT KSequentialCompoundJob : public KCompoundJob
     Q_OBJECT
 public:
     /**
-     * Creates a new KSequentialCompoundJob object.
+     * Create a new KSequentialCompoundJob object.
      *
      * @param parent the parent QObject
      */
     explicit KSequentialCompoundJob(QObject *parent = nullptr);
 
     /**
-     * Destroys a KSequentialCompoundJob object.
+     * Destroy a KSequentialCompoundJob object.
      */
     ~KSequentialCompoundJob() override;
 
     /**
-     * Configures whether this compound job finishes as soon as
+     * Configure whether this compound job finishes as soon as
      * a subjob finishes with error.
      *
      * By default, unless @p abort is set to @c false, when a subjob
@@ -56,7 +56,7 @@ public:
     void setAbortOnSubjobError(bool abort);
 
     /**
-     * Starts running subjobs beginning with the first subjob in the list
+     * Start running subjobs beginning with the first subjob in the list.
      */
     void start() override;
 
@@ -83,7 +83,7 @@ protected Q_SLOTS:
 
 protected:
     /**
-     * Adds a subjob that will run once all preceding subjobs finish
+     * Add a subjob that will run once all preceding subjobs finish.
      *
      * If possible, all subjobs should be added before calling start().
      * If a subjob is added after the compound job's percent() becomes
@@ -93,6 +93,9 @@ protected:
      */
     bool addSubjob(KJob *job) override;
 
+    /**
+     * Kill this job and the subjob that is currently running, if any.
+     */
     bool doKill() override;
 
     KCOREADDONS_NO_EXPORT KSequentialCompoundJob(KSequentialCompoundJobPrivate &dd, QObject *parent);
