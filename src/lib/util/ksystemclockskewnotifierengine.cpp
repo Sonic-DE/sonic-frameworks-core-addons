@@ -10,7 +10,7 @@
 
 #if defined(Q_OS_LINUX)
 #include "ksystemclockskewnotifierengine_linux.h"
-#elif defined(HAVE_QTDBUS)
+#elif HAVE_QTDBUS
 #include "ksystemclockskewnotifierengine_dbus.h"
 #endif
 
@@ -18,7 +18,7 @@ KSystemClockSkewNotifierEngine *KSystemClockSkewNotifierEngine::create(QObject *
 {
 #if defined(Q_OS_LINUX)
     return KLinuxSystemClockSkewNotifierEngine::create(parent);
-#elif defined(HAVE_QTDBUS)
+#elif HAVE_QTDBUS
     return KDBusSystemClockSkewNotifierEngine::create(parent);
 #else
     return nullptr;
