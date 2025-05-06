@@ -16,7 +16,7 @@
 
 KSystemClockSkewNotifierEngine *KSystemClockSkewNotifierEngine::create(QObject *parent)
 {
-#if defined(Q_OS_LINUX)
+#if defined(Q_OS_LINUX) || defined(Q_OS_ANDROID)
     return KLinuxSystemClockSkewNotifierEngine::create(parent);
 #elif HAVE_QTDBUS
     return KDBusSystemClockSkewNotifierEngine::create(parent);

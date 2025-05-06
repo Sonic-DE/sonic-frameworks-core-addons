@@ -180,7 +180,7 @@ target_sources(KF6CoreAddons PRIVATE
     util/kruntimeplatform.h
 )
 
-if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Android")
     target_sources(KF6CoreAddons PRIVATE util/ksystemclockskewnotifierengine_linux.cpp)
 elseif(HAVE_QTDBUS)
     target_sources(KF6CoreAddons PRIVATE util/ksystemclockskewnotifierengine_dbus.cpp)
