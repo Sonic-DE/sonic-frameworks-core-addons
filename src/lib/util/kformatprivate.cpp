@@ -358,14 +358,14 @@ QString KFormatPrivate::formatDuration(quint64 msecs, KFormat::DurationFormatOpt
         ms = qRound64(ms / (qreal)MSecsInSecond) * MSecsInSecond;
     }
 
-    int hours = ms / MSecsInHour;
-    ms = ms % MSecsInHour;
-    int minutes = ms / MSecsInMinute;
-    ms = ms % MSecsInMinute;
-    int seconds = ms / MSecsInSecond;
-    ms = ms % MSecsInSecond;
-
     if ((options & KFormat::InitialDuration) == KFormat::InitialDuration) {
+        int hours = ms / MSecsInHour;
+        ms = ms % MSecsInHour;
+        int minutes = ms / MSecsInMinute;
+        ms = ms % MSecsInMinute;
+        int seconds = ms / MSecsInSecond;
+        ms = ms % MSecsInSecond;
+
         if ((options & KFormat::FoldHours) == KFormat::FoldHours && (options & KFormat::ShowMilliseconds) == KFormat::ShowMilliseconds) {
             //: @item:intext Duration format minutes, seconds and milliseconds
             return tr("%1m%2.%3s").arg(hours * 60 + minutes, 1, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0')).arg(ms, 3, 10, QLatin1Char('0'));
@@ -382,65 +382,77 @@ QString KFormatPrivate::formatDuration(quint64 msecs, KFormat::DurationFormatOpt
                 .arg(minutes, 2, 10, QLatin1Char('0'))
                 .arg(seconds, 2, 10, QLatin1Char('0'))
                 .arg(ms, 3, 10, QLatin1Char('0'));
-        } else { // Default
-            //: @item:intext Duration format hours, minutes, seconds
-            return tr("%1h%2m%3s").arg(hours, 1, 10, QLatin1Char('0')).arg(minutes, 2, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0'));
         }
 
-    } else if (options & KFormat::AbbreviatedDuration) {
+        //: @item:intext Duration format hours, minutes, seconds
+        return tr("%1h%2m%3s").arg(hours, 1, 10, QLatin1Char('0')).arg(minutes, 2, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0'));
+    }
+
+    int days = 0;
+    if (options & KFormat::AbbreviatedDuration) {
+        days = ms / MSecsInDay;
+        ms = ms % MSecsInDay;
+    }
+    int hours = ms / MSecsInHour;
+    ms = ms % MSecsInHour;
+    int minutes = ms / MSecsInMinute;
+    ms = ms % MSecsInMinute;
+    int seconds = ms / MSecsInSecond;
+    ms = ms % MSecsInSecond;
+
+    if (options & KFormat::AbbreviatedDuration) {
         if (options & KFormat::FoldHours) {
-            minutes += 60 * hours;
+            minutes += 60 * hours + 60 * 24 * days;
             hours = 0;
+            days = 0;
         }
 
-        if (hours == 0 && minutes == 0) {
+        if (days == 0 && hours == 0 && minutes == 0) {
             return (options & KFormat::HideSeconds) ? formatSingleAbbreviatedDuration(Minutes, minutes) : formatSingleAbbreviatedDuration(Seconds, seconds);
         }
 
-        if (hours == 0) {
-            if (options & KFormat::HideSeconds) {
-                return formatSingleAbbreviatedDuration(Minutes, minutes);
+        if (days != 0) {
+            if (hours == 0) {
+                return formatSingleAbbreviatedDuration(Days, days);
             }
-            //: @item:intext abbreviated amount of minutes and abbreviated amount of seconds
-            return tr("%1 %2").arg(formatSingleAbbreviatedDuration(Minutes, minutes), formatSingleAbbreviatedDuration(Seconds, seconds));
+
+            //: @item:intext abbreviated amount of days and abbreviated amount of hours
+            return tr("%1 %2").arg(formatSingleAbbreviatedDuration(Days, days), formatSingleAbbreviatedDuration(Hours, hours));
         }
 
-        if (options & KFormat::HideSeconds) {
+        if (hours != 0) {
             //: @item:intext abbreviated amount of hours and abbreviated amount of minutes
             return tr("%1 %2").arg(formatSingleAbbreviatedDuration(Hours, hours), formatSingleAbbreviatedDuration(Minutes, minutes));
         }
 
-        //: @item:intext abbreviated amount of hours, abbreviated amount of minutes and abbreviated amount of seconds
-        return tr("%1 %2 %3")
-            .arg(formatSingleAbbreviatedDuration(Hours, hours),
-                 formatSingleAbbreviatedDuration(Minutes, minutes),
-                 formatSingleAbbreviatedDuration(Seconds, seconds));
-
-    } else {
-        if ((options & KFormat::FoldHours) == KFormat::FoldHours && (options & KFormat::ShowMilliseconds) == KFormat::ShowMilliseconds) {
-            //: @item:intext Duration format minutes, seconds and milliseconds
-            return tr("%1:%2.%3").arg(hours * 60 + minutes, 1, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0')).arg(ms, 3, 10, QLatin1Char('0'));
-        } else if ((options & KFormat::FoldHours) == KFormat::FoldHours) {
-            //: @item:intext Duration format minutes and seconds
-            return tr("%1:%2").arg(hours * 60 + minutes, 1, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0'));
-        } else if ((options & KFormat::HideSeconds) == KFormat::HideSeconds) {
-            //: @item:intext Duration format hours and minutes
-            return tr("%1:%2").arg(hours, 1, 10, QLatin1Char('0')).arg(minutes, 2, 10, QLatin1Char('0'));
-        } else if ((options & KFormat::ShowMilliseconds) == KFormat::ShowMilliseconds) {
-            //: @item:intext Duration format hours, minutes, seconds, milliseconds
-            return tr("%1:%2:%3.%4")
-                .arg(hours, 1, 10, QLatin1Char('0'))
-                .arg(minutes, 2, 10, QLatin1Char('0'))
-                .arg(seconds, 2, 10, QLatin1Char('0'))
-                .arg(ms, 3, 10, QLatin1Char('0'));
-        } else { // Default
-            //: @item:intext Duration format hours, minutes, seconds
-            return tr("%1:%2:%3").arg(hours, 1, 10, QLatin1Char('0')).arg(minutes, 2, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0'));
+        if (options & KFormat::HideSeconds) {
+            return formatSingleAbbreviatedDuration(Minutes, minutes);
         }
+
+        //: @item:intext abbreviated amount of minutes and abbreviated amount of seconds
+        return tr("%1 %2").arg(formatSingleAbbreviatedDuration(Minutes, minutes), formatSingleAbbreviatedDuration(Seconds, seconds));
     }
 
-    Q_UNREACHABLE();
-    return QString();
+    if ((options & KFormat::FoldHours) == KFormat::FoldHours && (options & KFormat::ShowMilliseconds) == KFormat::ShowMilliseconds) {
+        //: @item:intext Duration format minutes, seconds and milliseconds
+        return tr("%1:%2.%3").arg(hours * 60 + minutes, 1, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0')).arg(ms, 3, 10, QLatin1Char('0'));
+    } else if ((options & KFormat::FoldHours) == KFormat::FoldHours) {
+        //: @item:intext Duration format minutes and seconds
+        return tr("%1:%2").arg(hours * 60 + minutes, 1, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0'));
+    } else if ((options & KFormat::HideSeconds) == KFormat::HideSeconds) {
+        //: @item:intext Duration format hours and minutes
+        return tr("%1:%2").arg(hours, 1, 10, QLatin1Char('0')).arg(minutes, 2, 10, QLatin1Char('0'));
+    } else if ((options & KFormat::ShowMilliseconds) == KFormat::ShowMilliseconds) {
+        //: @item:intext Duration format hours, minutes, seconds, milliseconds
+        return tr("%1:%2:%3.%4")
+            .arg(hours, 1, 10, QLatin1Char('0'))
+            .arg(minutes, 2, 10, QLatin1Char('0'))
+            .arg(seconds, 2, 10, QLatin1Char('0'))
+            .arg(ms, 3, 10, QLatin1Char('0'));
+    }
+
+    //: @item:intext Duration format hours, minutes, seconds
+    return tr("%1:%2:%3").arg(hours, 1, 10, QLatin1Char('0')).arg(minutes, 2, 10, QLatin1Char('0')).arg(seconds, 2, 10, QLatin1Char('0'));
 }
 
 QString KFormatPrivate::formatDecimalDuration(quint64 msecs, int decimalPlaces) const

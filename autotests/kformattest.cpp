@@ -291,10 +291,13 @@ void KFormatTest::formatAbbreviatedDuration()
     QCOMPARE(fmt.formatDuration(MSecsInSecond, opt), "1 sec"_L1);
     QCOMPARE(fmt.formatDuration(MSecsInMinute, opt), "1 min 0 sec"_L1);
     QCOMPARE(fmt.formatDuration(MSecsInMinute, opt | KFormat::HideSeconds), "1 min"_L1);
-    QCOMPARE(fmt.formatDuration(MSecsInHour, opt), "1 hr 0 min 0 sec"_L1);
+    QCOMPARE(fmt.formatDuration(MSecsInHour, opt), "1 hr 0 min"_L1);
     QCOMPARE(fmt.formatDuration(MSecsInHour, opt | KFormat::HideSeconds), "1 hr 0 min"_L1);
     QCOMPARE(fmt.formatDuration(MSecsInHour, opt | KFormat::HideSeconds | KFormat::FoldHours), "60 min"_L1);
     QCOMPARE(fmt.formatDuration(12 * MSecsInHour + 59 * MSecsInMinute, opt | KFormat::HideSeconds), "12 hr 59 min"_L1);
+    QCOMPARE(fmt.formatDuration(17 * MSecsInDay + 2 * MSecsInHour + 19 * MSecsInMinute, opt | KFormat::HideSeconds), "17 d 2 hr"_L1);
+    QCOMPARE(fmt.formatDuration(17 * MSecsInDay + 2 * MSecsInHour + 31 * MSecsInMinute, opt | KFormat::HideSeconds), "17 d 3 hr"_L1);
+    QCOMPARE(fmt.formatDuration(17 * MSecsInDay + 2 * MSecsInHour + 19 * MSecsInMinute, opt), "17 d 2 hr 19 min 0 sec"_L1);
 }
 
 void KFormatTest::formatDecimalDuration()
