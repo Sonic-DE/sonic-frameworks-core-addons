@@ -156,3 +156,12 @@ foreach(_backendName ${KDIRWATCH_BACKENDS_TO_TEST})
     endif()
 
 endforeach()
+
+if (NOT TARGET Qt6::QuickTest)
+    message(STATUS "Qt6QuickTest not found, autotests for QML bindings will not be built.")
+    return()
+endif()
+
+add_executable(kformatqmltest kformatqmltest.cpp)
+target_link_libraries(kformatqmltest PRIVATE Qt6::QuickTest Qt6::Qml)
+add_test(NAME kformatqmltest COMMAND kformatqmltest -platform offscreen -input kformatqmltest.qml WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
