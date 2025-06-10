@@ -23,8 +23,10 @@ void setupEnvironment()
 #ifndef Q_OS_WIN
     // ignore translations
     qputenv("XDG_DATA_DIRS", "does-not-exist");
-#endif
     qputenv("TZ", "Asia/Kolkata");
+#else
+    qputenv("TZ", "IST");
+#endif
 }
 Q_CONSTRUCTOR_FUNCTION(setupEnvironment)
 
@@ -442,6 +444,8 @@ void KFormatTest::formatRelativeDate()
 
 void KFormatTest::formatTime()
 {
+    qDebug() << QTimeZone::systemTimeZone().id();
+
     KFormat fmt(QLocale(u"en_GB"));
     QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::LocalTime}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviation), "12:23"_L1);
     QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviation), "12:23 UTC"_L1);
