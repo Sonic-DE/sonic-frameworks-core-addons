@@ -710,6 +710,14 @@ bool KDirWatchPrivate::useQFSWatch(Entry *e)
     e->dirty = false;
 
     if (e->m_status == NonExistent) {
+        // on e.g. Windows we can end up with a removed drive Y:
+        // parentDirectory() will then just keep looping with that, see bug 499865
+        // so i general, just abort if we loop
+        const auto parentDir = e->parentDirectory();
+        if (parentDir == e->path) {
+            return false;
+        }
+
         addEntry(nullptr, e->parentDirectory(), e, true /*isDir*/);
         return true;
     }
