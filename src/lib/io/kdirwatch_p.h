@@ -118,7 +118,9 @@ public:
         int msecLeft, freq;
         bool isDir;
 
+        bool isRoot() const;
         QString parentDirectory() const;
+
         void addClient(KDirWatch *, KDirWatch::WatchModes);
         void removeClient(KDirWatch *);
         int clientCount() const;

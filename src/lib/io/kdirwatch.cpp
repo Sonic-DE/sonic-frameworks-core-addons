@@ -508,6 +508,11 @@ int KDirWatchPrivate::Entry::clientCount() const
     return clients;
 }
 
+bool KDirWatchPrivate::Entry::isRoot() const
+{
+    return QDir(path).isRoot();
+}
+
 QString KDirWatchPrivate::Entry::parentDirectory() const
 {
     return QDir::cleanPath(path + QLatin1String("/.."));
@@ -675,6 +680,11 @@ bool KDirWatchPrivate::useINotify(Entry *e)
     e->m_mode = INotifyMode;
 
     if (e->m_status == NonExistent) {
+        // be safe, don't walk upwards on /
+        if (e->isRoot()) {
+            return false;
+        }
+
         addEntry(nullptr, e->parentDirectory(), e, true);
         return true;
     }
@@ -710,6 +720,14 @@ bool KDirWatchPrivate::useQFSWatch(Entry *e)
     e->dirty = false;
 
     if (e->m_status == NonExistent) {
+        // be safe, don't walk upwards on drive level or /
+        // on e.g. Windows we can end up with a removed drive Y:
+        // parentDirectory() will then just keep looping with that, see bug 499865
+        // just abort if we loop, is correct for all platforms
+        if (e->isRoot()) {
+            return false;
+        }
+
         addEntry(nullptr, e->parentDirectory(), e, true /*isDir*/);
         return true;
     }
@@ -1453,7 +1471,11 @@ void KDirWatchPrivate::slotRescan()
                 if (s_verboseDebug) {
                     qCDebug(KDIRWATCH) << "scanEntry says" << entry->path << "was deleted";
                 }
-                addEntry(nullptr, entry->parentDirectory(), entry, true);
+
+                // be safe, don't walk upwards on drive level or /
+                if (!entry->isRoot()) {
+                    addEntry(nullptr, entry->parentDirectory(), entry, true);
+                }
             } else if (ev == Created) {
                 if (s_verboseDebug) {
                     qCDebug(KDIRWATCH) << "scanEntry says" << entry->path << "was created. wd=" << entry->wd;
@@ -1605,7 +1627,10 @@ void KDirWatchPrivate::fswEventReceived(const QString &path)
         }
         if (ev == Deleted) {
             if (entry->isDir) {
-                addEntry(nullptr, entry->parentDirectory(), entry, true);
+                // be safe, don't walk upwards on drive level or /
+                if (!entry->isRoot()) {
+                    addEntry(nullptr, entry->parentDirectory(), entry, true);
+                }
             } else {
                 addEntry(nullptr, QFileInfo(entry->path).absolutePath(), entry, true);
             }
