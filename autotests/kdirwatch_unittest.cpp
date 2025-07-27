@@ -78,6 +78,7 @@ private Q_SLOTS: // test methods
     void testRefcounting();
     void testRelativeRefcounting();
     void testMoveToThread();
+    void testWindowsDriveRemoved();
 
 protected Q_SLOTS: // internal slots
     void nestedEventLoopSlot();
@@ -761,6 +762,22 @@ void KDirWatch_UnitTest::testMoveToThread()
     const QString file = dir.path() + QLatin1String("/bar");
     createFile(file);
     waitUntilMTimeChange(file);
+}
+
+void KDirWatch_UnitTest::testWindowsDriveRemoved()
+{
+    // test that QDir::isRoot works as needed
+    // we use that in Entry::isRoot
+    // see KDirWatchPrivate::useQFSWatch & bug 499865 comment there
+#ifdef Q_OS_WIN
+    QVERIFY(QDir(QLatin1String("Y://")).isRoot());
+    QVERIFY(QDir(QLatin1String("Y:/")).isRoot());
+    QVERIFY(QDir(QLatin1String("Y:\\")).isRoot());
+    QVERIFY(QDir(QLatin1String("Y:\\\\")).isRoot());
+    QVERIFY(QDir(QLatin1String("Y:")).isRoot());
+#else
+    QVERIFY(QDir(QLatin1String("/")).isRoot());
+#endif
 }
 
 #include "kdirwatch_unittest.moc"
