@@ -778,6 +778,8 @@ void KDirWatch_UnitTest::testWindowsDriveRemoved()
     QVERIFY(QDir(QLatin1String("Y:\\\\")).isRoot());
 #else
     QVERIFY(QDir(QLatin1String("/")).isRoot());
+    QVERIFY(QDir(QLatin1String("//")).isRoot());
+    QVERIFY(!QDir(QLatin1String("/test")).isRoot());
 #endif
 }
 
