@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
+#include <QSaveFile>
 #include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QTest>
@@ -537,32 +538,18 @@ void KDirWatch_UnitTest::testMoveTo()
         waitUntilMTimeChange(m_path);
     }
 
-    // Atomic rename of "temp" to "file1", much like KAutoSave would do when saving file1 again
-    // ### TODO: this isn't an atomic rename anymore. We need ::rename for that, or API from Qt.
-    const QString filetemp = m_path + QLatin1String("temp");
-    createFile(filetemp);
-    QFile::remove(file1);
-    QVERIFY(QFile::rename(filetemp, file1)); // overwrite file1 with the tempfile
-    qCDebug(KCOREADDONS_DEBUG) << "Overwrite file1 with tempfile";
+    // Use QSaveFile to have the atomic rename of a temp file to the file we are watching
+    {
+        QSaveFile saveFile(file1);
+        saveFile.setDirectWriteFallback(false);
+        QVERIFY(saveFile.open(QIODeviceBase::WriteOnly));
+        saveFile.write("test");
+        QVERIFY(saveFile.commit());
+    }
 
     QSignalSpy spyCreated(&watch, &KDirWatch::created);
     QSignalSpy spyDirty(&watch, &KDirWatch::dirty);
     QVERIFY(waitForOneSignal(watch, SIGNAL(dirty(QString)), m_path));
-
-    // Getting created() on an unwatched file is an inotify bonus, it's not part of the requirements.
-    if (watch.internalMethod() == KDirWatch::INotify) {
-        QCOMPARE(spyCreated.count(), 1);
-        QCOMPARE(spyCreated[0][0].toString(), file1);
-
-        QCOMPARE(spyDirty.size(), 2);
-        QCOMPARE(spyDirty[1][0].toString(), filetemp);
-    }
-
-#ifdef Q_OS_WIN
-    if (watch.internalMethod() == KDirWatch::QFSWatch) {
-        QEXPECT_FAIL(nullptr, "QFSWatch fails here on Windows!", Continue);
-    }
-#endif
 
     // make sure we're still watching it
     appendToFile(file1);
@@ -572,7 +559,8 @@ void KDirWatch_UnitTest::testMoveTo()
 
     // Just touch another file to trigger a findSubEntry - this where the crash happened
     waitUntilMTimeChange(m_path);
-    createFile(filetemp);
+    const QString file2 = m_path + QLatin1String("otherOne");
+    createFile(file2);
     QVERIFY(waitForOneSignal(watch, SIGNAL(dirty(QString)), m_path));
 }
 
