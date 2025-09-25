@@ -54,8 +54,7 @@ public:
      * \li KAboutData::desktopFileName as \c AboutData.desktopFileName
      * \endlist
      *
-     * The KAboutData metadata is expected to be set in C++ (or equivalent KAboutData bindings),
-     * and so these properties cannot be set from QML.
+     * The KAboutData metadata is expected to be set in C++ (or equivalent KAboutData bindings).
      *
      * \sa KAboutData
      */
