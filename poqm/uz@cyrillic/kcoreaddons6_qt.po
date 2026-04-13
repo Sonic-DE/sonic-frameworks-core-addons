@@ -285,7 +285,7 @@ msgctxt "KAboutLicense|@item license"
 msgid "Not specified"
 msgstr "Ҳеч қандай провайдер танланмаган."
 
-#: lib/kaboutdata.cpp:1062
+#: lib/kaboutdata.cpp:1069
 #, fuzzy
 #| msgctxt "replace this with information about your translation team"
 #| msgid ""
@@ -308,33 +308,33 @@ msgstr ""
 "\"http://www.uni-bremen.de/~kmashrab/to-uzbek-linux.html\">\"Линукс ўзбекча "
 "гапиради\"</a> лойиҳасининг веб-сайтига қаранг.</p>"
 
-#: lib/kaboutdata.cpp:1310
+#: lib/kaboutdata.cpp:1317
 #, fuzzy
 #| msgid "Show author information"
 msgctxt "KAboutData CLI|"
 msgid "Show author information."
 msgstr "Муаллиф ҳақида маълумотни кўрсатиш"
 
-#: lib/kaboutdata.cpp:1311
+#: lib/kaboutdata.cpp:1318
 #, fuzzy
 #| msgid "Show license information"
 msgctxt "KAboutData CLI|"
 msgid "Show license information."
 msgstr "Лицензия ҳақида маълумотни кўрсатиш"
 
-#: lib/kaboutdata.cpp:1313
+#: lib/kaboutdata.cpp:1320
 msgctxt "KAboutData CLI|"
 msgid "The base file name of the desktop entry for this application."
 msgstr ""
 
-#: lib/kaboutdata.cpp:1314
+#: lib/kaboutdata.cpp:1321
 #, fuzzy
 #| msgid "Vietnamese"
 msgctxt "KAboutData CLI|"
 msgid "file name"
 msgstr "Ветнамча"
 
-#: lib/kaboutdata.cpp:1324
+#: lib/kaboutdata.cpp:1331
 #, fuzzy
 #| msgid ""
 #| "This application was written by somebody who wants to remain anonymous."
@@ -342,7 +342,7 @@ msgctxt "KAboutData CLI|"
 msgid "This application was written by somebody who wants to remain anonymous."
 msgstr "Ушбу дастур исмини ошкор қилишни истамаган киши томонидан ёзилган."
 
-#: lib/kaboutdata.cpp:1326
+#: lib/kaboutdata.cpp:1333
 #, fuzzy, qt-format
 #| msgctxt "the 2nd argument is a list of name+address, one on each line"
 #| msgid ""
@@ -355,7 +355,7 @@ msgstr ""
 "%2\n"
 "томонидан ёзилган."
 
-#: lib/kaboutdata.cpp:1337
+#: lib/kaboutdata.cpp:1344
 #, fuzzy
 #| msgid "Please use http://bugs.kde.org to report bugs.\n"
 msgctxt "KAboutData CLI|"
@@ -364,7 +364,7 @@ msgstr ""
 "Илтимос, хато ҳақида хабар бериш учун http://bugs.kde.org веб-сайтидан "
 "фойдаланинг.\n"
 
-#: lib/kaboutdata.cpp:1339
+#: lib/kaboutdata.cpp:1346
 #, fuzzy, qt-format
 #| msgid "Please report bugs to %1.\n"
 msgctxt "KAboutData CLI|"
