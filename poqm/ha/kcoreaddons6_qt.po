@@ -258,7 +258,7 @@ msgctxt "KAboutLicense|@item license"
 msgid "Not specified"
 msgstr ""
 
-#: lib/kaboutdata.cpp:1062
+#: lib/kaboutdata.cpp:1069
 msgctxt "KAboutData|replace this with information about your translation team"
 msgid ""
 "<p>KDE is translated into many languages thanks to the work of the "
@@ -267,38 +267,38 @@ msgid ""
 "org</a></p>"
 msgstr ""
 
-#: lib/kaboutdata.cpp:1310
+#: lib/kaboutdata.cpp:1317
 msgctxt "KAboutData CLI|"
 msgid "Show author information."
 msgstr ""
 
-#: lib/kaboutdata.cpp:1311
+#: lib/kaboutdata.cpp:1318
 msgctxt "KAboutData CLI|"
 msgid "Show license information."
 msgstr ""
 
-#: lib/kaboutdata.cpp:1313
+#: lib/kaboutdata.cpp:1320
 msgctxt "KAboutData CLI|"
 msgid "The base file name of the desktop entry for this application."
 msgstr ""
 
-#: lib/kaboutdata.cpp:1314
+#: lib/kaboutdata.cpp:1321
 msgctxt "KAboutData CLI|"
 msgid "file name"
 msgstr ""
 
-#: lib/kaboutdata.cpp:1324
+#: lib/kaboutdata.cpp:1331
 msgctxt "KAboutData CLI|"
 msgid "This application was written by somebody who wants to remain anonymous."
 msgstr ""
 
-#: lib/kaboutdata.cpp:1326
+#: lib/kaboutdata.cpp:1333
 #, qt-format
 msgctxt "KAboutData CLI|"
 msgid "%1 was written by:"
 msgstr ""
 
-#: lib/kaboutdata.cpp:1337
+#: lib/kaboutdata.cpp:1344
 #, fuzzy
 #| msgid ""
 #| "Please use <a href=\"http://bugs.kde.org\">http://bugs.kde.org</a> to "
@@ -309,7 +309,7 @@ msgstr ""
 "Yi amfani da <a href=\"http://bugs.kde.org\">http://bugs.kde.org</a> domin "
 "sanar da matsaloli.\n"
 
-#: lib/kaboutdata.cpp:1339
+#: lib/kaboutdata.cpp:1346
 #, fuzzy, qt-format
 #| msgid "Please report bugs to <a href=\"mailto:%1\">%2</a>.\n"
 msgctxt "KAboutData CLI|"
