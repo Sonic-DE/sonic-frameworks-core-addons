@@ -171,6 +171,10 @@ KFileSystemType::Type probeFuseBlkType(const QByteArray &path)
     return Fuse;
 }
 
+#if HAVE_LIB_MOUNT
+#include <libmount/libmount.h>
+#endif
+
 // Reverse-engineering without C++ code:
 // strace stat -f /mnt 2>&1|grep statfs|grep mnt, and look for f_type
 //
@@ -178,6 +182,26 @@ KFileSystemType::Type probeFuseBlkType(const QByteArray &path)
 
 static KFileSystemType::Type determineFileSystemTypeImpl(const QByteArray &path)
 {
+#if HAVE_LIB_MOUNT
+    using LibmntTable = std::unique_ptr<struct libmnt_table, decltype(&mnt_free_table)>;
+    if (auto table = LibmntTable(mnt_new_table(), mnt_free_table)) {
+        QLatin1String fstype;
+        if (mnt_table_parse_mtab(table.get(), nullptr) == 0) {
+            struct libmnt_fs *fs = mnt_table_find_mountpoint(table.get(), path.constData(), MNT_ITER_BACKWARD);
+            if (fs) {
+                fstype = QLatin1String(mnt_fs_get_fstype(fs));
+            }
+        }
+
+        if (!fstype.isEmpty()) {
+            if (fstype == QLatin1String("fuseblk")) {
+                return probeFuseBlkType(path);
+            }
+            return kde_typeFromName(fstype);
+        }
+    }
+#endif
+
     struct statfs buf;
     if (statfs(path.constData(), &buf) != 0) {
         return KFileSystemType::Unknown;
