@@ -88,7 +88,7 @@ endfunction()
 # Since 5.89
 function(kcoreaddons_target_static_plugins app_target)
     cmake_parse_arguments(ARGS "" "LINK_OPTION;NAMESPACE;TARGETS" "" ${ARGN})
-    if ((ARGS_LINK_OPTION AND ARGS_NAMESPACE) OR (NOT ARGS_NAMESPACE AND NOT ARGS_TARGETS))
+    if ((ARGS_TARGETS AND ARGS_NAMESPACE) OR (NOT ARGS_NAMESPACE AND NOT ARGS_TARGETS))
         message(FATAL_ERROR "Either NAMESPACE or TARGETS must be set")
     endif()
 
