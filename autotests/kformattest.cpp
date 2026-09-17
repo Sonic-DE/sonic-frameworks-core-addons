@@ -486,6 +486,57 @@ void KFormatTest::formatTime()
     KFormat de_fmt(QLocale(u"de_DE"));
     QCOMPARE(de_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
              "12:23 MESZ"_L1);
+
+    // and now all the same tests in long-format
+    QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::LocalTime}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation), "12:23:45"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation), "12:23:45 UTC"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded), "12:23:45 UTC"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Asia/Kolkata")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "12:23:45"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Asia/Kolkata")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation),
+             "12:23:45 IST"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "12:23:45 CEST"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation),
+             "12:23:45 CET"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::DoNotAddTimeZone), "12:23:45"_L1);
+
+    QCOMPARE(fmt.formatTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone::fromSecondsAheadOfUtc(0)}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "12:23:45 UTC"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone::fromSecondsAheadOfUtc(8 * 3600)},
+                            QLocale::LongFormat,
+                            KFormat::AddTimezoneAbbreviationIfNeeded),
+             "12:23:45 UTC+08:00"_L1);
+    QCOMPARE(fmt.formatTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone::fromSecondsAheadOfUtc(5.5 * 3600)},
+                            QLocale::LongFormat,
+                            KFormat::AddTimezoneAbbreviationIfNeeded),
+             "12:23:45"_L1);
+
+    QCOMPARE(de_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "12:23:45 MESZ"_L1);
+
+    // These locales surround the long timezone with parentheses, which must also be removed.
+    for (const auto &locale : {QLocale(u"es_ES"), QLocale(u"hr_HR")}) {
+        KFormat parenthesized_fmt(locale);
+        QCOMPARE(parenthesized_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::LocalTime},
+                                             QLocale::LongFormat,
+                                             KFormat::AddTimezoneAbbreviation),
+                 "12:23:45"_L1);
+        QCOMPARE(parenthesized_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::LongFormat, KFormat::DoNotAddTimeZone),
+                 "12:23:45"_L1);
+        QCOMPARE(parenthesized_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation),
+                 "12:23:45 UTC"_L1);
+        QCOMPARE(parenthesized_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()},
+                                             QLocale::LongFormat,
+                                             KFormat::AddTimezoneAbbreviationIfNeeded),
+                 "12:23:45 UTC"_L1);
+        QCOMPARE(parenthesized_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Asia/Kolkata")},
+                                             QLocale::LongFormat,
+                                             KFormat::AddTimezoneAbbreviationIfNeeded),
+                 "12:23:45"_L1);
+        QCOMPARE(parenthesized_fmt.formatTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviation),
+                 "12:23 UTC"_L1);
+    }
 }
 
 void KFormatTest::formatDistance()
