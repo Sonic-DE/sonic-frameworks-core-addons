@@ -658,15 +658,11 @@ QString KFormatPrivate::formatRelativeDateTime(const QDateTime &dateTime, QLocal
     return dt.timeZone().offsetFromUtc(dt) != QTimeZone::systemTimeZone().offsetFromUtc(dt);
 }
 
-QString KFormatPrivate::formatTime(const QDateTime &dateTime, QLocale::FormatType format, KFormat::TimeFormatOptions options) const
+QString KFormatPrivate::formatTimeTzHelper(const QString &dtStrNoTz, const QDateTime &dateTime, KFormat::TimeFormatOptions options) const
 {
-    // Remove the long timezone, including its parentheses in locales that use them.
-    // The TZ abbreviation might be appended later.
-    auto noTzTimeFormat = m_locale.timeFormat(format).remove("(tttt)"_L1).remove("tttt"_L1).trimmed();
-    auto output = m_locale.toString(dateTime.time(), noTzTimeFormat);
     if (options == KFormat::DoNotAddTimeZone || dateTime.timeSpec() == Qt::LocalTime
         || ((options & KFormat::AddTimezoneAbbreviationIfNeeded) && !needsTimeZone(dateTime))) {
-        return output;
+        return dtStrNoTz;
     }
 
     QString tzAbbr;
@@ -677,10 +673,58 @@ QString KFormatPrivate::formatTime(const QDateTime &dateTime, QLocale::FormatTyp
         tzAbbr = tz.displayName(QTimeZone::GenericTime, QTimeZone::ShortName, m_locale);
     }
     if (tzAbbr.isEmpty()) {
-        return output;
+        return dtStrNoTz;
     }
-    /*: %1 is a formatted time (from QLocale.toString), %2 is a localized timezone abbreviation (from QTimeZone::displayName(QTimeZone::ShortName)). */
-    return tr("%1 %2").arg(output, tzAbbr);
+    /*: %1 is a formatted datetime or time (from QLocale.toString)
+     *  %2 is a localized timezone abbreviation (from QTimeZone::displayName(QTimeZone::ShortName)).
+     */
+    return tr("%1 %2").arg(dtStrNoTz, tzAbbr);
+}
+
+static QString removeTimeZoneFormat(QString format)
+{
+    bool quoted = false;
+    for (qsizetype i = 0; i < format.size();) {
+        if (format.at(i) == u'\'') {
+            // A doubled quote is a literal quote, not the start or end of a quoted section.
+            if (i + 1 < format.size() && format.at(i + 1) == u'\'') {
+                i += 2;
+            } else {
+                quoted = !quoted;
+                ++i;
+            }
+        } else if (!quoted && format.at(i) == u't') {
+            qsizetype end = i + 1;
+            while (end < format.size() && format.at(end) == u't') {
+                ++end;
+            }
+            // Some locales enclose the timezone token in parentheses.
+            if (i > 0 && format.at(i - 1) == u'(' && end < format.size() && format.at(end) == u')') {
+                --i;
+                ++end;
+            }
+            format.remove(i, end - i);
+        } else {
+            ++i;
+        }
+    }
+    return format.trimmed();
+}
+
+QString KFormatPrivate::formatTime(const QDateTime &dateTime, QLocale::FormatType format, KFormat::TimeFormatOptions options) const
+{
+    // Remove timezone tokens and their parentheses. The TZ abbreviation might be appended later.
+    const auto noTzTimeFormat = removeTimeZoneFormat(m_locale.timeFormat(format));
+    auto dtStringNoTz = m_locale.toString(dateTime.time(), noTzTimeFormat);
+    return formatTimeTzHelper(dtStringNoTz, dateTime, options);
+}
+
+QString KFormatPrivate::formatDateTime(const QDateTime &dateTime, QLocale::FormatType format, KFormat::TimeFormatOptions options) const
+{
+    // Remove timezone tokens and their parentheses. Preserve any quoted literal text.
+    const auto noTzTimeFormat = removeTimeZoneFormat(m_locale.dateTimeFormat(format));
+    auto dtStringNoTz = m_locale.toString(dateTime, noTzTimeFormat);
+    return formatTimeTzHelper(dtStringNoTz, dateTime, options);
 }
 
 QString KFormatPrivate::formatDistance(double distance, KFormat::DistanceFormatOptions options) const

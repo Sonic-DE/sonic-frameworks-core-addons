@@ -539,6 +539,78 @@ void KFormatTest::formatTime()
     }
 }
 
+void KFormatTest::formatDateTime()
+{
+    if (QTimeZone::systemTimeZone().id() != "Asia/Kolkata") {
+        qDebug() << QTimeZone::systemTimeZone().id();
+        QSKIP("Changing timezone not working on this platform!");
+    }
+
+    KFormat fmt(QLocale(u"en_GB"));
+    QCOMPARE(fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::LocalTime}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviation),
+             "23/05/2025 12:23"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviation),
+             "23/05/2025 12:23 UTC"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::utc()}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "23/05/2025 12:23 UTC"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Asia/Kolkata")}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "23/05/2025 12:23"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Asia/Kolkata")}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviation),
+             "23/05/2025 12:23 IST"_L1);
+
+    QCOMPARE(fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "Friday, 23 May 2025 12:23:45 CEST"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation),
+             "Thursday, 23 January 2025 12:23:45 CET"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::DoNotAddTimeZone),
+             "Thursday, 23 January 2025 12:23:45"_L1);
+
+    QCOMPARE(
+        fmt.formatDateTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone::fromSecondsAheadOfUtc(0)}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+        "Thursday, 23 January 2025 12:23:45 UTC"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone::fromSecondsAheadOfUtc(8 * 3600)},
+                                QLocale::LongFormat,
+                                KFormat::AddTimezoneAbbreviationIfNeeded),
+             "Thursday, 23 January 2025 12:23:45 UTC+08:00"_L1);
+    QCOMPARE(fmt.formatDateTime({{2025, 1, 23}, {12, 23, 45}, QTimeZone::fromSecondsAheadOfUtc(5.5 * 3600)},
+                                QLocale::LongFormat,
+                                KFormat::AddTimezoneAbbreviationIfNeeded),
+             "Thursday, 23 January 2025 12:23:45"_L1);
+
+    KFormat de_fmt(QLocale(u"de_DE"));
+    QCOMPARE(
+        de_fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("America/New_York")}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+        "23.05.25 12:23 GMT-4"_L1);
+    QCOMPARE(de_fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("America/New_York")}, QLocale::LongFormat, KFormat::DoNotAddTimeZone),
+             "Freitag, 23. Mai 2025 12:23:45"_L1);
+
+    QCOMPARE(de_fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::ShortFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "23.05.25 12:23 MESZ"_L1);
+    QCOMPARE(de_fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels")}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+             "Freitag, 23. Mai 2025 12:23:45 MESZ"_L1);
+
+    // The C locale uses a single 't'; Spanish encloses 'tttt' in parentheses.
+    for (const auto &locale : {QLocale::c(), QLocale(u"es_ES")}) {
+        KFormat locale_fmt(locale);
+        const auto expectedDateTime = locale.name() == "C"_L1 ? "Friday, 23 May 2025 12:23:45"_L1 : "viernes, 23 de mayo de 2025 12:23:45"_L1;
+        const QDateTime foreignDateTime({2025, 5, 23}, {12, 23, 45}, QTimeZone("Europe/Brussels"));
+        QCOMPARE(locale_fmt.formatDateTime(foreignDateTime, QLocale::LongFormat, KFormat::DoNotAddTimeZone), expectedDateTime);
+        QCOMPARE(locale_fmt.formatDateTime(foreignDateTime, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation),
+                 QString(expectedDateTime) + " CEST"_L1);
+        QCOMPARE(locale_fmt.formatDateTime(foreignDateTime, QLocale::LongFormat, KFormat::AddTimezoneAbbreviationIfNeeded),
+                 QString(expectedDateTime) + " CEST"_L1);
+        QCOMPARE(locale_fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone::LocalTime}, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation),
+                 expectedDateTime);
+        QCOMPARE(locale_fmt.formatDateTime({{2025, 5, 23}, {12, 23, 45}, QTimeZone("Asia/Kolkata")},
+                                          QLocale::LongFormat,
+                                          KFormat::AddTimezoneAbbreviationIfNeeded),
+                 expectedDateTime);
+
+        QCOMPARE(locale_fmt.formatTime(foreignDateTime, QLocale::LongFormat, KFormat::DoNotAddTimeZone), "12:23:45"_L1);
+        QCOMPARE(locale_fmt.formatTime(foreignDateTime, QLocale::LongFormat, KFormat::AddTimezoneAbbreviation), "12:23:45 CEST"_L1);
+    }
+}
+
 void KFormatTest::formatDistance()
 {
     {
