@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.30)
 
 set(KF_VERSION "6.30.0") # handled by release scripts
 project(KCoreAddons VERSION ${KF_VERSION})
@@ -28,13 +28,14 @@ include(ECMQtDeclareLoggingCategory)
 include(ECMSetupQtPluginMacroNames)
 include(ECMDeprecationSettings)
 include(ECMGenerateQDoc)
+include(ECMInstalledLibraryCheck)
 
 set(EXCLUDE_DEPRECATED_BEFORE_AND_AT 0 CACHE STRING "Control the range of deprecated API excluded from the build [default=0].")
 
 option(ENABLE_PCH "Enable precompile headers for faster builds" ON)
 option(KCOREADDONS_USE_QML "Build the QML plugin" ON)
 
-set(REQUIRED_QT_VERSION 6.9.0)
+set(REQUIRED_QT_VERSION 6.10.0)
 find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core)
 if (KCOREADDONS_USE_QML)
     find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Qml Network)

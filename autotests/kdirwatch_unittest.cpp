@@ -14,9 +14,11 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QSignalSpy>
+
 #include <QTemporaryDir>
 #include <QTest>
 #include <QThread>
+#include <algorithm>
 #include <sys/stat.h>
 #ifdef Q_OS_UNIX
 #include <unistd.h> // ::link()
@@ -63,12 +65,14 @@ private Q_SLOTS: // test methods
         s_staticObject()->m_dirWatch.addFile(m_path + QLatin1String("ExistingFile"));
     }
     void touchOneFile();
+    void twoChangesInOneSecond();
     void touch1000Files();
     void watchAndModifyOneFile();
     void removeAndReAdd();
     void watchNonExistent();
     void watchNonExistentWithSingleton();
     void testDelete();
+    void testDeleteAndRecreateFile_data();
     void testDeleteAndRecreateFile();
     void testDeleteAndRecreateDir();
     void testMoveTo();
@@ -272,6 +276,36 @@ void KDirWatch_UnitTest::touchOneFile() // watch a dir, create a file in it
     removeFile(0);
 }
 
+void KDirWatch_UnitTest::twoChangesInOneSecond() // watch a dir, create two files in it within one second
+{
+#ifdef Q_OS_WIN
+    if (m_stat) {
+        QSKIP("stat() has whole seconds only on Windows");
+    }
+#endif
+    KDirWatch watch;
+    watch.addDir(m_path);
+    watch.startScan();
+
+    // Both changes fall in one second when they start at the beginning of one.
+    const qint64 previousSecond = QDateTime::currentSecsSinceEpoch();
+    while (QDateTime::currentSecsSinceEpoch() == previousSecond) {
+        QTest::qWait(10);
+    }
+    const qint64 second = QDateTime::currentSecsSinceEpoch();
+
+    createFile(0);
+    QVERIFY(waitForOneSignal(watch, SIGNAL(dirty(QString)), m_path));
+    createFile(1);
+    QVERIFY(waitForOneSignal(watch, SIGNAL(dirty(QString)), m_path));
+
+    removeFile(0);
+    removeFile(1);
+    if (QDateTime::currentSecsSinceEpoch() != second) {
+        QSKIP("The two changes did not fall within one second");
+    }
+}
+
 void KDirWatch_UnitTest::touch1000Files()
 {
     KDirWatch watch;
@@ -420,11 +454,22 @@ void KDirWatch_UnitTest::testDelete()
     QCOMPARE(spyDirty.count(), 0);
 }
 
+void KDirWatch_UnitTest::testDeleteAndRecreateFile_data()
+{
+    QTest::addColumn<QString>("subdirName");
+    QTest::addColumn<QString>("fileName");
+    QTest::newRow("ascii") << QStringLiteral("subdir_delete_ascii") << QStringLiteral("/1");
+    QTest::newRow("unicode-file") << QStringLiteral("subdir_delete_unicode_file") << QStringLiteral("/\u8cc7\u6599-\u00e9");
+    QTest::newRow("unicode-directory") << QStringLiteral("subdir_delete_\u8cc7\u6599") << QStringLiteral("/1");
+}
+
 void KDirWatch_UnitTest::testDeleteAndRecreateFile() // Useful for /etc/localtime for instance
 {
-    const QString subdir = m_path + QLatin1String("subdir");
+    QFETCH(QString, subdirName);
+    QFETCH(QString, fileName);
+    const QString subdir = m_path + subdirName;
     QDir().mkdir(subdir);
-    const QString file1 = subdir + QLatin1String("/1");
+    const QString file1 = subdir + fileName;
     if (!QFile::exists(file1)) {
         createFile(file1);
     }
@@ -560,8 +605,11 @@ void KDirWatch_UnitTest::testMoveTo()
         QCOMPARE(spyCreated.count(), 1);
         QCOMPARE(spyCreated[0][0].toString(), file1);
 
-        QCOMPARE(spyDirty.size(), 2);
-        QCOMPARE(spyDirty[1][0].toString(), filetemp);
+        // The directory comes once from the inotify events and once more from its own timestamp.
+        QVERIFY(spyDirty.size() >= 2);
+        QVERIFY(std::any_of(spyDirty.cbegin(), spyDirty.cend(), [&filetemp](const QVariantList &args) {
+            return args[0].toString() == filetemp;
+        }));
     }
 
     // make sure we're still watching it

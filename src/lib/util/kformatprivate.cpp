@@ -17,6 +17,7 @@
 #include <QStandardPaths>
 #include <QTimeZone>
 
+#include <limits>
 #include <math.h>
 
 using namespace Qt::Literals;
@@ -572,11 +573,16 @@ QString KFormatPrivate::formatSpelloutDuration(quint64 msecs) const
 
 QString KFormatPrivate::formatRelativeDate(const QDate &date, QLocale::FormatType format) const
 {
+    return formatRelativeDate(date, QDate::currentDate(), format);
+}
+
+QString KFormatPrivate::formatRelativeDate(const QDate &date, const QDate &today, QLocale::FormatType format) const
+{
     if (!date.isValid()) {
         return tr("Invalid date", "used when a relative date string can't be generated because the date is invalid");
     }
 
-    const qint64 daysTo = QDate::currentDate().daysTo(date);
+    const qint64 daysTo = today.daysTo(date);
     if (daysTo > 2 || daysTo < -2) {
         return m_locale.toString(date, format);
     }
@@ -599,8 +605,14 @@ QString KFormatPrivate::formatRelativeDate(const QDate &date, QLocale::FormatTyp
 QString KFormatPrivate::formatRelativeDateTime(const QDateTime &dateTime, QLocale::FormatType format) const
 {
     const QDateTime now = QDateTime::currentDateTime(QTimeZone::UTC);
+    // QDateTime::daysTo() compares the dates without converting them to the same time zone,
+    // so take today's date in the time zone of dateTime.
+    const QDate today = now.toTimeZone(dateTime.timeRepresentation()).date();
+    const qint64 daysToNow = dateTime.date().daysTo(today);
 
-    const auto secsToNow = dateTime.secsTo(now);
+    // Within an hour of now is within two days of today, even where a zone skipped a day to cross the
+    // date line, which spares secsTo() a time zone conversion for every older date.
+    const auto secsToNow = daysToNow <= 2 && daysToNow >= -2 ? dateTime.secsTo(now) : std::numeric_limits<qint64>::max();
     constexpr int secsInAHour = 60 * 60;
     if (secsToNow >= 0 && secsToNow < secsInAHour) {
         const int minutesToNow = secsToNow / 60;
@@ -634,10 +646,9 @@ QString KFormatPrivate::formatRelativeDateTime(const QDateTime &dateTime, QLocal
     }
 
     const auto timeFormatType = format == QLocale::FormatType::LongFormat ? QLocale::FormatType::ShortFormat : format;
-    const qint64 daysToNow = dateTime.daysTo(now);
     QString dateString;
     if (daysToNow < 2 && daysToNow > -2) {
-        dateString = formatRelativeDate(dateTime.date(), format);
+        dateString = formatRelativeDate(dateTime.date(), today, format);
     } else {
         dateString = m_locale.toString(dateTime.date(), format);
     }
@@ -658,12 +669,11 @@ QString KFormatPrivate::formatRelativeDateTime(const QDateTime &dateTime, QLocal
     return dt.timeZone().offsetFromUtc(dt) != QTimeZone::systemTimeZone().offsetFromUtc(dt);
 }
 
-QString KFormatPrivate::formatTime(const QDateTime &dateTime, QLocale::FormatType format, KFormat::TimeFormatOptions options) const
+QString KFormatPrivate::formatTimeTzHelper(const QString &dtStrNoTz, const QDateTime &dateTime, KFormat::TimeFormatOptions options) const
 {
-    auto output = m_locale.toString(dateTime.time(), format);
     if (options == KFormat::DoNotAddTimeZone || dateTime.timeSpec() == Qt::LocalTime
         || ((options & KFormat::AddTimezoneAbbreviationIfNeeded) && !needsTimeZone(dateTime))) {
-        return output;
+        return dtStrNoTz;
     }
 
     QString tzAbbr;
@@ -674,10 +684,28 @@ QString KFormatPrivate::formatTime(const QDateTime &dateTime, QLocale::FormatTyp
         tzAbbr = tz.displayName(QTimeZone::GenericTime, QTimeZone::ShortName, m_locale);
     }
     if (tzAbbr.isEmpty()) {
-        return output;
+        return dtStrNoTz;
     }
-    /*: %1 is a formatted time (from QLocale.toString), %2 is a localized timezone abbreviation (from QTimeZone::displayName(QTimeZone::ShortName)). */
-    return tr("%1 %2").arg(output, tzAbbr);
+    /*: %1 is a formatted datetime or time (from QLocale.toString)
+     *  %2 is a localized timezone abbreviation (from QTimeZone::displayName(QTimeZone::ShortName)).
+     */
+    return tr("%1 %2").arg(dtStrNoTz, tzAbbr);
+}
+
+QString KFormatPrivate::formatTime(const QDateTime &dateTime, QLocale::FormatType format, KFormat::TimeFormatOptions options) const
+{
+    // Remove the long timezone. The TZ abbreviation might be appended later.
+    auto noTzTimeFormat = m_locale.timeFormat(format).remove("tttt"_L1).trimmed();
+    auto dtStringNoTz = m_locale.toString(dateTime.time(), noTzTimeFormat);
+    return formatTimeTzHelper(dtStringNoTz, dateTime, options);
+}
+
+QString KFormatPrivate::formatDateTime(const QDateTime &dateTime, QLocale::FormatType format, KFormat::TimeFormatOptions options) const
+{
+    // Remove the long timezone. The TZ abbreviation might be appended later.
+    auto noTzTimeFormat = m_locale.dateTimeFormat(format).remove("tttt"_L1).trimmed();
+    auto dtStringNoTz = m_locale.toString(dateTime, noTzTimeFormat);
+    return formatTimeTzHelper(dtStringNoTz, dateTime, options);
 }
 
 QString KFormatPrivate::formatDistance(double distance, KFormat::DistanceFormatOptions options) const

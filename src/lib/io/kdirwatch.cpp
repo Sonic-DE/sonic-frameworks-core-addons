@@ -74,6 +74,43 @@
 
 #endif // HAVE_SYS_INOTIFY_H
 
+namespace
+{
+// The times of a stat result since the epoch, to the nanosecond, so that two changes within one second differ.
+std::chrono::nanoseconds sinceEpoch(time_t seconds, long nanoseconds)
+{
+    return std::chrono::seconds(seconds) + std::chrono::nanoseconds(nanoseconds);
+}
+
+std::chrono::nanoseconds statMTime(const QT_STATBUF &statBuf)
+{
+#if defined(Q_OS_WIN)
+    return sinceEpoch(statBuf.st_mtime, 0);
+#elif defined(Q_OS_DARWIN)
+    return sinceEpoch(statBuf.st_mtimespec.tv_sec, statBuf.st_mtimespec.tv_nsec);
+#else
+    return sinceEpoch(statBuf.st_mtim.tv_sec, statBuf.st_mtim.tv_nsec);
+#endif
+}
+
+std::chrono::nanoseconds statCTime(const QT_STATBUF &statBuf)
+{
+#if defined(Q_OS_WIN)
+    return sinceEpoch(statBuf.st_ctime, 0);
+#elif defined(Q_OS_DARWIN)
+    return sinceEpoch(statBuf.st_ctimespec.tv_sec, statBuf.st_ctimespec.tv_nsec);
+#else
+    return sinceEpoch(statBuf.st_ctim.tv_sec, statBuf.st_ctim.tv_nsec);
+#endif
+}
+
+// ctime is the 'creation time' on windows, but with qMax we get the latest change of any kind, on any platform.
+std::chrono::nanoseconds statChangeTime(const QT_STATBUF &statBuf)
+{
+    return qMax(statCTime(statBuf), statMTime(statBuf));
+}
+}
+
 Q_DECLARE_LOGGING_CATEGORY(KDIRWATCH)
 // logging category for this framework, default: log stuff >= warning
 Q_LOGGING_CATEGORY(KDIRWATCH, "kf.coreaddons.kdirwatch", QtWarningMsg)
@@ -130,6 +167,19 @@ static const char s_envPoll[] = "KDIRWATCH_POLLINTERVAL";
 static const char s_envMethod[] = "KDIRWATCH_METHOD";
 static const char s_envNfsMethod[] = "KDIRWATCH_NFSMETHOD";
 static const char s_envVerboseDebug[] = "KDIRWATCH_VERBOSE";
+
+static int statPath(const QString &path, QT_STATBUF *statBuffer)
+{
+#ifdef Q_OS_WIN
+#ifdef QT_LARGEFILE_SUPPORT
+    return ::_wstati64(qUtf16Printable(path), statBuffer);
+#else
+    return ::_wstat(qUtf16Printable(path), statBuffer);
+#endif
+#else
+    return QT_STAT(QFile::encodeName(path).constData(), statBuffer);
+#endif
+}
 
 //
 // Class KDirWatchPrivate (singleton)
@@ -815,7 +865,7 @@ void KDirWatchPrivate::addEntry(KDirWatch *instance, const QString &_path, Entry
     // we have a new path to watch
 
     QT_STATBUF stat_buf;
-    bool exists = (QT_STAT(QFile::encodeName(path).constData(), &stat_buf) == 0);
+    bool exists = (statPath(path, &stat_buf) == 0);
 
     auto newIt = m_mapEntries.insert(path, Entry());
     // the insert does a copy, so we have to use <e> now
@@ -850,9 +900,9 @@ void KDirWatchPrivate::addEntry(KDirWatch *instance, const QString &_path, Entry
 
 #ifdef Q_OS_WIN
         // ctime is the 'creation time' on windows - use mtime instead
-        e->m_ctime = stat_buf.st_mtime;
+        e->m_ctime = statMTime(stat_buf);
 #else
-        e->m_ctime = stat_buf.st_ctime;
+        e->m_ctime = statCTime(stat_buf);
 #endif
         e->m_status = Normal;
         e->m_nlink = stat_buf.st_nlink;
@@ -1152,11 +1202,9 @@ bool KDirWatchPrivate::restartEntryScan(KDirWatch *instance, Entry *e, bool noti
     if (wasWatching == 0) {
         if (!notify) {
             QT_STATBUF stat_buf;
-            bool exists = (QT_STAT(QFile::encodeName(e->path).constData(), &stat_buf) == 0);
+            bool exists = (statPath(e->path, &stat_buf) == 0);
             if (exists) {
-                // ctime is the 'creation time' on windows, but with qMax
-                // we get the latest change of any kind, on any platform.
-                e->m_ctime = qMax(stat_buf.st_ctime, stat_buf.st_mtime);
+                e->m_ctime = statChangeTime(stat_buf);
                 e->m_status = Normal;
                 if (verboseDebug) {
                     qCDebug(KDIRWATCH) << "Setting status to Normal for" << e << e->path;
@@ -1248,12 +1296,10 @@ int KDirWatchPrivate::scanEntry(Entry *e)
     }
 
     QT_STATBUF stat_buf;
-    const bool exists = (QT_STAT(QFile::encodeName(e->path).constData(), &stat_buf) == 0);
+    const bool exists = (statPath(e->path, &stat_buf) == 0);
     if (exists) {
         if (e->m_status == NonExistent) {
-            // ctime is the 'creation time' on windows, but with qMax
-            // we get the latest change of any kind, on any platform.
-            e->m_ctime = qMax(stat_buf.st_ctime, stat_buf.st_mtime);
+            e->m_ctime = statChangeTime(stat_buf);
             e->m_status = Normal;
             e->m_ino = stat_buf.st_ino;
             if (verboseDebug) {
@@ -1267,7 +1313,8 @@ int KDirWatchPrivate::scanEntry(Entry *e)
 
 #if 1 // for debugging the if() below
         if (verboseDebug) {
-            struct tm *tmp = localtime(&e->m_ctime);
+            const time_t ctimeSeconds = std::chrono::duration_cast<std::chrono::seconds>(e->m_ctime).count();
+            struct tm *tmp = localtime(&ctimeSeconds);
             char outstr[200];
             strftime(outstr, sizeof(outstr), "%H:%M:%S", tmp);
             qCDebug(KDIRWATCH) << e->path << "e->m_ctime=" << e->m_ctime << outstr << "stat_buf.st_ctime=" << stat_buf.st_ctime
@@ -1277,7 +1324,7 @@ int KDirWatchPrivate::scanEntry(Entry *e)
 #endif
 
         if ((e->m_ctime != invalid_ctime)
-            && (qMax(stat_buf.st_ctime, stat_buf.st_mtime) != e->m_ctime || stat_buf.st_ino != e->m_ino
+            && (statChangeTime(stat_buf) != e->m_ctime || stat_buf.st_ino != e->m_ino
                 || int(stat_buf.st_nlink) != int(e->m_nlink)
 #ifdef Q_OS_WIN
                 // on Windows, we trust QFSW to get it right, the ctime comparisons above
@@ -1286,7 +1333,7 @@ int KDirWatchPrivate::scanEntry(Entry *e)
                 || e->m_mode == QFSWatchMode
 #endif
                 )) {
-            e->m_ctime = qMax(stat_buf.st_ctime, stat_buf.st_mtime);
+            e->m_ctime = statChangeTime(stat_buf);
             e->m_nlink = stat_buf.st_nlink;
             if (e->m_ino != stat_buf.st_ino) {
                 // The file got deleted and recreated. We need to watch it again.
@@ -1733,11 +1780,11 @@ QDateTime KDirWatch::ctime(const QString &_path) const
 {
     KDirWatchPrivate::Entry *e = d->entry(_path);
 
-    if (!e) {
+    if (!e || e->m_ctime == invalid_ctime) {
         return QDateTime();
     }
 
-    return QDateTime::fromSecsSinceEpoch(e->m_ctime);
+    return QDateTime::fromMSecsSinceEpoch(std::chrono::duration_cast<std::chrono::milliseconds>(e->m_ctime).count());
 }
 
 void KDirWatch::removeDir(const QString &_path)
