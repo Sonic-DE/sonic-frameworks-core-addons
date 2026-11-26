@@ -436,7 +436,9 @@ public:
      *
      * \a dateTime the time to be formatted, as a full QDateTime object so timezone informations
      * remain available.
+     *
      * \a format the format used for formatting the time value
+     *
      * \a options controls how timezone information should be formatted
      *
      * \since 6.15
@@ -450,10 +452,12 @@ public:
      * made to add additional timezone information via \a options.
      *
      * \a dateTime the datetime to be formatted.
+     *
      * \a format the format used for formatting the time value
+     *
      * \a options controls how timezone information should be formatted
      *
-     * \since 6.31
+     * \since 6.32
      */
     [[nodiscard]] QString formatDateTime(const QDateTime &dateTime, QLocale::FormatType format, TimeFormatOptions options = KFormat::DoNotAddTimeZone) const;
 
@@ -494,6 +498,7 @@ public:
                         KFormat::UnitPrefix prefix = KFormat::UnitPrefix::AutoAdjust,
                         KFormat::BinaryUnitDialect dialect = KFormat::DefaultBinaryDialect) const;
 
+    // TODO KF7: remove in favor of the method below
     /*!
      * Converts \a value to the appropriate string representation
      *
@@ -521,8 +526,8 @@ public:
      * \sa UnitPrefix
      * \since 5.49
      */
-    // TODO KF7: remove in favor of the method below
     QString formatValue(double value, const QString &unit, int precision = 1, KFormat::UnitPrefix prefix = KFormat::UnitPrefix::AutoAdjust) const;
+
     /*!
      * Converts \a value to the appropriate string representation.
      *
